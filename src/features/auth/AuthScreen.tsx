@@ -1,26 +1,48 @@
 import { useAuthAction } from './domain/usecase.ts';
 import { useFormik } from 'formik';
-import { initialAuthFieldData, loginFields } from './domain/fields.ts';
-import { loginValidator } from './domain/validators.ts';
+import { authFieldsData, loginFields, twoFactorFields } from './domain/fields.ts';
+import { loginValidator, twofactorConfirmationValidator } from './domain/validators.ts';
 import { Link } from 'react-router-dom';
 import { AuthType } from './domain/types.ts';
 import logo from '../../app/assets/images/logo.svg';
-import InputField from '../../app/components/input-field.tsx';
+import { FormEvent, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import InputField from '../../app/components/InputField.tsx';
 
 type AuthScreenProps = {
   type: AuthType;
 };
 
 export default function AuthScreen({ type }: AuthScreenProps) {
-  const fields = loginFields;
+  const { performAuth, loading, userId } = useAuthAction(type);
 
-  const { performAuth, loading } = useAuthAction(type);
+  const isTwoFactorMode = type === AuthType.login && userId;
+
+  const fields = isTwoFactorMode ? twoFactorFields : loginFields;
 
   const formik = useFormik({
-    initialValues: initialAuthFieldData,
-    validationSchema: loginValidator,
+    initialValues: authFieldsData,
+    validationSchema: isTwoFactorMode ? twofactorConfirmationValidator : loginValidator,
     onSubmit: (values) => performAuth(values)
   });
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    await formik.validateForm();
+    if (formik.isValid) {
+      formik.handleSubmit(e);
+    } else {
+      e.preventDefault();
+      Object.keys(formik.errors).forEach((key) => {
+        toast(formik.errors[key], { type: 'error' });
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      formik.setFieldValue('userId', userId);
+    }
+  }, [userId]);
 
   return (
     <main className="w-full h-full bg-lotion flex flex-col items-center px-4">
@@ -32,9 +54,9 @@ export default function AuthScreen({ type }: AuthScreenProps) {
       </h1>
       <form
         className="mt-1 bg-white p-6 md:p-12 w-full lg:w-[50%] flex flex-col"
-        onSubmit={formik.handleSubmit}
+        onSubmit={onSubmit}
       >
-        {fields.map((field, index) => (
+        {fields.map((field) => (
           <InputField
             key={field.id}
             label={field.label}
@@ -48,16 +70,17 @@ export default function AuthScreen({ type }: AuthScreenProps) {
             placeholder={field.placeholder}
             value={formik.values[field.id]}
             onChange={formik.handleChange}
-            $className={index !== fields.length - 1 ? 'mb-4 md:mb-8' : ''}
+            $className={`mb-4 md:mb-8 ${field.hidden ? 'hidden' : ''}`}
           />
         ))}
         {type === AuthType.login && (
-          <Link className="text-black-olive font-poppins mt-4" to="/forgot-password">
+          <Link className="text-black-olive font-poppins" to="/forgot-password">
             Forgot your password?
           </Link>
         )}
         <button type="submit" className="btn btn-primary mt-10 lg:mt-20" disabled={loading}>
-          Login {loading && <span className="loading loading-spinner"></span>}
+          {type === AuthType.login && userId ? 'Authenticate' : 'Login'}
+          {loading && <span className="loading loading-spinner"></span>}
         </button>
       </form>
       <div className="flex-3"></div>

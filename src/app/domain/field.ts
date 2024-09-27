@@ -6,4 +6,5 @@ export default interface Field {
   label: string;
   placeholder: string;
   type: string;
+  hidden?: boolean;
 }

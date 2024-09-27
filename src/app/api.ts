@@ -6,14 +6,19 @@ import {
   FetchBaseQueryError
 } from '@reduxjs/toolkit/query/react';
 import { RootState } from './store';
-import { LoginRequest, LoginResponse } from '../features/auth/data/dto.ts';
+import {
+  LoginRequest,
+  LoginResponse,
+  TwoFactorConfirmationRequest
+} from '../features/auth/data/dto.ts';
+import { leaveFields } from '../utils/fieldManipulation.ts';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth?.token;
-    console.log('Getting token', token);
     if (token) {
+      console.log('Setting token', token);
       headers.set('Authorization', `Bearer ${token}`);
     }
     return headers;
@@ -39,7 +44,14 @@ export const api = createApi({
       query: (body) => ({
         url: 'admin/signin',
         method: 'POST',
-        body: body
+        body: leaveFields(body, 'username', 'password')
+      })
+    }),
+    twofactorConfirmation: builder.mutation<LoginResponse, TwoFactorConfirmationRequest>({
+      query: (body) => ({
+        url: 'admin/twofactor-confirmation',
+        method: 'POST',
+        body: leaveFields(body, 'otp', 'userId')
       })
     }),
     forgotPassword: builder.query<LoginResponse, string>({
@@ -52,4 +64,5 @@ export const api = createApi({
   })
 });
 
-export const { useLoginMutation, useLazyForgotPasswordQuery } = api;
+export const { useLoginMutation, useLazyForgotPasswordQuery, useTwofactorConfirmationMutation } =
+  api;

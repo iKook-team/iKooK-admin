@@ -1,5 +1,5 @@
 import { InputHTMLAttributes } from 'react';
-import { removeFields } from '../../utils/field-manipulation.ts';
+import { removeFields } from '../../utils/fieldManipulation.ts';
 
 interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
