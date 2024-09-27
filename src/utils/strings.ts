@@ -1,5 +1,8 @@
 export function capitalize(string: string) {
-  return string.replace(string[0], string[0].toUpperCase());
+  if (!string) {
+    return string;
+  }
+  return string[0].toUpperCase() + string.slice(1);
 }
 
 export function toCamelCase(string: string) {

@@ -35,9 +35,10 @@ export const authSlice = createSlice({
     });
   },
   selectors: {
-    isAuthenticated: (state: AuthState) => !!state.token
+    isAuthenticated: (state: AuthState) => !!state.token,
+    getUser: (state: AuthState) => state
   }
 });
 
 export const { saveToken, saveUser } = authSlice.actions;
-export const { isAuthenticated } = authSlice.selectors;
+export const { isAuthenticated, getUser } = authSlice.selectors;

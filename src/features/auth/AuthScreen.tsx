@@ -4,7 +4,7 @@ import { authFieldsData, loginFields, twoFactorFields } from './domain/fields.ts
 import { loginValidator, twofactorConfirmationValidator } from './domain/validators.ts';
 import { Link } from 'react-router-dom';
 import { AuthType } from './domain/types.ts';
-import logo from '../../app/assets/images/logo.svg';
+import logo from '../../app/assets/icons/logo.svg';
 import { FormEvent, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import InputField from '../../app/components/InputField.tsx';

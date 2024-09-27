@@ -1,6 +1,6 @@
 import { FaSquareFacebook, FaSquareInstagram, FaSquareXTwitter } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
-import logo from '../../app/assets/images/logo.svg';
+import logo from '../assets/icons/logo.svg';
 import { createRef } from 'react';
 
 export const FooterRef = createRef<HTMLElement>();

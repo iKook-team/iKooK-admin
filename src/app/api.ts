@@ -54,6 +54,10 @@ export const api = createApi({
         body: leaveFields(body, 'otp', 'userId')
       })
     }),
+    getAllUsers: builder.query<LoginResponse, GetAllUsersRequest>({
+      query: (request) =>
+        `admin/get-all-users?user_type=${request.user_type}&verified=${request.verified}`
+    }),
     forgotPassword: builder.query<LoginResponse, string>({
       query: (email) => ({
         url: 'auth/generate-password-reset-link',
@@ -64,5 +68,9 @@ export const api = createApi({
   })
 });
 
-export const { useLoginMutation, useLazyForgotPasswordQuery, useTwofactorConfirmationMutation } =
-  api;
+export const {
+  useLoginMutation,
+  useLazyForgotPasswordQuery,
+  useTwofactorConfirmationMutation,
+  useGetAllUsersQuery
+} = api;
