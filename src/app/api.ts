@@ -12,6 +12,8 @@ import {
   TwoFactorConfirmationRequest
 } from '../features/auth/data/dto.ts';
 import { leaveFields } from '../utils/fieldManipulation.ts';
+import resetStore from '../features/auth/domain/resetStore.ts';
+import { GetAllUsersRequest, GetAllUsersResponse } from '../features/users/data/dto.ts';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BASE_URL,
@@ -33,6 +35,9 @@ const baseQueryWithLogging: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
   console.log('Request:', args);
   const result = await baseQuery(args, api, extraOptions);
   console.log('Response:', result);
+  if (result?.meta?.response?.status === 401) {
+    await resetStore();
+  }
   return result;
 };
 
@@ -54,9 +59,9 @@ export const api = createApi({
         body: leaveFields(body, 'otp', 'userId')
       })
     }),
-    getAllUsers: builder.query<LoginResponse, GetAllUsersRequest>({
+    getAllUsers: builder.query<GetAllUsersResponse, GetAllUsersRequest>({
       query: (request) =>
-        `admin/get-all-users?user_type=${request.user_type}&verified=${request.verified}`
+        `admin/get-all-users?user_type=${request.user_type}${request.verified !== undefined ? `&verified=${request.verified}` : ''}`
     }),
     forgotPassword: builder.query<LoginResponse, string>({
       query: (email) => ({

@@ -11,7 +11,6 @@ import {
   REGISTER,
   REHYDRATE
 } from 'redux-persist';
-import { useResetStore } from '../features/auth/domain/usecase.ts';
 import localStorage from 'redux-persist/es/storage';
 import { isDev } from './environment.ts';
 import { authSlice } from '../features/auth/domain/slice.ts';
@@ -35,14 +34,6 @@ const appReducer = combineReducers({
 });
 
 export const rootReducer: typeof appReducer = (state, action) => {
-  if (action.type === useResetStore.type) {
-    location.replace(`${location.origin}/login`);
-    void Promise.all([
-      localStorage.removeItem('persist:' + authSlice.reducerPath),
-      localStorage.removeItem('persist:root')
-    ]);
-    return appReducer(undefined, action);
-  }
   return appReducer(state, action);
 };
 

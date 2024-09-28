@@ -6,6 +6,8 @@ import AuthScreen from '../features/auth/AuthScreen.tsx';
 import { useAppSelector } from '../hooks';
 import { isAuthenticated } from '../features/auth/domain/slice.ts';
 import NavigationShell from './components/NavigationShell.tsx';
+import UsersScreen from '../features/users/UsersScreen.tsx';
+import { UserType } from '../features/users/domain/types.ts';
 
 export default function Routes() {
   const authenticated = useAppSelector(isAuthenticated);
@@ -16,7 +18,11 @@ export default function Routes() {
           {
             path: '/',
             element: <NavigationShell />,
-            children: [{ path: '*', element: <NotFound /> }]
+            children: [
+              { path: 'users', element: <UsersScreen type={UserType.host} /> },
+              { path: 'chefs', element: <UsersScreen type={UserType.chef} /> },
+              { path: '*', element: <NotFound /> }
+            ]
           }
         ]
       : [{ path: '*', element: <AuthScreen type={AuthType.login} /> }]

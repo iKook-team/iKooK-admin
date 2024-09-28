@@ -1,4 +1,8 @@
-interface GetAllUsersRequest {
+import { User } from './model.ts';
+
+export interface GetAllUsersRequest {
   user_type: string;
-  verified: boolean;
+  verified?: boolean;
 }
+
+export interface GetAllUsersResponse extends GenericResponse<User[]> {}

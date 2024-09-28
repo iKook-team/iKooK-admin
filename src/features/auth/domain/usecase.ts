@@ -1,4 +1,3 @@
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   useLazyForgotPasswordQuery,
   useLoginMutation,
@@ -70,10 +69,3 @@ export function useAuthAction(type: AuthType) {
     userId
   };
 }
-
-export const useResetStore = createAction('RESET_STORE');
-
-export const useLogout = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
-  dispatch(useResetStore());
-  return null;
-});

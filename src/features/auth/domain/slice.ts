@@ -1,11 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { useLogout } from './usecase.ts';
 import { AuthState } from './types.ts';
-import { User } from '../data/model.ts';
+import { CurrentUser } from '../data/model.ts';
 
-const initialState: User & {
-  token: string | null;
-} = {
+const initialState: AuthState = {
   token: '',
   id: '',
   first_name: '',
@@ -21,7 +18,7 @@ export const authSlice = createSlice({
     saveToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
-    saveUser: (state, action: PayloadAction<User>) => {
+    saveUser: (state, action: PayloadAction<CurrentUser>) => {
       state.id = action.payload.id;
       state.first_name = action.payload.first_name;
       state.last_name = action.payload.last_name;
@@ -29,16 +26,11 @@ export const authSlice = createSlice({
       state.roles = action.payload.roles;
     }
   },
-  extraReducers: (builder) => {
-    builder.addCase(useLogout.fulfilled, (state) => {
-      state.token = null;
-    });
-  },
   selectors: {
     isAuthenticated: (state: AuthState) => !!state.token,
-    getUser: (state: AuthState) => state
+    getCurrentUser: (state: AuthState): CurrentUser => state
   }
 });
 
 export const { saveToken, saveUser } = authSlice.actions;
-export const { isAuthenticated, getUser } = authSlice.selectors;
+export const { isAuthenticated, getCurrentUser } = authSlice.selectors;

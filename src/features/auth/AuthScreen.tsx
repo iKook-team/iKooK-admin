@@ -70,7 +70,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
             placeholder={field.placeholder}
             value={formik.values[field.id]}
             onChange={formik.handleChange}
-            $className={`mb-4 md:mb-8 ${field.hidden ? 'hidden' : ''}`}
+            className={`mb-4 md:mb-8 ${field.hidden ? 'hidden' : ''}`}
           />
         ))}
         {type === AuthType.login && (

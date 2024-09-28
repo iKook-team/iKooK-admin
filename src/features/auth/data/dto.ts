@@ -1,13 +1,13 @@
 import { InferType } from 'yup';
 import { loginValidator, twofactorConfirmationValidator } from '../domain/validators.ts';
-import { User } from './model.ts';
+import { CurrentUser } from './model.ts';
 
 export type LoginRequest = InferType<typeof loginValidator>;
 
 export type TwoFactorConfirmationRequest = InferType<typeof twofactorConfirmationValidator>;
 
 export type LoginResponse = GenericResponse<
-  User & {
+  CurrentUser & {
     access: string;
     refresh: string;
   }

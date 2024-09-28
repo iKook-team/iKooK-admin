@@ -14,7 +14,10 @@ export default {
         lotion: '#FBFBFB',
         charcoal: '#344054',
         'dark-charcoal': '#323335',
-        'black-olive': '#3F3E3D'
+        'black-olive': '#3F3E3D',
+        green: '#00D67C',
+        red: '#FC3E03',
+        'ghost-white': '#F7F9FB'
       },
       width: {
         max: '70%',

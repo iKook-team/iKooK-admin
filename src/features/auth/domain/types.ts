@@ -1,3 +1,5 @@
+import { CurrentUser } from '../data/model.ts';
+
 export enum AuthType {
   login = 'login',
   forgotPassword = 'forgot-password',
@@ -5,6 +7,6 @@ export enum AuthType {
   resetPassword = 'reset-password'
 }
 
-export interface AuthState {
+export interface AuthState extends CurrentUser {
   token: string | null;
 }

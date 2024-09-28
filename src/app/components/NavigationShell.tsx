@@ -4,7 +4,9 @@ import { RiMenu5Line } from 'react-icons/ri';
 import logo from '../assets/icons/logo.svg';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
 import { useAppSelector } from '../../hooks';
-import { getUser } from '../../features/auth/domain/slice.ts';
+import { getCurrentUser } from '../../features/auth/domain/slice.ts';
+import { FaSearch } from 'react-icons/fa';
+import InputField from './InputField.tsx';
 
 export interface NavigationShellOutlet {
   setQuery: (query: string) => void;
@@ -21,18 +23,23 @@ export default function NavigationShell() {
       {/* Content */}
       <div className="drawer-content flex flex-col">
         {/* Top Bar */}
-        <nav className="navbar flex items-center justify-between p-6 pb-3">
+        <nav className="navbar flex items-center justify-between px-5 py-4 gap-2">
           {/* Mobile Navigation Icon */}
           <label htmlFor="navigation-bar-drawer" className="drawer-button block lg:hidden">
             <RiMenu5Line size={48} />
           </label>
 
-          <span />
+          <InputField
+            className="flex-1 max-w-96"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search"
+            trailing={<FaSearch />}
+          />
 
           <LoggedInUser />
         </nav>
-        <div className="md:h-6 h-5" />
-        <div className="flex-1">
+        <div className="flex-1 py-6 px-5">
           <Outlet context={{ setQuery } satisfies NavigationShellOutlet} />
         </div>
         {/* Footer */}
@@ -56,14 +63,16 @@ export default function NavigationShell() {
               <Link
                 to={item.route}
                 key={item.route}
-                className={`flex flex-row font-normal text-sm btn ${pathname.startsWith(item.route) ? 'bg-primary' : 'btn-ghost'} rounded-none`}
+                className={`w-full flex flex-row font-normal text-sm btn ${pathname.startsWith(item.route) ? 'bg-primary' : 'btn-ghost'} rounded-none`}
               >
                 <img
                   src={getImageUrl(`icons/${item.icon}.svg`)}
                   alt={item.title}
                   className="w-4 h-4"
                 />
-                <span className="flex-1 text-start">{item.title}</span>
+                <span className="flex-1 text-start overflow-hidden overflow-ellipsis whitespace-nowrap">
+                  {item.title}
+                </span>
               </Link>
             ))}
           </div>
@@ -74,7 +83,7 @@ export default function NavigationShell() {
 }
 
 function LoggedInUser() {
-  const user = useAppSelector(getUser);
+  const user = useAppSelector(getCurrentUser);
   return (
     <div className="flex flex-col items-start border border-primary px-5 py-2">
       <p className="capitalize font-semibold">{user.role}</p>
