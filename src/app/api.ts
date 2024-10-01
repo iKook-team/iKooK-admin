@@ -14,6 +14,7 @@ import {
 import { leaveFields } from '../utils/fieldManipulation.ts';
 import resetStore from '../features/auth/domain/resetStore.ts';
 import { GetAllUsersRequest, GetAllUsersResponse } from '../features/users/data/dto.ts';
+import { GetAllMenusRequest, GetAllMenusResponse } from '../features/menus/data/dto.ts';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BASE_URL,
@@ -63,6 +64,10 @@ export const api = createApi({
       query: (request) =>
         `admin/get-all-users?user_type=${request.user_type}${request.verified !== undefined ? `&verified=${request.verified}` : ''}`
     }),
+    getAllMenus: builder.query<GetAllMenusResponse, GetAllMenusRequest>({
+      query: (request) =>
+        `admin/get-menus?page_number=${request.page_number}${request.menu_status !== undefined ? `&menu_status=${request.menu_status}` : ''}`
+    }),
     forgotPassword: builder.query<LoginResponse, string>({
       query: (email) => ({
         url: 'auth/generate-password-reset-link',
@@ -77,5 +82,6 @@ export const {
   useLoginMutation,
   useLazyForgotPasswordQuery,
   useTwofactorConfirmationMutation,
-  useGetAllUsersQuery
+  useGetAllUsersQuery,
+  useGetAllMenusQuery
 } = api;
