@@ -1,8 +1,4 @@
-import { User } from './model.ts';
+import { Menu } from './model.ts';
+import { GenericResponse, PagedResponse } from '../../../app/data/dto.ts';
 
-export interface GetAllMenusRequest {
-  menu_status?: string;
-  page_number: number;
-}
-
-export interface GetAllMenusResponse extends GenericResponse<User[]> {}
+export interface GetAllMenusResponse extends GenericResponse<PagedResponse<Menu>> {}

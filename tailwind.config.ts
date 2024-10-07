@@ -17,7 +17,8 @@ export default {
         'black-olive': '#3F3E3D',
         green: '#00D67C',
         red: '#FC3E03',
-        'ghost-white': '#F7F9FB'
+        'ghost-white': '#F7F9FB',
+        'jordy-blue': '#95A4FC'
       },
       width: {
         max: '70%',

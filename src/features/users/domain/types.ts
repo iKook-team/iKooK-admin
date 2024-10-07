@@ -1,4 +1,4 @@
 export enum UserType {
-  chef,
-  host
+  chef = 'chef',
+  host = 'host'
 }

@@ -1,5 +1,4 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { api } from './api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import {
   FLUSH,
@@ -12,8 +11,8 @@ import {
   REHYDRATE
 } from 'redux-persist';
 import localStorage from 'redux-persist/es/storage';
-import { isDev } from './environment.ts';
-import { authSlice } from '../features/auth/domain/slice.ts';
+import { isDev } from '../../environment.ts';
+import { authSlice } from '../../../features/auth/domain/slice.ts';
 
 const rootPersistConfig = {
   key: 'root',
@@ -29,7 +28,6 @@ const authPersistConfig = {
 };
 
 const appReducer = combineReducers({
-  [api.reducerPath]: api.reducer,
   [authSlice.reducerPath]: persistReducer(authPersistConfig, authSlice.reducer)
 });
 
@@ -45,12 +43,9 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat(api.middleware)
+    })
 });
 
 export const persistor = persistStore(store);
 
 setupListeners(store.dispatch);
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;

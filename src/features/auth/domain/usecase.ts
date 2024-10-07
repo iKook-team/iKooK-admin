@@ -1,28 +1,31 @@
-import {
-  useLazyForgotPasswordQuery,
-  useLoginMutation,
-  useTwofactorConfirmationMutation
-} from '../../../app/api.ts';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ConsolidatedAuthRequest, ConsolidatedAuthResponse } from '../data/dto.ts';
 import { AuthType } from './types.ts';
-import { useAppDispatch } from '../../../hooks';
 import { saveToken, saveUser } from './slice.ts';
+import { useAppDispatch } from '../../../app/services/store/hooks.ts';
+import fetch from '../../../app/services/api';
+import { useMutation } from '@tanstack/react-query';
 
 export function useAuthAction(type: AuthType) {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string>();
+  const [buttonText, setButtonText] = useState<string>('Login');
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  const [postRequest] = useLoginMutation();
-  const [forgotPassword] = useLazyForgotPasswordQuery();
-  const [twoFactorAuth] = useTwofactorConfirmationMutation();
 
   const isTwoFactor = type === AuthType.login && userId;
+
+  const mutation = useMutation({
+    mutationFn: async (request: ConsolidatedAuthRequest) => {
+      const response = await fetch({
+        url: isTwoFactor ? 'admin/twofactor-confirmation' : 'admin/signin',
+        method: 'POST',
+        data: request
+      });
+      return response.data as ConsolidatedAuthResponse;
+    }
+  });
 
   return {
     performAuth: async (request: ConsolidatedAuthRequest) => {
@@ -33,14 +36,7 @@ export function useAuthAction(type: AuthType) {
       try {
         setLoading(true);
 
-        const promise =
-          type === AuthType.forgotPassword
-            ? forgotPassword(request.email)
-            : isTwoFactor
-              ? twoFactorAuth(request)
-              : postRequest(request);
-
-        const response = (await promise.unwrap()) as ConsolidatedAuthResponse;
+        const response = await mutation.mutateAsync(request);
 
         if (isTwoFactor) {
           dispatch(saveToken(response.data.access));
@@ -53,19 +49,17 @@ export function useAuthAction(type: AuthType) {
           toast(`Enter the otp sent to your email`, {
             type: 'info'
           });
-        } else {
-          navigate('/login');
+          setButtonText('Authenticate');
         }
-      } catch (e) {
-        // @ts-expect-error e is an rtk query error
-        toast(e.data.message, {
-          type: 'error'
-        });
+      } catch (_) {
+        setButtonText('Login');
+        setUserId(undefined);
       } finally {
         setLoading(false);
       }
     },
     loading,
-    userId
+    userId,
+    buttonText
   };
 }

@@ -1,6 +1,7 @@
 import { InferType } from 'yup';
 import { loginValidator, twofactorConfirmationValidator } from '../domain/validators.ts';
 import { CurrentUser } from './model.ts';
+import { GenericResponse } from '../../../app/data/dto.ts';
 
 export type LoginRequest = InferType<typeof loginValidator>;
 

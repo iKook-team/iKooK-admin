@@ -14,7 +14,7 @@ type AuthScreenProps = {
 };
 
 export default function AuthScreen({ type }: AuthScreenProps) {
-  const { performAuth, loading, userId } = useAuthAction(type);
+  const { performAuth, loading, userId, buttonText } = useAuthAction(type);
 
   const isTwoFactorMode = type === AuthType.login && userId;
 
@@ -79,7 +79,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
           </Link>
         )}
         <button type="submit" className="btn btn-primary mt-10 lg:mt-20" disabled={loading}>
-          {type === AuthType.login && userId ? 'Authenticate' : 'Login'}
+          {buttonText}
           {loading && <span className="loading loading-spinner"></span>}
         </button>
       </form>

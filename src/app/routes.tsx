@@ -3,12 +3,12 @@ import { AuthType } from '../features/auth/domain/types.ts';
 import NotFound from './components/not-found.tsx';
 import ScrollToTop from './components/scroll-to-top.tsx';
 import AuthScreen from '../features/auth/AuthScreen.tsx';
-import { useAppSelector } from '../hooks';
 import { isAuthenticated } from '../features/auth/domain/slice.ts';
 import NavigationShell from './components/NavigationShell.tsx';
 import UsersScreen from '../features/users/UsersScreen.tsx';
 import { UserType } from '../features/users/domain/types.ts';
 import MenusScreen from '../features/menus/MenusScreen.tsx';
+import { useAppSelector } from './services/store/hooks.ts';
 
 export default function Routes() {
   const authenticated = useAppSelector(isAuthenticated);

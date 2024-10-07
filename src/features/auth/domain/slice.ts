@@ -28,9 +28,10 @@ export const authSlice = createSlice({
   },
   selectors: {
     isAuthenticated: (state: AuthState) => !!state.token,
-    getCurrentUser: (state: AuthState): CurrentUser => state
+    getCurrentUser: (state: AuthState): CurrentUser => state,
+    getToken: (state: AuthState) => state.token
   }
 });
 
 export const { saveToken, saveUser } = authSlice.actions;
-export const { isAuthenticated, getCurrentUser } = authSlice.selectors;
+export const { isAuthenticated, getCurrentUser, getToken } = authSlice.selectors;

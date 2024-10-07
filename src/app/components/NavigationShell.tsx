@@ -3,10 +3,10 @@ import { useMemo, useState } from 'react';
 import { RiMenu5Line } from 'react-icons/ri';
 import logo from '../assets/icons/logo.svg';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
-import { useAppSelector } from '../../hooks';
 import { getCurrentUser } from '../../features/auth/domain/slice.ts';
 import { FaSearch } from 'react-icons/fa';
 import InputField from './InputField.tsx';
+import { useAppSelector } from '../services/store/hooks.ts';
 
 export interface NavigationShellOutlet {
   setQuery: (query: string) => void;
@@ -78,8 +78,8 @@ export default function NavigationShell() {
                     className="w-4 h-4"
                   />
                   <span className="flex-1 text-start overflow-hidden overflow-ellipsis whitespace-nowrap">
-                  {item.title}
-                </span>
+                    {item.title}
+                  </span>
                 </Link>
               );
             })}

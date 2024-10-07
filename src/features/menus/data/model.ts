@@ -1,9 +1,13 @@
-import { CurrentUser } from '../../auth/data/model.ts';
+import { User } from '../../users/data/model.ts';
 
-export interface User extends CurrentUser {
-  username: string;
-  is_active: boolean;
-  menus: string[];
-  photo: string;
-  verified: boolean;
+export interface Menu {
+  id: string;
+  chefID: User;
+  menuName: string;
+  menuPrice: string;
+  currency: string;
+  images: string[];
+  verifiedAt: string;
+  active: boolean;
+  status: string;
 }

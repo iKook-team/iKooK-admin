@@ -7,9 +7,9 @@ import {
   GenericTableActions
 } from '../../app/components/GenericPage.tsx';
 import { ChangeEventHandler, useMemo, useState } from 'react';
-import { useGetAllUsersQuery } from '../../app/api.ts';
 import UserNameAndImage from './components/UserNameAndImage.tsx';
-import UserVerificationStatus from './components/UserVerificationStatus.tsx';
+import { useFetchUsersQuery } from './domain/usecase.ts';
+import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 
 type UsersScreenProps = {
   type: UserType;
@@ -44,24 +44,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   const [filter, setFilter] = useState<string>(filters[0]);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const { data: response, isFetching } = useGetAllUsersQuery({
-    user_type: type === UserType.host ? 'host' : 'chef',
-    verified: filter === 'all' ? undefined : filter === 'verified'
+  const { isPending, users, error } = useFetchUsersQuery({
+    type,
+    verified: filter === 'all' ? undefined : filter === 'verified',
+    query
   });
-
-  const users = useMemo(() => {
-    if (!query || !response?.data) {
-      return response?.data || [];
-    }
-
-    return response?.data?.filter((user) => {
-      const cleanedQuery = query?.toLowerCase();
-      return (
-        user.first_name.toLowerCase().includes(cleanedQuery) ||
-        user.last_name.toLowerCase().includes(cleanedQuery)
-      );
-    });
-  }, [query, response?.data]);
 
   const toggleSelection = (id: string) => {
     if (selected.includes(id)) {
@@ -72,7 +59,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   };
 
   const selectAll: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setSelected(event.target.checked ? response?.data?.map((user) => user.id) || [] : []);
+    setSelected(event.target.checked ? users.map((user) => user.id) : []);
   };
 
   return (
@@ -88,13 +75,14 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         button={type === UserType.host ? 'New User' : 'New Chef'}
       />
       <GenericTable
-        isFetching={isFetching}
+        isFetching={isPending}
         emptyMessage={
-          users.length == 0
+          error?.message ||
+          (users.length == 0
             ? type === UserType.host
               ? 'No users found'
               : 'No chefs found'
-            : undefined
+            : undefined)
         }
         header={
           <tr>
@@ -155,7 +143,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 </>
               )}
               <td>
-                <UserVerificationStatus isVerified={user.verified} />
+                <VerificationStatus
+                  title={user.verified ? 'Verified' : 'Not verified'}
+                  circleColor={user.verified ? 'bg-green' : 'bg-red'}
+                  textColor={user.verified ? 'text-green' : 'text-red'}
+                />
               </td>
               <td>
                 <GenericTableActions>

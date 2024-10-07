@@ -5,11 +5,13 @@ import {
   GenericTableAction,
   GenericTableActions
 } from '../../app/components/GenericPage.tsx';
-import { useMemo, useState } from 'react';
-import { useGetAllMenusQuery } from '../../app/api.ts';
+import { useMemo } from 'react';
+import { useFetchMenusQuery } from './domain/usecase.ts';
+import UserNameAndImage from '../users/components/UserNameAndImage.tsx';
+import VerificationStatus from '../../app/components/VerificationStatus.tsx';
+import { capitalize } from '../../utils/strings.ts';
 
 export default function MenusScreen() {
-  const filters = useMemo(() => ['all', 'approved', 'unapproved'], []);
   const header = useMemo(
     () => ['ID', 'Menu', 'Chef', 'Availability', 'Starting Price', 'Status'],
     []
@@ -23,37 +25,8 @@ export default function MenusScreen() {
     []
   );
 
-  const [page] = useState(1);
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
-  // const [selected, setSelected] = useState<string[]>([]);
-
-  const { data: response, isFetching } = useGetAllMenusQuery(
-    {
-      page_number: page,
-      menu_status: filter === 'all' ? undefined : filter
-    },
-    {
-      refetchOnMountOrArgChange: true, // Forces a refetch on page load
-      refetchOnReconnect: true, // Refetch when the browser reconnects
-      refetchOnFocus: true // Refetch when the user focuses the window
-    }
-  );
-
-  const menus = useMemo(() => {
-    // if (!query || !response?.data) {
-    //   return response?.data || [];
-    // }
-    //
-    // return response?.data?.filter((user) => {
-    //   const cleanedQuery = query?.toLowerCase();
-    //   return (
-    //     user.first_name.toLowerCase().includes(cleanedQuery) ||
-    //     user.last_name.toLowerCase().includes(cleanedQuery)
-    //   );
-    // });
-    return [];
-  }, [query, response?.data]);
+  const { isPending, error, menus, filter, setFilter, filters, query, setQuery } =
+    useFetchMenusQuery();
 
   return (
     <div>
@@ -68,8 +41,8 @@ export default function MenusScreen() {
         button="New Menu"
       />
       <GenericTable
-        isFetching={isFetching}
-        emptyMessage={menus.length == 0 ? 'No menus found' : undefined}
+        isFetching={isPending}
+        emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
         header={
           <tr>
             {header.map((title) => (
@@ -91,28 +64,51 @@ export default function MenusScreen() {
             </th>
           </tr>
         }
-        body={<></>}
-        // body={users.map((user) => {
-        //   const isSelected = selected.includes(user.id);
-        //   return (
-        //     <tr key={user.id} className={isSelected ? 'active' : undefined}>
-        //       <td>E-mail</td>
-        //       <td>Address</td>
-        //       <td>
-        //         <GenericTableActions>
-        //           {dropdown.map((entry) => (
-        //             <GenericTableAction
-        //               key={entry.title}
-        //               icon={entry.icon}
-        //               text={entry.title}
-        //               onClick={() => {}}
-        //             />
-        //           ))}
-        //         </GenericTableActions>
-        //       </td>
-        //     </tr>
-        //   );
-        // })}
+        body={menus.map((menu) => (
+          <tr key={menu.id}>
+            <td>{menu.id}</td>
+            <td className="capitalize">{menu.menuName}</td>
+            <td>
+              <UserNameAndImage
+                name={`${menu.chefID.first_name} ${menu.chefID.last_name}`}
+                image={menu.chefID.photo}
+              />
+            </td>
+            <td></td>
+            <td></td>
+            <td>
+              <VerificationStatus
+                title={capitalize(menu.status)}
+                circleColor={
+                  menu.status === 'approved'
+                    ? 'bg-green'
+                    : menu.status === 'deleted' || menu.status === 'unapproved'
+                      ? 'bg-red'
+                      : 'bg-jordy-blue'
+                }
+                textColor={
+                  menu.status === 'approved'
+                    ? 'text-green'
+                    : menu.status === 'deleted' || menu.status === 'unapproved'
+                      ? 'text-red'
+                      : 'text-jordy-blue'
+                }
+              />
+            </td>
+            <td>
+              <GenericTableActions>
+                {dropdown.map((entry) => (
+                  <GenericTableAction
+                    key={entry.title}
+                    icon={entry.icon}
+                    text={entry.title}
+                    onClick={() => {}}
+                  />
+                ))}
+              </GenericTableActions>
+            </td>
+          </tr>
+        ))}
         page={1}
         pages={1}
         onPageChange={() => {}}
