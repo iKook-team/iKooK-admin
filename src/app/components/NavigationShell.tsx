@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RiMenu5Line } from 'react-icons/ri';
 import logo from '../assets/icons/logo.svg';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
@@ -13,8 +13,13 @@ export interface NavigationShellOutlet {
 }
 
 export default function NavigationShell() {
-  const { pathname } = useLocation();
+  const location = useLocation();
   const [query, setQuery] = useState<string>();
+
+  const pathname = useMemo(() => {
+    // extract only the root path
+    return location.pathname.split('/')[1];
+  }, [location]);
 
   return (
     <main className="h-screen drawer lg:drawer-open lg:grid-cols-[2fr_8fr]">
@@ -59,22 +64,25 @@ export default function NavigationShell() {
         <div className="h-full bg-white flex flex-col py-10 border-r items-center overflow-y-scroll">
           <img src={logo} alt="iKooK" className="w-20" />
           <div className="flex flex-col flex-1 mt-12 w-full">
-            {sidebarItems.map((item) => (
-              <Link
-                to={item.route}
-                key={item.route}
-                className={`w-full flex flex-row font-normal text-sm btn ${pathname.startsWith(item.route) ? 'bg-primary' : 'btn-ghost'} rounded-none`}
-              >
-                <img
-                  src={getImageUrl(`icons/${item.icon}.svg`)}
-                  alt={item.title}
-                  className="w-4 h-4"
-                />
-                <span className="flex-1 text-start overflow-hidden overflow-ellipsis whitespace-nowrap">
+            {sidebarItems.map((item) => {
+              const selected = pathname.replace('/', '') === item.route.replace('/', '');
+              return (
+                <Link
+                  to={item.route}
+                  key={item.route}
+                  className={`w-full flex flex-row font-normal text-sm btn ${selected ? 'bg-primary' : 'btn-ghost'} rounded-none`}
+                >
+                  <img
+                    src={getImageUrl(`icons/${item.icon}.svg`)}
+                    alt={item.title}
+                    className="w-4 h-4"
+                  />
+                  <span className="flex-1 text-start overflow-hidden overflow-ellipsis whitespace-nowrap">
                   {item.title}
                 </span>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
@@ -96,7 +104,7 @@ const sidebarItems = [
   {
     title: 'Dashboard',
     icon: 'dashboard',
-    route: '/dashboard'
+    route: '/'
   },
   {
     title: 'Users',

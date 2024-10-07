@@ -144,14 +144,14 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                   isActive={user.is_active}
                 />
               </td>
-              <td>E-mail</td>
-              <td>Address</td>
+              <td>{user.email}</td>
+              <td>{user.address}</td>
               {type === UserType.host ? (
-                <td>Phone No</td>
+                <td>{user.mobile}</td>
               ) : (
                 <>
                   <td>Wallet</td>
-                  <td>Rating</td>
+                  <td>{user.rating}</td>
                 </>
               )}
               <td>

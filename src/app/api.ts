@@ -34,12 +34,25 @@ const baseQueryWithLogging: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
   extraOptions
 ) => {
   console.log('Request:', args);
-  const result = await baseQuery(args, api, extraOptions);
-  console.log('Response:', result);
-  if (result?.meta?.response?.status === 401) {
+  const response = await baseQuery(args, api, extraOptions);
+  // customize the response
+  if (response.error) {
+    console.error('Response:', {
+      data: response.error?.data ?? response.error,
+      status: response.error?.status,
+      response: response.meta?.response
+    });
+  } else {
+    console.log('Response:', {
+      data: response.data,
+      response: response.meta?.response
+    });
+  }
+  // if the token is invalid and we are not already in the login screen
+  if (response?.meta?.response?.status === 401 && (api.getState() as RootState)?.auth?.token) {
     await resetStore();
   }
-  return result;
+  return response;
 };
 
 export const api = createApi({

@@ -79,7 +79,9 @@ export function GenericTable({
         <div className="overflow-x-auto">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead className="text-black/40">{header}</thead>
-            <tbody className="[&_td]:py-2 [&.active]:bg-ghost-white">{body}</tbody>
+            <tbody className="[&_td]:py-2 [&_td]:overflow-hidden [&_td]:overflow-ellipsis [&_td]:whitespace-nowrap [&.active]:bg-ghost-white">
+              {body}
+            </tbody>
           </table>
         </div>
       )}
