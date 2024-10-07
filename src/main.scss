@@ -15,3 +15,23 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 1px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ffe9ad;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.primary');
+}

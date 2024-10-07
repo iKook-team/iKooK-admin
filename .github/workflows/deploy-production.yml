@@ -1,0 +1,28 @@
+name: Hostinger Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build and deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Push
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.ikook.co.uk
+          username: u645967772.ikookadmin
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
