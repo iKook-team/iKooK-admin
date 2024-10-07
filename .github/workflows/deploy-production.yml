@@ -29,4 +29,4 @@ jobs:
           server: ftp.ikook.co.uk
           username: u645967772.ikookadmin
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./build/
+          local-dir: ./dist/
