@@ -11,8 +11,10 @@ export function useFetchMenusQuery() {
   const [filter, setFilter] = useState<string>(filters[0]);
 
   const { isPending, data, error } = useQuery({
-    queryKey: ['menu'],
-    queryFn: async () => {
+    queryKey: ['menu', page, filter],
+    queryFn: async ({ queryKey }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [_, page, filter] = queryKey;
       const response = await fetch({
         url: `admin/get-menus?page_number=${page}${filter === 'all' ? '' : `&menu_status=${filter}`}&page_size=20`,
         method: 'GET'
@@ -46,6 +48,8 @@ export function useFetchMenusQuery() {
     setQuery,
     filter,
     setFilter,
-    filters
+    filters,
+    totalCount: data?.data?.total_count || 0,
+    numberOfPages: data?.data?.number_of_pages || 0
   };
 }

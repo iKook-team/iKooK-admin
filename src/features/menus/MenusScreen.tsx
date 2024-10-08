@@ -10,6 +10,7 @@ import { useFetchMenusQuery } from './domain/usecase.ts';
 import UserNameAndImage from '../users/components/UserNameAndImage.tsx';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';
+import IdCell from '../../app/components/IdCell.tsx';
 
 export default function MenusScreen() {
   const header = useMemo(
@@ -25,11 +26,23 @@ export default function MenusScreen() {
     []
   );
 
-  const { isPending, error, menus, filter, setFilter, filters, query, setQuery } =
-    useFetchMenusQuery();
+  const {
+    isPending,
+    error,
+    menus,
+    filter,
+    setFilter,
+    filters,
+    query,
+    setQuery,
+    totalCount,
+    page,
+    setPage,
+    numberOfPages
+  } = useFetchMenusQuery();
 
   return (
-    <div>
+    <>
       <GenericPageTitle title="Menus" />
       <GenericPageSearchRow
         className="mt-4 mb-6 w-full"
@@ -66,7 +79,9 @@ export default function MenusScreen() {
         }
         body={menus.map((menu) => (
           <tr key={menu.id}>
-            <td>{menu.id}</td>
+            <td>
+              <IdCell id={menu.id} />
+            </td>
             <td className="capitalize">{menu.menuName}</td>
             <td>
               <UserNameAndImage
@@ -109,10 +124,12 @@ export default function MenusScreen() {
             </td>
           </tr>
         ))}
-        page={1}
-        pages={1}
-        onPageChange={() => {}}
+        page={page}
+        numberOfPages={numberOfPages}
+        onPageChange={setPage}
+        pageItemCount={menus.length}
+        totalItemCount={totalCount}
       />
-    </div>
+    </>
   );
 }

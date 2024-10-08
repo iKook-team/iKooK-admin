@@ -1,7 +1,11 @@
 import InputField, { DropdownField } from './InputField.tsx';
 import { FaSearch } from 'react-icons/fa';
-import { ReactNode } from 'react';
-import { MdOutlineMoreHoriz } from 'react-icons/md';
+import { ReactNode, useMemo } from 'react';
+import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+  MdOutlineMoreHoriz
+} from 'react-icons/md';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
 
 export function GenericPageTitle({ title }: { title: string }) {
@@ -45,7 +49,9 @@ export function GenericPageSearchRow(props: {
 
 interface PaginationControlsProps {
   page: number;
-  pages: number;
+  numberOfPages: number;
+  pageItemCount?: number;
+  totalItemCount?: number;
   onPageChange: (page: number) => void;
 }
 
@@ -56,94 +62,31 @@ export interface GenericTableProps extends PaginationControlsProps {
   body: ReactNode;
 }
 
-export function GenericTable({
-  isFetching,
-  emptyMessage,
-  header,
-  body
-  // page,
-  // pages,
-  // onPageChange
-}: GenericTableProps) {
+export function GenericTable(props: GenericTableProps) {
   return (
     <>
-      {isFetching ? (
+      {props.isFetching ? (
         <div className="flex flex-row gap-2">
           <div className="skeleton h-4 w-full" />
           <div className="skeleton h-4 w-full" />
           <div className="skeleton h-4 w-full" />
         </div>
-      ) : emptyMessage ? (
-        <p className="text-center">{emptyMessage}</p>
+      ) : props.emptyMessage ? (
+        <p className="text-center">{props.emptyMessage}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1">
           <table className="table table-xs table-pin-rows table-pin-cols">
-            <thead className="text-black/40">{header}</thead>
+            <thead className="text-black/40">{props.header}</thead>
             <tbody className="[&_td]:py-2 [&_td]:overflow-hidden [&_td]:overflow-ellipsis [&_td]:whitespace-nowrap [&.active]:bg-ghost-white">
-              {body}
+              {props.body}
             </tbody>
           </table>
         </div>
       )}
-      {/*<PaginationControls page={page} pages={pages} onPageChange={onPageChange} />*/}
+      <PaginationControls {...props} />
     </>
   );
 }
-
-// function PaginationControls({ page, pages, onPageChange }: PaginationControlsProps) {
-//   const [newPage, setNewPage] = useState(page + 1);
-//
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-3 mt-6">
-//       <div className="join flex justify-center">
-//         <button className="join-item btn" onClick={() => onPageChange(0)} disabled={page === 0}>
-//           First
-//         </button>
-//         <button
-//           className="join-item btn"
-//           onClick={() => onPageChange(page - 1)}
-//           disabled={page === 0}
-//         >
-//           Previous
-//         </button>
-//         <span className="join-item btn btn-active">
-//           Page {page + 1} of {pages}
-//         </span>
-//         <button
-//           className="join-item btn"
-//           onClick={() => onPageChange(page + 1)}
-//           disabled={page === pages - 1}
-//         >
-//           Next
-//         </button>
-//         <button
-//           className="join-item btn"
-//           onClick={() => onPageChange(pages - 1)}
-//           disabled={page === pages - 1}
-//         >
-//           Last
-//         </button>
-//       </div>
-//       <div className="flex items-center justify-center gap-2">
-//         <span className="text-neutral-500">Jump to page:</span>
-//         <input
-//           type="number"
-//           className="input input-bordered w-16"
-//           value={newPage}
-//           onChange={(e) => {
-//             const value = parseInt(e.target.value);
-//             if (value > 0 && value <= pages) {
-//               setNewPage(value);
-//             }
-//           }}
-//         />
-//         <button className="btn btn-primary" onClick={() => onPageChange(newPage - 1)}>
-//           Go
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
 
 export function GenericTableActions({ children }: { children: ReactNode }) {
   return (
@@ -167,5 +110,45 @@ export function GenericTableAction(props: { icon: string; text: string; onClick:
         <span>{props.text}</span>
       </button>
     </li>
+  );
+}
+
+function PaginationControls(props: PaginationControlsProps) {
+  const range = useMemo(() => {
+    const start = Math.max(1, props.page - 2);
+    const end = Math.min(props.numberOfPages, start + 3);
+    return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+  }, [props.page, props.numberOfPages]);
+  return (
+    <div className="mt-12 flex flex-row items-center justify-between">
+      <span className="text-sm font-medium text-purple-taupe">
+        Showing {props.pageItemCount} from {props.totalItemCount} item(s)
+      </span>
+      <div className="join flex justify-center shadow-sm">
+        <button
+          className="join-item btn btn-ghost"
+          onClick={() => props.onPageChange(1)}
+          disabled={props.page === 1}
+        >
+          <MdKeyboardDoubleArrowLeft />
+        </button>
+        {range.map((page) => (
+          <button
+            key={page}
+            className={`join-item btn ${page === props.page ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => props.onPageChange(page)}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          className="join-item btn btn-ghost"
+          onClick={() => props.onPageChange(props.numberOfPages)}
+          disabled={props.page === props.numberOfPages}
+        >
+          <MdKeyboardDoubleArrowRight />
+        </button>
+      </div>
+    </div>
   );
 }

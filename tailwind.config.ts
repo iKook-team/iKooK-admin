@@ -18,7 +18,8 @@ export default {
         green: '#00D67C',
         red: '#FC3E03',
         'ghost-white': '#F7F9FB',
-        'jordy-blue': '#95A4FC'
+        'jordy-blue': '#95A4FC',
+        'purple-taupe': '#464255'
       },
       width: {
         max: '70%',

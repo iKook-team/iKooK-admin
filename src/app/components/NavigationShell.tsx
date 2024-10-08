@@ -22,7 +22,7 @@ export default function NavigationShell() {
   }, [location]);
 
   return (
-    <main className="h-screen drawer lg:drawer-open lg:grid-cols-[2fr_8fr]">
+    <div className="h-screen drawer lg:drawer-open lg:grid-cols-[2fr_8fr]">
       <input id="navigation-bar-drawer" type="checkbox" className="drawer-toggle" />
 
       {/* Content */}
@@ -44,9 +44,9 @@ export default function NavigationShell() {
 
           <LoggedInUser />
         </nav>
-        <div className="flex-1 py-6 px-5">
+        <main className="flex-1 flex flex-col py-6 px-5">
           <Outlet context={{ setQuery } satisfies NavigationShellOutlet} />
-        </div>
+        </main>
         {/* Footer */}
         <footer className="p-5 text-xs border-t">
           Copyright © {new Date().getFullYear()} iKooK, All Rights Reserved
@@ -86,7 +86,7 @@ export default function NavigationShell() {
           </div>
         </div>
       </nav>
-    </main>
+    </div>
   );
 }
 

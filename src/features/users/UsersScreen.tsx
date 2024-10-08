@@ -63,7 +63,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   };
 
   return (
-    <div>
+    <>
       <GenericPageTitle title={type === UserType.host ? 'Users' : 'Chefs'} />
       <GenericPageSearchRow
         className="mt-4 mb-6 w-full"
@@ -165,9 +165,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
           );
         })}
         page={1}
-        pages={1}
+        numberOfPages={1}
+        totalItemCount={users.length}
+        pageItemCount={users.length}
         onPageChange={() => {}}
       />
-    </div>
+    </>
   );
 }

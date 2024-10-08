@@ -5,10 +5,11 @@ import { useMemo } from 'react';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const { isPending, data, error } = useQuery({
-    queryKey: [request.type],
-    queryFn: async () => {
+    queryKey: [request.type, request.verified],
+    queryFn: async ({ queryKey }) => {
+      const [type, verified] = queryKey;
       const response = await fetch({
-        url: `admin/get-all-users?user_type=${request.type}${request.verified !== undefined ? `&verified=${request.verified}` : ''}`,
+        url: `admin/get-all-users?user_type=${type}${verified !== undefined ? `&verified=${verified}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;

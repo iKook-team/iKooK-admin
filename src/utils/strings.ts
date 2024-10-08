@@ -12,3 +12,7 @@ export function toCamelCase(string: string) {
 export function fromCamelCase(string: string) {
   return string.replace(string[0], string[0].toUpperCase()).replace(/([A-Z])/g, ' $1');
 }
+
+export function truncateString(string: string, length: number, separator: string = '...') {
+  return string.length > length ? `${string.slice(0, length)}${separator}` : string;
+}
