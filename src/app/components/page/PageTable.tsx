@@ -1,51 +1,10 @@
-import InputField, { DropdownField } from './InputField.tsx';
-import { FaSearch } from 'react-icons/fa';
 import { ReactNode, useMemo } from 'react';
 import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
   MdOutlineMoreHoriz
 } from 'react-icons/md';
-import { getImageUrl } from '../../utils/getImageUrl.ts';
-
-export function GenericPageTitle({ title }: { title: string }) {
-  return <h1 className="font-medium text-xl">{title}</h1>;
-}
-
-export function GenericPageSearchRow(props: {
-  search?: string;
-  onSearch?: (value: string) => void;
-  dropdown?: string;
-  dropdownOptions?: string[];
-  onDropdown?: (value: string) => void;
-  button?: string;
-  onButton?: () => void;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`w-full flex flex-row gap-3 items-center ${props.className ? props.className : ''}`}
-    >
-      <DropdownField
-        value={props.dropdown}
-        onChange={(e) => props.onDropdown?.(e.target.value)}
-        options={props.dropdownOptions || []}
-      />
-      <div className="flex-1">
-        <InputField
-          className="w-full max-w-80"
-          value={props.search}
-          onChange={(e) => props.onSearch?.(e.target.value)}
-          placeholder="Search by name, email, address..."
-          trailing={<FaSearch />}
-        />
-      </div>
-      <button onClick={props.onButton} className="btn btn-primary">
-        {props.button}
-      </button>
-    </div>
-  );
-}
+import { getImageUrl } from '../../../utils/getImageUrl.ts';
 
 interface PaginationControlsProps {
   page: number;
@@ -55,14 +14,14 @@ interface PaginationControlsProps {
   onPageChange: (page: number) => void;
 }
 
-export interface GenericTableProps extends PaginationControlsProps {
+interface GenericTableProps extends PaginationControlsProps {
   isFetching: boolean;
   emptyMessage?: string;
   header: ReactNode;
   body: ReactNode;
 }
 
-export function GenericTable(props: GenericTableProps) {
+export default function PageTable(props: GenericTableProps) {
   return (
     <>
       {props.isFetching ? (
@@ -77,7 +36,7 @@ export function GenericTable(props: GenericTableProps) {
         <div className="overflow-x-auto flex-1">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead className="text-black/40">{props.header}</thead>
-            <tbody className="[&_td]:py-2 [&_td]:overflow-hidden [&_td]:overflow-ellipsis [&_td]:whitespace-nowrap [&.active]:bg-ghost-white">
+            <tbody className="[&_td]:py-2 [&_td]:truncate [&.active]:bg-ghost-white">
               {props.body}
             </tbody>
           </table>
@@ -88,7 +47,7 @@ export function GenericTable(props: GenericTableProps) {
   );
 }
 
-export function GenericTableActions({ children }: { children: ReactNode }) {
+export function PageTableActions({ children }: { children: ReactNode }) {
   return (
     <div className="dropdown dropdown-bottom dropdown-end">
       <MdOutlineMoreHoriz tabIndex={0} role="button" />
@@ -102,7 +61,7 @@ export function GenericTableActions({ children }: { children: ReactNode }) {
   );
 }
 
-export function GenericTableAction(props: { icon: string; text: string; onClick: () => void }) {
+export function PageTableAction(props: { icon: string; text: string; onClick: () => void }) {
   return (
     <li>
       <button className="flex flex-row items-center gap-2" onClick={props.onClick}>

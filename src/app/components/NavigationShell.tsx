@@ -7,6 +7,7 @@ import { getCurrentUser } from '../../features/auth/domain/slice.ts';
 import { FaSearch } from 'react-icons/fa';
 import InputField from './InputField.tsx';
 import { useAppSelector } from '../services/store/hooks.ts';
+import resetStore from '../../features/auth/domain/resetStore.ts';
 
 export interface NavigationShellOutlet {
   setQuery: (query: string) => void;
@@ -28,7 +29,7 @@ export default function NavigationShell() {
       {/* Content */}
       <div className="drawer-content flex flex-col">
         {/* Top Bar */}
-        <nav className="navbar flex items-center justify-between px-5 py-4 gap-2">
+        <nav className="navbar flex items-center justify-between px-5 py-4 gap-2 border-b">
           {/* Mobile Navigation Icon */}
           <label htmlFor="navigation-bar-drawer" className="drawer-button block lg:hidden">
             <RiMenu5Line size={48} />
@@ -77,9 +78,7 @@ export default function NavigationShell() {
                     alt={item.title}
                     className="w-4 h-4"
                   />
-                  <span className="flex-1 text-start overflow-hidden overflow-ellipsis whitespace-nowrap">
-                    {item.title}
-                  </span>
+                  <span className="flex-1 text-start truncate">{item.title}</span>
                 </Link>
               );
             })}
@@ -93,7 +92,7 @@ export default function NavigationShell() {
 function LoggedInUser() {
   const user = useAppSelector(getCurrentUser);
   return (
-    <div className="flex flex-col items-start border border-primary px-5 py-2">
+    <div className="flex flex-col items-start border border-primary px-5 py-2" onClick={resetStore}>
       <p className="capitalize font-semibold">{user.role}</p>
       <p className="capitalize text-xs">{user.first_name}</p>
     </div>
@@ -109,7 +108,7 @@ const sidebarItems = [
   {
     title: 'Users',
     icon: 'users',
-    route: '/users'
+    route: '/hosts'
   },
   {
     title: 'Chefs',

@@ -1,21 +1,23 @@
 import { UserType } from './domain/types.ts';
-import {
-  GenericPageSearchRow,
-  GenericPageTitle,
-  GenericTable,
-  GenericTableAction,
-  GenericTableActions
-} from '../../app/components/GenericPage.tsx';
+import PageTable, {
+  PageTableAction,
+  PageTableActions
+} from '../../app/components/page/PageTable.tsx';
 import { ChangeEventHandler, useMemo, useState } from 'react';
 import UserNameAndImage from './components/UserNameAndImage.tsx';
 import { useFetchUsersQuery } from './domain/usecase.ts';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
+import { useNavigate } from 'react-router-dom';
+import PageTitle from '../../app/components/page/PageTitle.tsx';
+import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 
 type UsersScreenProps = {
   type: UserType;
 };
 
 export default function UsersScreen({ type }: UsersScreenProps) {
+  const navigate = useNavigate();
+
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
   const header = useMemo(
     () => [
@@ -64,8 +66,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   return (
     <>
-      <GenericPageTitle title={type === UserType.host ? 'Users' : 'Chefs'} />
-      <GenericPageSearchRow
+      <PageTitle title={type === UserType.host ? 'Users' : 'Chefs'} />
+      <PageSearchRow
         className="mt-4 mb-6 w-full"
         search={query}
         onSearch={setQuery}
@@ -74,7 +76,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         onDropdown={setFilter}
         button={type === UserType.host ? 'New User' : 'New Chef'}
       />
-      <GenericTable
+      <PageTable
         isFetching={isPending}
         emptyMessage={
           error?.message ||
@@ -97,23 +99,27 @@ export default function UsersScreen({ type }: UsersScreenProps) {
               </th>
             ))}
             <th>
-              <GenericTableActions>
+              <PageTableActions>
                 {dropdown.map((entry) => (
-                  <GenericTableAction
+                  <PageTableAction
                     key={entry.title}
                     icon={entry.icon}
                     text={entry.title}
                     onClick={() => {}}
                   />
                 ))}
-              </GenericTableActions>
+              </PageTableActions>
             </th>
           </tr>
         }
         body={users.map((user) => {
           const isSelected = selected.includes(user.id);
           return (
-            <tr key={user.id} className={isSelected ? 'active' : undefined}>
+            <tr
+              key={user.id}
+              className={isSelected ? 'active' : undefined}
+              onClick={() => navigate(`/${type}s/${user.id}`)}
+            >
               <td>
                 <label>
                   <input
@@ -150,16 +156,16 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 />
               </td>
               <td>
-                <GenericTableActions>
+                <PageTableActions>
                   {dropdown.map((entry) => (
-                    <GenericTableAction
+                    <PageTableAction
                       key={entry.title}
                       icon={entry.icon}
                       text={entry.title}
                       onClick={() => {}}
                     />
                   ))}
-                </GenericTableActions>
+                </PageTableActions>
               </td>
             </tr>
           );
