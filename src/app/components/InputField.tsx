@@ -53,7 +53,7 @@ function InputContainer(props: InputContainerProps) {
   return (
     <label className={`relative form-control ${props.className ? props.className : ''}`}>
       {props.label && (
-        <span className="label label-text p-0 pb-2 text-sm text-charcoal font-medium">
+        <span className="label label-text p-0 pb-2 text-sm text-charcoal font-medium capitalize">
           {props.label}
         </span>
       )}

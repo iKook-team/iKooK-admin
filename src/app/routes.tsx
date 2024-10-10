@@ -9,6 +9,7 @@ import UsersScreen from '../features/users/UsersScreen.tsx';
 import { UserType } from '../features/users/domain/types.ts';
 import MenusScreen from '../features/menus/MenusScreen.tsx';
 import { useAppSelector } from './services/store/hooks.ts';
+import UserScreen from '../features/users/UserScreen.tsx';
 
 export default function Routes() {
   const authenticated = useAppSelector(isAuthenticated);
@@ -20,8 +21,16 @@ export default function Routes() {
             path: '/',
             element: <NavigationShell />,
             children: [
-              { path: 'users', element: <UsersScreen type={UserType.host} /> },
-              { path: 'chefs', element: <UsersScreen type={UserType.chef} /> },
+              ...Object.values(UserType).flatMap((type) => [
+                {
+                  path: `${type}s`,
+                  element: <UsersScreen type={type} />
+                },
+                {
+                  path: `${type}s/:id`,
+                  element: <UserScreen type={type} />
+                }
+              ]),
               { path: 'menus', element: <MenusScreen /> },
               { path: '*', element: <NotFound /> }
             ]

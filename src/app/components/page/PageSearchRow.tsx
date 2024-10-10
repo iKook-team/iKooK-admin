@@ -1,0 +1,37 @@
+import InputField, { DropdownField } from '../InputField.tsx';
+import { FaSearch } from 'react-icons/fa';
+
+export default function PageSearchRow(props: {
+  search?: string;
+  onSearch?: (value: string) => void;
+  dropdown?: string;
+  dropdownOptions?: string[];
+  onDropdown?: (value: string) => void;
+  button?: string;
+  onButton?: () => void;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`w-full flex flex-row gap-3 items-center ${props.className ? props.className : ''}`}
+    >
+      <DropdownField
+        value={props.dropdown}
+        onChange={(e) => props.onDropdown?.(e.target.value)}
+        options={props.dropdownOptions || []}
+      />
+      <div className="flex-1">
+        <InputField
+          className="w-full max-w-80"
+          value={props.search}
+          onChange={(e) => props.onSearch?.(e.target.value)}
+          placeholder="Search by name, email, address..."
+          trailing={<FaSearch />}
+        />
+      </div>
+      <button onClick={props.onButton} className="btn btn-primary">
+        {props.button}
+      </button>
+    </div>
+  );
+}

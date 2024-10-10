@@ -1,16 +1,15 @@
-import {
-  GenericPageSearchRow,
-  GenericPageTitle,
-  GenericTable,
-  GenericTableAction,
-  GenericTableActions
-} from '../../app/components/GenericPage.tsx';
+import PageTable, {
+  PageTableAction,
+  PageTableActions
+} from '../../app/components/page/PageTable.tsx';
 import { useMemo } from 'react';
 import { useFetchMenusQuery } from './domain/usecase.ts';
 import UserNameAndImage from '../users/components/UserNameAndImage.tsx';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';
 import IdCell from '../../app/components/IdCell.tsx';
+import PageTitle from '../../app/components/page/PageTitle.tsx';
+import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 
 export default function MenusScreen() {
   const header = useMemo(
@@ -43,8 +42,8 @@ export default function MenusScreen() {
 
   return (
     <>
-      <GenericPageTitle title="Menus" />
-      <GenericPageSearchRow
+      <PageTitle title="Menus" />
+      <PageSearchRow
         className="mt-4 mb-6 w-full"
         search={query}
         onSearch={setQuery}
@@ -53,7 +52,7 @@ export default function MenusScreen() {
         onDropdown={setFilter}
         button="New Menu"
       />
-      <GenericTable
+      <PageTable
         isFetching={isPending}
         emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
         header={
@@ -64,16 +63,16 @@ export default function MenusScreen() {
               </th>
             ))}
             <th>
-              <GenericTableActions>
+              <PageTableActions>
                 {dropdown.map((entry) => (
-                  <GenericTableAction
+                  <PageTableAction
                     key={entry.title}
                     icon={entry.icon}
                     text={entry.title}
                     onClick={() => {}}
                   />
                 ))}
-              </GenericTableActions>
+              </PageTableActions>
             </th>
           </tr>
         }
@@ -111,16 +110,16 @@ export default function MenusScreen() {
               />
             </td>
             <td>
-              <GenericTableActions>
+              <PageTableActions>
                 {dropdown.map((entry) => (
-                  <GenericTableAction
+                  <PageTableAction
                     key={entry.title}
                     icon={entry.icon}
                     text={entry.title}
                     onClick={() => {}}
                   />
                 ))}
-              </GenericTableActions>
+              </PageTableActions>
             </td>
           </tr>
         ))}
