@@ -10,6 +10,7 @@ import { UserType } from '../features/users/domain/types.ts';
 import MenusScreen from '../features/menus/MenusScreen.tsx';
 import { useAppSelector } from './services/store/hooks.ts';
 import UserScreen from '../features/users/UserScreen.tsx';
+import BookingsScreen from '../features/bookings/BookingsScreen.tsx';
 
 export default function Routes() {
   const authenticated = useAppSelector(isAuthenticated);
@@ -32,6 +33,7 @@ export default function Routes() {
                 }
               ]),
               { path: 'menus', element: <MenusScreen /> },
+              { path: 'bookings', element: <BookingsScreen /> },
               { path: '*', element: <NotFound /> }
             ]
           }
