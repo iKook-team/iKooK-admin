@@ -7,8 +7,12 @@ import UserNameAndImage from '../users/components/UserNameAndImage';
 import { useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
+import { useNavigate } from 'react-router-dom';
+import { Booking } from './data/model';
 
 export default function BookingsScreen() {
+  const navigate = useNavigate();
+
   const bookingTypes = useMemo(() => ['menu', 'enquiries'], []);
 
   const [bookingType, setBookingType] = useState<string>(bookingTypes[1]);
@@ -39,6 +43,10 @@ export default function BookingsScreen() {
     bookingType: bookingType,
     query
   });
+
+  function getBookingById(bookings: Booking[], id: string): Booking | undefined {
+    return bookings.find((booking) => booking.id === id);
+  }
 
   return (
     <>
@@ -80,7 +88,15 @@ export default function BookingsScreen() {
         body={bookings.map((booking) => {
           const proposalList = booking?.proposals;
           return (
-            <tr key={booking.id}>
+            <tr
+              key={booking.id}
+              onClick={() =>
+                navigate(`/${bookingType}s/${booking.id}`, {
+                  state: { booking: getBookingById(bookings, booking.id) }
+                })
+              }
+              className="cursor-pointer hover:bg-gray-100"
+            >
               <td>
                 <IdCell id={booking.id} />
               </td>

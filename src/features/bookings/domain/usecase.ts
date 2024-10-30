@@ -4,7 +4,7 @@ import { GetAllBookingsRequest, GetAllBookingsResponse } from '../data/dto.ts';
 import { useMemo } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking } from '../data/model.ts';
-import { UserType } from '../../users/domain/types.ts';
+import { bookingType, UserType } from '../../users/domain/types.ts';
 
 export function useFetchBookingsQuery(request: GetAllBookingsRequest) {
  
@@ -14,8 +14,8 @@ export function useFetchBookingsQuery(request: GetAllBookingsRequest) {
       const [bookingType] = queryKey;
       const response = await fetch({
         // url: `admin/get-all-users?user_type=${type}${verified !== undefined ? `&verified=${verified}` : ''}`,
-                // url: `admin/get-bookings?type=${bookingType}`,   
-                url: `admin/get-bookings?type=enquiries`,
+                url: `admin/get-bookings?type=${bookingType}`,   
+                // url: `admin/get-bookings?type=enquiries`,
 
 
 
@@ -46,14 +46,14 @@ export function useFetchBookingsQuery(request: GetAllBookingsRequest) {
   };
 }
 
-export function useFetchUserQuery(type: UserType, id: string) {
+export function useFetchBookingQuery(type: bookingType, id: string) {
   const { isPending, data, error } = useQuery({
     queryKey: [type, id],
     queryFn: async ({ queryKey }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, id] = queryKey;
       const response = await fetch({
-        url: `admin/get-user-details/${id}`,
+        url: `admin/edit-booking/${id}`,
         method: 'GET'
       });
       return response.data as GenericResponse<Booking>;
@@ -62,7 +62,7 @@ export function useFetchUserQuery(type: UserType, id: string) {
 
   return {
     isPending,
-    user: data?.data,
+    booking: data?.data,
     error
   };
 }
