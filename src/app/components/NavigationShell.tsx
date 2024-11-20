@@ -3,11 +3,10 @@ import { useMemo, useState } from 'react';
 import { RiMenu5Line } from 'react-icons/ri';
 import logo from '../assets/icons/logo.svg';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
-import { getCurrentUser } from '../../features/auth/domain/slice.ts';
 import { FaSearch } from 'react-icons/fa';
 import InputField from './InputField.tsx';
-import { useAppSelector } from '../services/store/hooks.ts';
 import resetStore from '../../features/auth/domain/resetStore.ts';
+import useAuthStore from '../../features/auth/domain/store.ts';
 
 export interface NavigationShellOutlet {
   setQuery: (query: string) => void;
@@ -55,7 +54,7 @@ export default function NavigationShell() {
       </div>
 
       {/* Side Bar */}
-      <nav className="drawer-side">
+      <nav className="drawer-side justify-items-stretch">
         <label
           htmlFor="navigation-bar-drawer"
           aria-label="close sidebar"
@@ -90,11 +89,11 @@ export default function NavigationShell() {
 }
 
 function LoggedInUser() {
-  const user = useAppSelector(getCurrentUser);
+  const user = useAuthStore((state) => state.user);
   return (
     <div className="flex flex-col items-start border border-primary px-5 py-2" onClick={resetStore}>
-      <p className="capitalize font-semibold">{user.role}</p>
-      <p className="capitalize text-xs">{user.first_name}</p>
+      <p className="capitalize font-semibold">{user?.role}</p>
+      <p className="capitalize text-xs">{user?.first_name}</p>
     </div>
   );
 }

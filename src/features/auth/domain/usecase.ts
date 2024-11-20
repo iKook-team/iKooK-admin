@@ -2,17 +2,14 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { ConsolidatedAuthRequest, ConsolidatedAuthResponse } from '../data/dto.ts';
 import { AuthType } from './types.ts';
-import { saveToken, saveUser } from './slice.ts';
-import { useAppDispatch } from '../../../app/services/store/hooks.ts';
 import fetch from '../../../app/services/api';
 import { useMutation } from '@tanstack/react-query';
+import useAuthStore from './store.ts';
 
 export function useAuthAction(type: AuthType) {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string>();
   const [buttonText, setButtonText] = useState<string>('Login');
-
-  const dispatch = useAppDispatch();
 
   const isTwoFactor = type === AuthType.login && userId;
 
@@ -39,8 +36,11 @@ export function useAuthAction(type: AuthType) {
         const response = await mutation.mutateAsync(request);
 
         if (isTwoFactor) {
-          dispatch(saveToken(response.data.access));
-          dispatch(saveUser(response.data));
+          useAuthStore.getState().login({
+            user: response.data,
+            access: response.data.access,
+            refresh: response.data.refresh
+          });
           toast(`Welcome back ${response.data.first_name}`, {
             type: 'success'
           });

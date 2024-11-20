@@ -1,8 +1,5 @@
 import { UserType } from './domain/types.ts';
-import PageTable, {
-  PageTableAction,
-  PageTableActions
-} from '../../app/components/page/PageTable.tsx';
+import PageTable from '../../app/components/page/PageTable.tsx';
 import { ChangeEventHandler, useMemo, useState } from 'react';
 import UserNameAndImage from './components/UserNameAndImage.tsx';
 import { useFetchUsersQuery } from './domain/usecase.ts';
@@ -10,6 +7,8 @@ import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { useNavigate } from 'react-router-dom';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
+import PageAction from '../../app/components/page/PageAction.tsx';
+import { PageActionItem } from '../../app/components/page/types.ts';
 
 type UsersScreenProps = {
   type: UserType;
@@ -29,7 +28,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     ],
     [type]
   );
-  const dropdown = useMemo(
+  const actionItems = useMemo<PageActionItem[]>(
     () => [
       { title: 'Edit', icon: 'edit' },
       ...(type == UserType.host ? [{ title: 'Approve docs', icon: 'approve-document' }] : []),
@@ -62,6 +61,10 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   const selectAll: ChangeEventHandler<HTMLInputElement> = (event) => {
     setSelected(event.target.checked ? users.map((user) => user.id) : []);
+  };
+
+  const onAction = (action: PageActionItem) => {
+    console.log(action);
   };
 
   return (
@@ -99,16 +102,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
               </th>
             ))}
             <th>
-              <PageTableActions>
-                {dropdown.map((entry) => (
-                  <PageTableAction
-                    key={entry.title}
-                    icon={entry.icon}
-                    text={entry.title}
-                    onClick={() => {}}
-                  />
-                ))}
-              </PageTableActions>
+              <PageAction items={actionItems} onItemClick={onAction} />
             </th>
           </tr>
         }
@@ -126,7 +120,10 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                     className="checkbox"
                     type="checkbox"
                     checked={isSelected}
-                    onClick={() => toggleSelection(user.id)}
+                    onClick={(event) => {
+                      toggleSelection(user.id);
+                      event.stopPropagation();
+                    }}
                     readOnly={true}
                   />
                 </label>
@@ -156,16 +153,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 />
               </td>
               <td>
-                <PageTableActions>
-                  {dropdown.map((entry) => (
-                    <PageTableAction
-                      key={entry.title}
-                      icon={entry.icon}
-                      text={entry.title}
-                      onClick={() => {}}
-                    />
-                  ))}
-                </PageTableActions>
+                <PageAction items={actionItems} onItemClick={onAction} />
               </td>
             </tr>
           );
