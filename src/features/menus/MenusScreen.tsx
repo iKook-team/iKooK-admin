@@ -126,7 +126,7 @@ export default function MenusScreen() {
         pageItemCount={menus.length}
         totalItemCount={totalCount}
       />
-      {selectedMenu && <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />}
+      <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />
     </>
   );
 }
