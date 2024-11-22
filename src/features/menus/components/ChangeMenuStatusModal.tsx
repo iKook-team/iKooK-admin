@@ -4,6 +4,7 @@ import { Menu } from '../data/model.ts';
 import InputField, { DropdownField } from '../../../app/components/InputField.tsx';
 import { useUpdateMenuStatus } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
+import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 interface ChangeMenuStatusModalProps {
   menu?: Menu;
@@ -35,7 +36,7 @@ const ChangeMenuStatusModal = forwardRef<HTMLDialogElement, ChangeMenuStatusModa
           reason
         });
         toast(`${menu?.menuName} updated successfully`, { type: 'success' });
-        ref?.current?.close();
+        getCurrentFromRef(ref)?.close();
         setStatus('approve');
         setReason(undefined);
       } finally {

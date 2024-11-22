@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { User } from '../data/model.ts';
 import { UserType } from '../domain/types.ts';
 import { useToggleUserActive } from '../domain/usecase.ts';
+import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 interface ToggleUserActiveModalProps {
   user?: User;
@@ -32,7 +33,7 @@ const ToggleUserActiveModal = forwardRef<HTMLDialogElement, ToggleUserActiveModa
         });
 
         toast(response.data.data, { type: 'success' });
-        ref?.current?.close();
+        getCurrentFromRef(ref)?.close();
       } finally {
         setLoading(false);
       }
@@ -54,7 +55,7 @@ const ToggleUserActiveModal = forwardRef<HTMLDialogElement, ToggleUserActiveModa
       >
         <p>Are you sure you want to do this?</p>
         <div className="flex flex-row gap-10 justify-end mt-4">
-          <button className="btn-ghost" onClick={() => ref?.current?.close()}>
+          <button className="btn-ghost" onClick={() => getCurrentFromRef(ref)?.close()}>
             Cancel
           </button>
           <button
