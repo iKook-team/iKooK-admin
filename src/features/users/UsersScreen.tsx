@@ -1,6 +1,6 @@
 import { UserType } from './domain/types.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
-import { ChangeEventHandler, useMemo, useState } from 'react';
+import { ChangeEventHandler, useMemo, useRef, useState } from 'react';
 import UserNameAndImage from './components/UserNameAndImage.tsx';
 import { useFetchUsersQuery } from './domain/usecase.ts';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
@@ -9,6 +9,8 @@ import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
+import SuspendUserModal from './components/SuspendUserModal.tsx';
+import { User } from './data/model.ts';
 
 type UsersScreenProps = {
   type: UserType;
@@ -18,6 +20,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   const navigate = useNavigate();
 
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
+
   const header = useMemo(
     () => [
       'Name',
@@ -41,9 +44,12 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     [type]
   );
 
+  const suspendUserRef = useRef<HTMLDialogElement>(null);
+
   const [query, setQuery] = useState<string>();
   const [filter, setFilter] = useState<string>(filters[0]);
   const [selected, setSelected] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User>();
 
   const { isPending, users, error } = useFetchUsersQuery({
     type,
@@ -63,8 +69,13 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     setSelected(event.target.checked ? users.map((user) => user.id) : []);
   };
 
-  const onAction = (action: PageActionItem) => {
-    console.log(action);
+  const onAction = (action: PageActionItem, user?: User) => {
+    setSelectedUser(user);
+    switch (action.icon) {
+      case 'suspend':
+        suspendUserRef.current?.showModal();
+        break;
+    }
   };
 
   return (
@@ -153,7 +164,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 />
               </td>
               <td>
-                <PageAction items={actionItems} onItemClick={onAction} />
+                <PageAction items={actionItems} onItemClick={(action) => onAction(action, user)} />
               </td>
             </tr>
           );
@@ -164,6 +175,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         pageItemCount={users.length}
         onPageChange={() => {}}
       />
+      <SuspendUserModal ref={suspendUserRef} type={type} user={selectedUser} />
     </>
   );
 }

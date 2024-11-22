@@ -46,6 +46,7 @@ const ChangeMenuStatusModal = forwardRef<HTMLDialogElement, ChangeMenuStatusModa
     return (
       <PageModal
         ref={ref}
+        id="change-menu-status-modal"
         title={
           <>
             Update <span className="text-jordy-blue">{`Chef ${menu?.chefID.username}'s `}</span>
