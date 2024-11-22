@@ -3,18 +3,20 @@ import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { User } from '../data/model.ts';
 import { UserType } from '../domain/types.ts';
-import { useSuspendUser } from '../domain/usecase.ts';
+import { useToggleUserActive } from '../domain/usecase.ts';
 
-interface SuspendUserModalProps {
+interface ToggleUserActiveModalProps {
   user?: User;
   type: UserType;
 }
 
-const SuspendUserModal = forwardRef<HTMLDialogElement, SuspendUserModalProps>(
+const ToggleUserActiveModal = forwardRef<HTMLDialogElement, ToggleUserActiveModalProps>(
   ({ user, type }, ref) => {
+    const title = user?.is_active ? 'Suspend' : 'Activate';
+
     const [loading, setLoading] = useState(false);
 
-    const mutation = useSuspendUser(type);
+    const mutation = useToggleUserActive(type);
 
     const onSubmit = async () => {
       if (loading || user === undefined) {
@@ -24,9 +26,12 @@ const SuspendUserModal = forwardRef<HTMLDialogElement, SuspendUserModalProps>(
       try {
         setLoading(true);
 
-        await mutation.mutateAsync(user!.id);
+        const response = await mutation.mutateAsync({
+          id: user!.id,
+          disable: user?.is_active
+        });
 
-        toast(`${user?.username} suspended successfully`, { type: 'success' });
+        toast(response.data.data, { type: 'success' });
         ref?.current?.close();
       } finally {
         setLoading(false);
@@ -39,7 +44,7 @@ const SuspendUserModal = forwardRef<HTMLDialogElement, SuspendUserModalProps>(
         id="suspend-user-modal"
         title={
           <>
-            Suspend{' '}
+            {title}{' '}
             <span className="text-jordy-blue capitalize">
               {user?.first_name} {user?.last_name}
             </span>
@@ -47,13 +52,17 @@ const SuspendUserModal = forwardRef<HTMLDialogElement, SuspendUserModalProps>(
           </>
         }
       >
-        <p>This action cannot be undone</p>
+        <p>Are you sure you want to do this?</p>
         <div className="flex flex-row gap-10 justify-end mt-4">
           <button className="btn-ghost" onClick={() => ref?.current?.close()}>
             Cancel
           </button>
-          <button className="btn btn-primary bg-red" disabled={loading} onClick={onSubmit}>
-            Suspend
+          <button
+            className={`btn btn-primary border-0 ${user?.is_active ? 'bg-red' : 'bg-green'}`}
+            disabled={loading}
+            onClick={onSubmit}
+          >
+            {title}
             {loading && <span className="loading loading-spinner"></span>}
           </button>
         </div>
@@ -62,6 +71,6 @@ const SuspendUserModal = forwardRef<HTMLDialogElement, SuspendUserModalProps>(
   }
 );
 
-SuspendUserModal.displayName = 'SuspendUserModal';
+ToggleUserActiveModal.displayName = 'SuspendUserModal';
 
-export default SuspendUserModal;
+export default ToggleUserActiveModal;

@@ -9,7 +9,7 @@ import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
-import SuspendUserModal from './components/SuspendUserModal.tsx';
+import ToggleUserActiveModal from './components/ToggleUserActiveModal.tsx';
 import { User } from './data/model.ts';
 
 type UsersScreenProps = {
@@ -28,18 +28,6 @@ export default function UsersScreen({ type }: UsersScreenProps) {
       'Address',
       ...(type == UserType.host ? ['Phone No'] : ['Wallet', 'Rating']),
       'Status'
-    ],
-    [type]
-  );
-  const actionItems = useMemo<PageActionItem[]>(
-    () => [
-      { title: 'Edit', icon: 'edit' },
-      ...(type == UserType.host ? [{ title: 'Approve docs', icon: 'approve-document' }] : []),
-      { title: 'Suspend', icon: 'suspend' },
-      { title: 'Delete', icon: 'delete' },
-      { title: 'Reset Password', icon: 'reset' },
-
-      ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
     ],
     [type]
   );
@@ -113,7 +101,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
               </th>
             ))}
             <th>
-              <PageAction items={actionItems} onItemClick={onAction} />
+              <PageAction items={[]} onItemClick={onAction} />
             </th>
           </tr>
         }
@@ -164,7 +152,19 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 />
               </td>
               <td>
-                <PageAction items={actionItems} onItemClick={(action) => onAction(action, user)} />
+                <PageAction
+                  items={[
+                    { title: 'Edit', icon: 'edit' },
+                    ...(type == UserType.host
+                      ? [{ title: 'Approve docs', icon: 'approve-document' }]
+                      : []),
+                    { title: user.is_active ? 'Suspend' : 'Activate', icon: 'suspend' },
+                    { title: 'Delete', icon: 'delete' },
+                    { title: 'Reset Password', icon: 'reset' },
+                    ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
+                  ]}
+                  onItemClick={(action) => onAction(action, user)}
+                />
               </td>
             </tr>
           );
@@ -175,7 +175,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         pageItemCount={users.length}
         onPageChange={() => {}}
       />
-      <SuspendUserModal ref={suspendUserRef} type={type} user={selectedUser} />
+      <ToggleUserActiveModal ref={suspendUserRef} type={type} user={selectedUser} />
     </>
   );
 }

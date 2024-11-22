@@ -61,11 +61,12 @@ export function useFetchUserQuery(type: UserType, id: string) {
   };
 }
 
-export function useSuspendUser(type: UserType) {
+export function useToggleUserActive(type: UserType) {
   return useMutation({
-    mutationFn: (id: string) => {
+    mutationFn: ({ id, disable }: { id: string; disable: boolean }) => {
+      const route = disable ? 'disable-user' : 'activate-user';
       return fetch({
-        url: `/admin/disable-user/${id}`,
+        url: `/admin/${route}/${id}`,
         method: 'PUT'
       });
     },
