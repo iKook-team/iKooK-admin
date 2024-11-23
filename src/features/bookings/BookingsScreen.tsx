@@ -4,18 +4,156 @@ import PageSearchRow from '../../app/components/page/PageSearchRow';
 import PageTable, { PageTableAction, PageTableActions } from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import UserNameAndImage from '../users/components/UserNameAndImage';
-import { useFetchBookingsQuery } from './domain/usecase';
+import {
+  useDeleteBooking,
+  useEditBookingStatus,
+  useFetchBookingsQuery,
+  useReassignBooking
+} from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
-import { Booking } from './data/model';
+import Modal from './components/BookingsModal';
+import { DropdownField } from '../../app/components/InputField';
+import { Bookings } from './data/model';
 
 export default function BookingsScreen() {
+  const {
+    bookingType,
+    setBookingType,
+    bookingTypes,
+    isPending,
+    error,
+    bookings,
+    filter,
+    setFilter,
+    filters,
+    query,
+    setQuery,
+    totalCount,
+    page,
+    setPage,
+    numberOfPages
+  } = useFetchBookingsQuery();
+
   const navigate = useNavigate();
 
-  const bookingTypes = useMemo(() => ['menu', 'enquiries'], []);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const statuses = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
+  const [status, setStatus] = useState(statuses[0]);
+  const [currentBookingId, setCurrentBookingId] = useState('');
+  const [currentChefId, setCurrentChefId] = useState('');
+  const assignments = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
+  const [assign, setAssign] = useState(assignments[0]);
 
-  const [bookingType, setBookingType] = useState<string>(bookingTypes[1]);
+  const closeModal = () => setIsModalVisible(false);
+
+  interface ModalProps {
+    modalTitle: string;
+    status: string;
+    statuses: string[];
+  }
+
+  const ModalContent: React.FC<ModalProps> = ({
+    modalTitle,
+    status,
+    statuses
+  }) => {
+    const { performDelete, loading: deleteLoading } = useDeleteBooking();
+
+   
+
+    const { performEditStatus, loading: statusLoading } = useEditBookingStatus();
+
+    const { performReassign, loading: reassignLoading } = useReassignBooking();
+
+    const modalChildren =
+      modalTitle === 'Delete' ? (
+        <>
+          <h1>Are you sure you want to delete this menu?</h1>
+          <div className="flex  gap-4 justify-center">
+            <button
+              onClick={() => {
+                currentBookingId && performDelete(currentBookingId).then(() => closeModal());
+              }}
+              disabled={deleteLoading}
+              className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
+            >
+              {deleteLoading ? 'Deleting...' : 'Delete'}
+            </button>
+            <button onClick={closeModal} className="btn btn-primary flex  mt-3 w-[40%]">
+              Cancel
+            </button>
+          </div>
+        </>
+      ) : modalTitle === 'Cancel' ? (
+        <>
+          <h1>Are you sure you want to cancel this menu?</h1>
+
+          <div className="flex  gap-4 justify-center">
+            <button
+              disabled={statusLoading}
+              onClick={() => {
+                performEditStatus(currentBookingId, statuses[0]).then(() => closeModal());
+              }}
+              className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
+            >
+              {statusLoading ? 'Cancelling...' : 'Cancel'}
+            </button>
+            <button onClick={closeModal} className="btn btn-primary flex  mt-3 w-[40%]">
+              Back
+            </button>
+          </div>
+        </>
+      ) : modalTitle === 'Re-assign' ? (
+        <div>
+          <DropdownField
+            value={assign}
+            onChange={(e) => {
+              setAssign(e.target.value);
+            }}
+            options={assignments}
+          />
+          <button
+            disabled={reassignLoading}
+            onClick={
+              () => {
+                performReassign({ chefId: currentChefId, bookingId: currentBookingId }).then(() =>
+                  closeModal()
+                );
+              } // come back to provide chefId
+            }
+            className="btn btn-primary flex mx-auto mt-3 w-32"
+          >
+            {reassignLoading ? 'Assigning' : 'Assign'}
+          </button>
+        </div>
+      ) : modalTitle === 'Change Status' ? (
+        <div>
+          <DropdownField
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+            }}
+            options={statuses || []}
+          />
+          <button
+            onClick={() => {
+              performEditStatus(currentBookingId, status).then(() => closeModal());
+            }}
+            disabled={statusLoading}
+            className="btn btn-primary flex mx-auto mt-3 w-32"
+          >
+            {statusLoading ? 'Updating...' : 'Update'}
+          </button>
+        </div>
+      ) : (
+        <div></div>
+      );
+
+    return <div>{modalChildren}</div>;
+  };
 
   const header = useMemo(
     () =>
@@ -29,24 +167,39 @@ export default function BookingsScreen() {
     () => [
       { title: 'Edit', icon: 'edit' },
       { title: 'Change Status', icon: 'reset' },
-      { title: 'Delete', icon: 'delete' }
+      { title: 'Cancel', icon: 'close' },
+      { title: 'Delete', icon: 'delete' },
+      { title: 'Re-assign', icon: 'check' }
     ],
     []
   );
 
-  const filters = useMemo(() => ['all', 'in progress', 'completed', 'pending'], []);
+  const handleClick = (entry: string, booking: Bookings): void => {
+    setIsModalVisible(true);
+    setCurrentBookingId(booking.id);
+    setCurrentChefId(booking.id); // come back to set chefId here
 
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
-
-  const { isPending, bookings, error } = useFetchBookingsQuery({
-    bookingType: bookingType,
-    query
-  });
-
-  function getBookingById(bookings: Booking[], id: string): Booking | undefined {
-    return bookings.find((booking) => booking.id === id);
-  }
+    switch (entry) {
+      case 'Edit':
+        navigate(`/bookings/${bookingType}s/${booking.id}`);
+        break;
+      case 'Delete':
+        setModalTitle('Delete');
+        break;
+      case 'Change Status':
+        setModalTitle('Change Status');
+        break;
+      case 'Cancel':
+        setModalTitle('Cancel');
+        break;
+      case 'Re-assign':
+        setModalTitle('Re-assign');
+        break;
+      default:
+        console.log(`Action for ${entry} triggered`);
+        break;
+    }
+  };
 
   return (
     <>
@@ -71,18 +224,6 @@ export default function BookingsScreen() {
                 {title}
               </th>
             ))}
-            <th>
-              <PageTableActions>
-                {dropdown.map((entry) => (
-                  <PageTableAction
-                    key={entry.title}
-                    icon={entry.icon}
-                    text={entry.title}
-                    onClick={() => {}}
-                  />
-                ))}
-              </PageTableActions>
-            </th>
           </tr>
         }
         body={bookings.map((booking) => {
@@ -90,11 +231,7 @@ export default function BookingsScreen() {
           return (
             <tr
               key={booking.id}
-              onClick={() =>
-                navigate(`/${bookingType}s/${booking.id}`, {
-                  state: { booking: getBookingById(bookings, booking.id) }
-                })
-              }
+              onClick={() => navigate(`/bookings/${bookingType}s/${booking.id}`, {})} 
               className="cursor-pointer hover:bg-gray-100"
             >
               <td>
@@ -104,7 +241,6 @@ export default function BookingsScreen() {
                 <UserNameAndImage
                   name={`${booking.user.firstName} ${booking.user.lastName}`}
                   image={booking.user?.photo ? booking?.user?.photo : ''}
-                  // image={ booking.chef?.photo ? booking?.chef?.photo  : ""}
                 />
               </td>
               <td className="capitalize">
@@ -128,26 +264,41 @@ export default function BookingsScreen() {
               </td>
 
               {bookingType === bookingTypes[0] && <td> {booking.status}</td>}
-              <td>
+              <th onClick={(e) => e.stopPropagation()}>
                 <PageTableActions>
                   {dropdown.map((entry) => (
                     <PageTableAction
                       key={entry.title}
                       icon={entry.icon}
                       text={entry.title}
-                      onClick={() => {}}
+                      onClick={() => {
+                        handleClick(entry.title, booking);
+                      }}
                     />
                   ))}
                 </PageTableActions>
-              </td>
+              </th>
             </tr>
           );
         })}
-        page={1}
-        numberOfPages={1}
-        onPageChange={() => {}}
+        page={page}
+        numberOfPages={numberOfPages}
+        onPageChange={setPage}
         pageItemCount={bookings.length}
-        totalItemCount={bookings.length}
+        totalItemCount={totalCount}
+      />
+      <Modal
+        isVisible={isModalVisible}
+        onClose={closeModal}
+        children={
+          <ModalContent
+            modalTitle={modalTitle}
+            status={status}
+            statuses={statuses}
+          />
+        }
+        title={modalTitle}
+        isQuote={false}
       />
     </>
   );

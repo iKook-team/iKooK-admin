@@ -37,7 +37,7 @@ export default function Routes() {
 
               ...Object.values(bookingType).flatMap((type) => [
                 {
-                  path: `${type}s/:id`,
+                  path: `bookings/${type}s/:id`,
                   element: <BookingEditScreen/>
                 },
               ]),
