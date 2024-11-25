@@ -1,10 +1,5 @@
 import { ReactNode, useMemo } from 'react';
-import {
-  MdKeyboardDoubleArrowLeft,
-  MdKeyboardDoubleArrowRight,
-  MdOutlineMoreHoriz
-} from 'react-icons/md';
-import { getImageUrl } from '../../../utils/getImageUrl.ts';
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
 
 interface PaginationControlsProps {
   page: number;
@@ -33,10 +28,10 @@ export default function PageTable(props: GenericTableProps) {
       ) : props.emptyMessage ? (
         <p className="text-center">{props.emptyMessage}</p>
       ) : (
-        <div className="overflow-x-auto flex-1">
+        <div className="overflow-x-auto flex-1 relative">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead className="text-black/40">{props.header}</thead>
-            <tbody className="[&_td]:py-2 [&_td]:truncate [&.active]:bg-ghost-white">
+            <tbody className="[&_tr]:transition [&_tr]:ease-in-out [&_td]:py-2 [&_td]:truncate [&.active]:bg-ghost-white">
               {props.body}
             </tbody>
           </table>
@@ -44,31 +39,6 @@ export default function PageTable(props: GenericTableProps) {
       )}
       <PaginationControls {...props} />
     </>
-  );
-}
-
-export function PageTableActions({ children }: { children: ReactNode }) {
-  return (
-    <div className="dropdown dropdown-bottom dropdown-end">
-      <MdOutlineMoreHoriz tabIndex={0} role="button" />
-      <ul
-        tabIndex={0}
-        className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-      >
-        {children}
-      </ul>
-    </div>
-  );
-}
-
-export function PageTableAction(props: { icon: string; text: string; onClick: () => void }) {
-  return (
-    <li>
-      <button className="flex flex-row items-center gap-2" onClick={props.onClick}>
-        <img src={getImageUrl(`icons/${props.icon}.svg`)} alt={props.text} />
-        <span>{props.text}</span>
-      </button>
-    </li>
   );
 }
 
