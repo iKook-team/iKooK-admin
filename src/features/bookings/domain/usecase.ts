@@ -1,24 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 import fetch from '../../../app/services/api';
-import { GetAllBookingsRequest, GetAllBookingsResponse } from '../data/dto.ts';
-import { useMemo } from 'react';
-import { GenericResponse } from '../../../app/data/dto.ts';
-import { Booking } from '../data/model.ts';
-import { UserType } from '../../users/domain/types.ts';
+import { GetAllBookingsResponse } from '../data/dto.ts';
+import { useMemo, useState } from 'react';
+import { BookingType } from './types.ts';
 
-export function useFetchBookingsQuery(request: GetAllBookingsRequest) {
- 
+export function useFetchBookingsQuery() {
+  const filters = useMemo(() => ['all', 'in progress', 'completed', 'pending'], []);
+
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState<string>();
+  const [filter, setFilter] = useState<string>(filters[0]);
+  const [bookingType, setBookingType] = useState<BookingType>(BookingType.enquiries);
+
   const { isPending, data, error } = useQuery({
-    queryKey: [request.bookingType],
+    queryKey: [bookingType],
     queryFn: async ({ queryKey }) => {
       const [bookingType] = queryKey;
       const response = await fetch({
-        // url: `admin/get-all-users?user_type=${type}${verified !== undefined ? `&verified=${verified}` : ''}`,
-                // url: `admin/get-bookings?type=${bookingType}`,   
-                url: `admin/get-bookings?type=enquiries`,
-
-
-
+        url: `admin/get-bookings?page_number=${page}&type=${bookingType}&page_size=20`,
         method: 'GET'
       });
       return response.data as GetAllBookingsResponse;
@@ -26,43 +25,34 @@ export function useFetchBookingsQuery(request: GetAllBookingsRequest) {
   });
 
   const bookings = useMemo(() => {
-    if (!request.query || !data) {
-      return data?.data || [];
+    const items = data?.data?.items || [];
+    if (!query) {
+      return items;
     }
 
-    return data?.data?.filter((booking) => {
-      const cleanedQuery = request.query!.toLowerCase();
+    return items.filter((booking) => {
+      const cleanedQuery = query!.toLowerCase();
       return (
         booking.user.firstName.toLowerCase().includes(cleanedQuery) ||
         booking.user.lastName.toLowerCase().includes(cleanedQuery)
       );
     });
-  }, [request.query, data]);
+  }, [query, data]);
 
   return {
     isPending,
     bookings,
-    error
-  };
-}
-
-export function useFetchUserQuery(type: UserType, id: string) {
-  const { isPending, data, error } = useQuery({
-    queryKey: [type, id],
-    queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, id] = queryKey;
-      const response = await fetch({
-        url: `admin/get-user-details/${id}`,
-        method: 'GET'
-      });
-      return response.data as GenericResponse<Booking>;
-    }
-  });
-
-  return {
-    isPending,
-    user: data?.data,
-    error
+    error,
+    page,
+    setPage,
+    query,
+    setQuery,
+    filter,
+    setFilter,
+    filters,
+    bookingType,
+    setBookingType,
+    totalCount: data?.data?.total_count || 0,
+    numberOfPages: data?.data?.number_of_pages || 0
   };
 }

@@ -1,27 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import IdCell from '../../app/components/IdCell';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
-import PageTable, { PageTableAction, PageTableActions } from '../../app/components/page/PageTable';
+import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import UserNameAndImage from '../users/components/UserNameAndImage';
 import { useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
+import PageAction from '../../app/components/page/PageAction.tsx';
+import { PageActionItem } from '../../app/components/page/types.ts';
+import { Booking } from './data/model.ts';
+import { BookingType } from './domain/types.ts';
 
 export default function BookingsScreen() {
-  const bookingTypes = useMemo(() => ['menu', 'enquiries'], []);
-
-  const [bookingType, setBookingType] = useState<string>(bookingTypes[1]);
-
-  const header = useMemo(
-    () =>
-      bookingType === bookingTypes[1]
-        ? ['Booking ID', 'User', 'Location', 'Proposals', 'Number Of Guests']
-        : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
-    [bookingType, bookingTypes]
-  );
-
-  const dropdown = useMemo(
+  const actionItems = useMemo(
     () => [
       { title: 'Edit', icon: 'edit' },
       { title: 'Change Status', icon: 'reset' },
@@ -30,15 +22,34 @@ export default function BookingsScreen() {
     []
   );
 
-  const filters = useMemo(() => ['all', 'in progress', 'completed', 'pending'], []);
+  const {
+    isPending,
+    bookings,
+    error,
+    filter,
+    setFilter,
+    filters,
+    query,
+    setQuery,
+    bookingType,
+    setBookingType,
+    totalCount,
+    page,
+    setPage,
+    numberOfPages
+  } = useFetchBookingsQuery();
 
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
+  const header = useMemo(
+    () =>
+      bookingType === BookingType.enquiries
+        ? ['Booking ID', 'User', 'Location', 'Proposals', 'Number Of Guests']
+        : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
+    [bookingType]
+  );
 
-  const { isPending, bookings, error } = useFetchBookingsQuery({
-    bookingType: bookingType,
-    query
-  });
+  const onAction = (action: PageActionItem, booking?: Booking) => {
+    console.log(action, booking);
+  };
 
   return (
     <>
@@ -55,7 +66,7 @@ export default function BookingsScreen() {
       />
       <PageTable
         isFetching={isPending}
-        emptyMessage={error?.message || (bookings.length == 0 ? 'No bookings found' : undefined)}
+        emptyMessage={error?.message || (bookings?.length == 0 ? 'No bookings found' : undefined)}
         header={
           <tr>
             {header.map((title) => (
@@ -64,21 +75,11 @@ export default function BookingsScreen() {
               </th>
             ))}
             <th>
-              <PageTableActions>
-                {dropdown.map((entry) => (
-                  <PageTableAction
-                    key={entry.title}
-                    icon={entry.icon}
-                    text={entry.title}
-                    onClick={() => {}}
-                  />
-                ))}
-              </PageTableActions>
+              <PageAction items={actionItems} onItemClick={(action) => onAction(action)} />
             </th>
           </tr>
         }
         body={bookings.map((booking) => {
-          const proposalList = booking?.proposals;
           return (
             <tr key={booking.id}>
               <td>
@@ -92,7 +93,7 @@ export default function BookingsScreen() {
                 />
               </td>
               <td className="capitalize">
-                {bookingType === bookingTypes[1]
+                {bookingType === BookingType.enquiries
                   ? booking.country
                   : booking.chef?.photo
                     ? `chef ${booking.chef?.firstName}`
@@ -100,38 +101,34 @@ export default function BookingsScreen() {
               </td>
 
               <td>
-                {bookingType === bookingTypes[1] ? (
-                  <BookingProposalImageStack proposalList={proposalList} />
+                {bookingType === BookingType.enquiries ? (
+                  <BookingProposalImageStack proposalList={booking?.proposals} />
                 ) : (
                   booking.menu
                 )}
               </td>
 
               <td>
-                {bookingType === bookingTypes[1] ? booking.number_of_guest : `€${booking.amount}`}
+                {bookingType === BookingType.enquiries
+                  ? booking.number_of_guest
+                  : `€${booking.amount}`}
               </td>
 
-              {bookingType === bookingTypes[0] && <td> {booking.status}</td>}
+              {bookingType === BookingType.menus && <td> {booking.status}</td>}
               <td>
-                <PageTableActions>
-                  {dropdown.map((entry) => (
-                    <PageTableAction
-                      key={entry.title}
-                      icon={entry.icon}
-                      text={entry.title}
-                      onClick={() => {}}
-                    />
-                  ))}
-                </PageTableActions>
+                <PageAction
+                  items={actionItems}
+                  onItemClick={(action) => onAction(action, booking)}
+                />
               </td>
             </tr>
           );
         })}
-        page={1}
-        numberOfPages={1}
-        onPageChange={() => {}}
+        page={page}
+        numberOfPages={numberOfPages}
+        onPageChange={setPage}
         pageItemCount={bookings.length}
-        totalItemCount={bookings.length}
+        totalItemCount={totalCount}
       />
     </>
   );
