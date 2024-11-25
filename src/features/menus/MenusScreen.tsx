@@ -1,8 +1,5 @@
-import PageTable, {
-  PageTableAction,
-  PageTableActions
-} from '../../app/components/page/PageTable.tsx';
-import { useMemo } from 'react';
+import PageTable from '../../app/components/page/PageTable.tsx';
+import { useMemo, useRef, useState } from 'react';
 import { useFetchMenusQuery } from './domain/usecase.ts';
 import UserNameAndImage from '../users/components/UserNameAndImage.tsx';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
@@ -10,13 +7,20 @@ import { capitalize } from '../../utils/strings.ts';
 import IdCell from '../../app/components/IdCell.tsx';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
+import ChangeMenuStatusModal from './components/ChangeMenuStatusModal.tsx';
+import PageAction from '../../app/components/page/PageAction.tsx';
+import { PageActionItem } from '../../app/components/page/types.ts';
+import { Menu } from './data/model.ts';
 
 export default function MenusScreen() {
+  const [selectedMenu, setSelectedMenu] = useState<Menu>();
+
   const header = useMemo(
     () => ['ID', 'Menu', 'Chef', 'Availability', 'Starting Price', 'Status'],
     []
   );
-  const dropdown = useMemo(
+
+  const actionItems = useMemo<PageActionItem[]>(
     () => [
       { title: 'Edit', icon: 'edit' },
       { title: 'Change Status', icon: 'reset' },
@@ -24,6 +28,8 @@ export default function MenusScreen() {
     ],
     []
   );
+
+  const changeStatusRef = useRef<HTMLDialogElement>(null);
 
   const {
     isPending,
@@ -39,6 +45,15 @@ export default function MenusScreen() {
     setPage,
     numberOfPages
   } = useFetchMenusQuery();
+
+  const onAction = (action: PageActionItem, menu?: Menu) => {
+    const icon = action.icon;
+    setSelectedMenu(menu);
+    if (icon === 'reset') {
+      changeStatusRef.current?.showModal();
+    }
+    console.log(action);
+  };
 
   return (
     <>
@@ -63,16 +78,7 @@ export default function MenusScreen() {
               </th>
             ))}
             <th>
-              <PageTableActions>
-                {dropdown.map((entry) => (
-                  <PageTableAction
-                    key={entry.title}
-                    icon={entry.icon}
-                    text={entry.title}
-                    onClick={() => {}}
-                  />
-                ))}
-              </PageTableActions>
+              <PageAction items={actionItems} onItemClick={onAction} />
             </th>
           </tr>
         }
@@ -110,16 +116,7 @@ export default function MenusScreen() {
               />
             </td>
             <td>
-              <PageTableActions>
-                {dropdown.map((entry) => (
-                  <PageTableAction
-                    key={entry.title}
-                    icon={entry.icon}
-                    text={entry.title}
-                    onClick={() => {}}
-                  />
-                ))}
-              </PageTableActions>
+              <PageAction items={actionItems} onItemClick={(action) => onAction(action, menu)} />
             </td>
           </tr>
         ))}
@@ -129,6 +126,7 @@ export default function MenusScreen() {
         pageItemCount={menus.length}
         totalItemCount={totalCount}
       />
+      <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />
     </>
   );
 }
