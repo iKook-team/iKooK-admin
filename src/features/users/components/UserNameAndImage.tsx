@@ -5,13 +5,10 @@ export default function UserNameAndImage(props: {
   image: string;
   isActive?: boolean;
 }) {
+  const url = props.image.startsWith('http') ? props.image : `${Constants.userUrl}/${props.image}`;
   return (
     <div className="flex flex-row gap-2 items-center">
-      <img
-        src={`${Constants.userUrl}/${props.image}`}
-        alt={props.name}
-        className="w-6 aspect-square rounded-full"
-      />
+      <img src={url} alt={props.name} className="w-6 aspect-square rounded-full" />
       <span className="capitalize">{props.name}</span>
       {props.isActive !== undefined && (
         <span
