@@ -8,7 +8,6 @@ import {
   useDeleteBooking,
   useEditBookingStatus,
   useFetchBookingsQuery,
-  useReassignBooking
 } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
@@ -16,6 +15,8 @@ import { useNavigate } from 'react-router-dom';
 import Modal from './components/BookingsModal';
 import { DropdownField } from '../../app/components/InputField';
 import { Bookings } from './data/model';
+import ReAssignSearchComponent from './components/ReAssignBooking';
+
 
 export default function BookingsScreen() {
   const {
@@ -44,8 +45,8 @@ export default function BookingsScreen() {
   const [status, setStatus] = useState(statuses[0]);
   const [currentBookingId, setCurrentBookingId] = useState('');
   const [currentChefId, setCurrentChefId] = useState('');
-  const assignments = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
-  const [assign, setAssign] = useState(assignments[0]);
+  // const assignments = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
+  // const [assign, setAssign] = useState(assignments[0]);
 
   const closeModal = () => setIsModalVisible(false);
 
@@ -55,18 +56,10 @@ export default function BookingsScreen() {
     statuses: string[];
   }
 
-  const ModalContent: React.FC<ModalProps> = ({
-    modalTitle,
-    status,
-    statuses
-  }) => {
+  const ModalContent: React.FC<ModalProps> = ({ modalTitle, status, statuses }) => {
     const { performDelete, loading: deleteLoading } = useDeleteBooking();
 
-   
-
     const { performEditStatus, loading: statusLoading } = useEditBookingStatus();
-
-    const { performReassign, loading: reassignLoading } = useReassignBooking();
 
     const modalChildren =
       modalTitle === 'Delete' ? (
@@ -107,29 +100,10 @@ export default function BookingsScreen() {
           </div>
         </>
       ) : modalTitle === 'Re-assign' ? (
-        <div>
-          <DropdownField
-            value={assign}
-            onChange={(e) => {
-              setAssign(e.target.value);
-            }}
-            options={assignments}
-          />
-          <button
-            disabled={reassignLoading}
-            onClick={
-              () => {
-                performReassign({ chefId: currentChefId, bookingId: currentBookingId }).then(() =>
-                  closeModal()
-                );
-              } // come back to provide chefId
-            }
-            className="btn btn-primary flex mx-auto mt-3 w-32"
-          >
-            {reassignLoading ? 'Assigning' : 'Assign'}
-          </button>
-        </div>
-      ) : modalTitle === 'Change Status' ? (
+          <ReAssignSearchComponent/>
+      ) :
+       
+      modalTitle === 'Change Status' ? (
         <div>
           <DropdownField
             value={status}
@@ -231,7 +205,7 @@ export default function BookingsScreen() {
           return (
             <tr
               key={booking.id}
-              onClick={() => navigate(`/bookings/${bookingType}s/${booking.id}`, {})} 
+              onClick={() => navigate(`/bookings/${bookingType}s/${booking.id}`, {})}
               className="cursor-pointer hover:bg-gray-100"
             >
               <td>
@@ -290,13 +264,7 @@ export default function BookingsScreen() {
       <Modal
         isVisible={isModalVisible}
         onClose={closeModal}
-        children={
-          <ModalContent
-            modalTitle={modalTitle}
-            status={status}
-            statuses={statuses}
-          />
-        }
+        children={<ModalContent modalTitle={modalTitle} status={status} statuses={statuses} />}
         title={modalTitle}
         isQuote={false}
       />

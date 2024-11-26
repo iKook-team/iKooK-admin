@@ -105,6 +105,64 @@ export function useFetchBookingQuery(id: string) {
 }
 
 
+// export function useFetchUsersQuery() {
+//   const { isPending, data, error } = useQuery({
+//     queryKey: [],
+//     queryFn: async ({ queryKey }) => {
+//       // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//       const [] = queryKey;
+//       const response = await fetch({
+//         url: `admin/get-all-users?user_type=chef`,
+//         method: 'GET'
+//       });
+//       return response?.data as GenericResponse<User[]>;
+//     }
+//   });
+
+//   const users = useMemo(() => {
+//     const items = data?.data?.items || [];
+//     if (!query && (!filter || filter === 'all')) {
+//       return items;
+//     }
+
+//     return items.filter((booking) => {
+//       let cleanedQuery = '';
+//       if (query) {
+//         cleanedQuery = query.toLowerCase();
+
+//         return (
+//           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
+//           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
+//           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
+//           booking.chef?.firstName.toLowerCase().includes(cleanedQuery)
+//         );
+//       } else if (query && filter != 'all') {
+//         const cleanedFilter = filter!.toLowerCase();
+
+//         return (
+//           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
+//           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
+//           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
+//           (booking.chef?.firstName.toLowerCase().includes(cleanedQuery) &&
+//             booking.status.toLowerCase() === cleanedFilter)
+//         );
+//       }
+//       const cleanedFilter = filter!.toLowerCase();
+//       return booking.status.toLowerCase() === cleanedFilter;
+//     });
+//   }, [query, filter, data]);
+
+//   return {
+//     isPending,
+//     users : data?.data,
+//     error
+//   };
+// }
+
+
+
+
+
 export function useEditBookingStatus() {
   const [loading, setLoading] = useState(false);
 

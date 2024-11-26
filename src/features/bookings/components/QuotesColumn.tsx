@@ -67,6 +67,7 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
           onClick={type ? openModal :
             () => performAcceptQuote(currentQuote?.image!)
           }
+          disabled={acceptingQuote}
           className="btn btn-primary w-full h-min capitalize"
         >
           {acceptingQuote ? "Accepting Quote..." : type ? "Quotes" : "Accept Quote"}
