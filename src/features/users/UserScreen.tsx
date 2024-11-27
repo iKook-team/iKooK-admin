@@ -6,6 +6,7 @@ import PageBackButton from '../../app/components/page/PageBackButton.tsx';
 import UserHeader from './components/UserHeader.tsx';
 import { User } from './data/model.ts';
 import UserProfilePage from './pages/UserProfilePage.tsx';
+import UserVerificationPage from './pages/UserVerificationPage.tsx';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
@@ -45,6 +46,8 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
   switch (tab) {
     case UserHeaderTab.profile:
       return <UserProfilePage user={user} type={type} />;
+    case UserHeaderTab.verification:
+      return <UserVerificationPage user={user} type={type} />;
     default:
       return null;
   }

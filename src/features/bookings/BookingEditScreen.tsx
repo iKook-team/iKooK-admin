@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { bookingType } from '../users/domain/types';
 import PageBackButton from '../../app/components/page/PageBackButton';
 import PageTitle from '../../app/components/page/PageTitle';
 import BudgetCard, { MenuList } from './components/BookingBudgetCard';
@@ -9,6 +8,7 @@ import QuotesColumn from './components/QuotesColumn';
 import { useFetchBookingQuery } from './domain/usecase';
 import Modal from './components/BookingsModal';
 import EditMenuModalContent from './components/EditMenuModalContent';
+import { BookingType } from './domain/types.ts';
 
 export default function BookingEditScreen() {
   const filters = useMemo(() => ['in-progress', 'rejected', 'successful'], []);
@@ -16,7 +16,7 @@ export default function BookingEditScreen() {
   const location = useLocation();
   const [type, bookingId] = useMemo(() => {
     const [type, bookingId] = location.pathname.split('/').slice(2);
-    return [type.slice(0, 4) as bookingType, bookingId];
+    return [type.slice(0, 4) as BookingType, bookingId];
   }, [location.pathname]);
 
   const { isPending, booking, error } = useFetchBookingQuery(bookingId);
@@ -86,7 +86,7 @@ export default function BookingEditScreen() {
         <div className="flex flex-row justify-between my-6 mr-20">
           <PageTitle
             title={
-              type === bookingType.menu
+              type === BookingType.menus
                 ? `${capitalizeFirst(booking?.booking_type)} Booking`
                 : `${capitalizeFirst(booking?.booking_type === 'custom-booking' ? booking.custom_booking_type_selected : booking?.booking_type)}`
             }
@@ -104,7 +104,7 @@ export default function BookingEditScreen() {
         <div className="flex justify-between w-[90%]">
           {booking.chef ? (
             <div className="flex flex-col w-[75%]">
-              {type != bookingType.menu ? (
+              {type != BookingType.menus ? (
                 <EnquiryProfileListTile
                   booking={booking}
                   enquiryProfileList={enquiryProfileList}
@@ -117,7 +117,7 @@ export default function BookingEditScreen() {
                   enquiryProfileList1={[]}
                 />
               )}
-              {type != bookingType.menu ? (
+              {type != BookingType.menus ? (
                 <BudgetCard
                   message={booking.message}
                   cuisines={booking.cuisines}
@@ -158,11 +158,7 @@ export default function BookingEditScreen() {
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         children={
-          <EditMenuModalContent
-            starter={['ab', 'cde']}
-            main={['ijk']}
-            dessert={['lmn', 'opq']}
-          />
+          <EditMenuModalContent starter={['ab', 'cde']} main={['ijk']} dessert={['lmn', 'opq']} />
         }
         title={'Edit menu'}
         isQuote={true}

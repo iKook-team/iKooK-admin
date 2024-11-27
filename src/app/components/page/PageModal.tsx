@@ -1,5 +1,6 @@
 import { forwardRef, ReactNode } from 'react';
 import close from '../../assets/icons/close.svg';
+import { ReactSVG } from 'react-svg';
 
 interface PageModalProps {
   id: string;
@@ -15,7 +16,7 @@ const PageModal = forwardRef<HTMLDialogElement, PageModalProps>((props, ref) => 
           <h1 className="flex-1 text-2xl font-semibold capitalize">{props.title}</h1>
           <form method="dialog">
             <button>
-              <img src={close} className="w-6 h-6" alt="Close Dialog" />
+              <ReactSVG src={close} className="w-6 h-6" />
             </button>
           </form>
         </div>

@@ -24,33 +24,33 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig<unknown>)
   if (token) {
     config.headers.set('Authorization', `Bearer ${token}`);
   }
-  console.log('Request:', {
-    url: config.url,
-    method: config.method,
-    headers: config.headers,
-    data: config.data
-  });
+  // console.log('Request:', {
+  //   url: config.url,
+  //   method: config.method,
+  //   headers: config.headers,
+  //   data: config.data
+  // });
   return config;
 });
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log('Response:', extractResponseForLog(response));
+    // console.log('Response:', extractResponseForLog(response));
     return response;
   },
   async (error: AxiosError) => {
-    console.error('Response:', error.message, extractResponseForLog(error.response!));
+    // console.error('Response:', error.message, extractResponseForLog(error.response!));
 
     const request = error.config;
-
-    // @ts-expect-error Access Token was expired
-    if (error.response?.status === 401 && !request?._retry) {
+    if (error.response?.status === 401) {
       try {
-        // @ts-expect-error Update the request to prevent infinite loop
-        request!._retry = true;
-        console.log('Refreshing token...');
-        await handleUnauthorizedError(request!);
-        console.log('Token refreshed:');
+        if (request?.url?.includes('refresh')) {
+          console.error('Error refreshing token:', error);
+          await resetStore();
+        } else {
+          console.log('Refreshing token...');
+          await handleUnauthorizedError(request!);
+        }
       } catch (error) {
         console.error('Error refreshing token:', error);
         await resetStore();
