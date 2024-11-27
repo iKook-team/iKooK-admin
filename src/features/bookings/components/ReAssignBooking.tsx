@@ -1,20 +1,30 @@
-import { useFetchUsersQuery, useReassignBooking } from '../domain/usecase';
+import { useReassignBooking } from '../domain/usecase';
 import { FaSearch } from 'react-icons/fa';
 import InputField from '../../../app/components/InputField';
 import { useState } from 'react';
-
+import { useFetchUsersQuery } from '../../users/domain/usecase.ts';
+import { UserType } from '../../users/domain/types.ts';
 
 interface ReAssignBookingProps {
   bookingId: string;
-  closeModal: () => void
+  closeModal: () => void;
 }
 
-const ReAssignSearchComponent: React.FC <ReAssignBookingProps> = ({bookingId, closeModal}) => {
-  const { isPending: loadingChefs, users, error, query, setQuery } = useFetchUsersQuery();
+const ReAssignSearchComponent: React.FC<ReAssignBookingProps> = ({ bookingId, closeModal }) => {
+  const [query, setQuery] = useState<string>();
+
+  const {
+    isPending: loadingChefs,
+    users,
+    error
+  } = useFetchUsersQuery({
+    type: UserType.chef,
+    query
+  });
 
   const { performReassign, loading: reassignLoading } = useReassignBooking();
-  
-  const [chefId , setChefId] = useState("");
+
+  const [chefId, setChefId] = useState('');
 
   return (
     <div>
@@ -31,31 +41,26 @@ const ReAssignSearchComponent: React.FC <ReAssignBookingProps> = ({bookingId, cl
 
       <ul className="mt-2">
         {users.map((chef, index) => (
-
-
           <li key={index}>
             <div
               className="text-center border border-black bg-primary mb-1 font-bold cursor-pointer hover:bg-gray-100"
-              onClick={() => {setQuery(chef.first_name + " " + chef.last_name);
-                        setChefId(chef.id);
-                        console.log("set chef id ")
-              } }
-              >
+              onClick={() => {
+                setQuery(chef.first_name + ' ' + chef.last_name);
+                setChefId(chef.id);
+                console.log('set chef id ');
+              }}
+            >
               {chef.last_name} {chef.first_name}
             </div>
-          </li> 
+          </li>
         ))}
       </ul>
 
       <button
         disabled={reassignLoading}
-        onClick={
-          () => {
-            performReassign({ chefId: chefId, bookingId: bookingId }).then(() =>
-              closeModal()
-            );
-          } 
-        }
+        onClick={() => {
+          performReassign({ chefId: chefId, bookingId: bookingId }).then(() => closeModal());
+        }}
         className="btn btn-primary flex mx-auto mt-3 w-32"
       >
         {reassignLoading ? 'Assigning' : 'Assign'}

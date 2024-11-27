@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking } from '../data/model.ts';
 import { toast } from 'react-toastify';
-import { User } from '../../users/data/model.ts';
 import { BookingType } from './types.ts';
 
 export function useFetchBookingsQuery() {
@@ -101,7 +100,6 @@ export function useFetchBookingQuery(id: string) {
   };
 }
 
-
 export function useEditBookingStatus() {
   const [loading, setLoading] = useState(false);
 
@@ -136,8 +134,6 @@ export function useEditBookingStatus() {
   };
 }
 
-
-
 export function useDeleteBooking() {
   const [loading, setLoading] = useState(false);
 
@@ -171,7 +167,6 @@ export function useDeleteBooking() {
   };
 }
 
-
 export function useReassignBooking() {
   const [loading, setLoading] = useState(false);
 
@@ -181,10 +176,10 @@ export function useReassignBooking() {
       const response = await fetch({
         url: 'admin-reassign-booking',
         method: 'POST',
-        data: { chefId, bookingId },
+        data: { chefId, bookingId }
       });
       return response.data;
-    },
+    }
   });
 
   return {
@@ -203,19 +198,18 @@ export function useReassignBooking() {
         setLoading(false);
       }
     },
-    loading,
+    loading
   };
 }
-
 
 export function useAcceptQuote() {
   const [loading, setLoading] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: async ({ quoteId }: { quoteId: string; }) => {
+    mutationFn: async ({ quoteId }: { quoteId: string }) => {
       const response = await fetch({
         url: `quotes/accept-quote/${quoteId}`,
-        method: 'GET',
+        method: 'GET'
         // data: { quoteId }
       });
       return response.data;
