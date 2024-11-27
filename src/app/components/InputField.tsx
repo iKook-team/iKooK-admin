@@ -31,7 +31,11 @@ export function DropdownField(
         {...removeFields(props, 'label', 'error', 'className')}
         className={`w-full capitalize select select-bordered ${props.error ? 'select-error' : ''}`}
       >
-        <option disabled>{props.placeholder}</option>
+        {props.placeholder && (
+          <option disabled className="w-full">
+            {props.placeholder}
+          </option>
+        )}
         {props.options.map((option) => (
           <option key={option} className="capitalize">
             {option}

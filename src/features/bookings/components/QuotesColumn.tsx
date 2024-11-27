@@ -1,5 +1,4 @@
 import React, { SetStateAction, useState } from 'react';
-import { bookingType } from '../../users/domain/types';
 import { getImageUrl } from '../../../utils/getImageUrl';
 import { Booking, Quote } from '../data/model';
 import Constants from '../../../utils/constants';
@@ -8,6 +7,7 @@ import Modal from './BookingsModal';
 import QuoteCardGrid from './QuotesGrid';
 import { ViewQuoteModal } from './QuotesModal';
 import { useAcceptQuote } from '../domain/usecase';
+import { BookingType } from '../domain/types.ts';
 
 interface IconTextItem {
   icon: string;
@@ -22,12 +22,12 @@ interface MenuItem {
 
 interface BookingComponentProps {
   booking: Booking;
-  type?: bookingType;
+  type?: BookingType;
   iconTextList: IconTextItem[];
   menuList: MenuItem[];
   filter?: string;
   filters?: string[];
-  setFilter?: (value: SetStateAction<string>) => void
+  setFilter?: (value: SetStateAction<string>) => void;
 }
 
 const QuotesColumn: React.FC<BookingComponentProps> = ({
@@ -59,19 +59,15 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
   const [currentQuote, setCurrentQuote] = useState<Quote | undefined>(undefined);
   const { performAcceptQuote, loading: acceptingQuote } = useAcceptQuote();
 
-
   return (
     <div className="flex flex-col aspect-[370/600] rounded-xl shadow-xl border border-gray-300 bg-white px-10 justify-evenly items-center h-min gap-3 py-5 max-w-[500px] ">
-      {type != bookingType.menu && (
+      {type != BookingType.menus && (
         <button
-          onClick={type ? openModal :
-            () => performAcceptQuote(currentQuote?.image!)
-          }
-          disabled={acceptingQuote}
+          onClick={type ? openModal : () => performAcceptQuote(currentQuote?.image!)}
           className="btn btn-primary w-full h-min capitalize"
+          disabled={acceptingQuote}
         >
-          {acceptingQuote ? "Accepting Quote..." : type ? "Quotes" : "Accept Quote"}
-
+          {acceptingQuote ? 'Accepting Quote...' : type ? 'Quotes' : 'Accept Quote'}
         </button>
       )}
 
@@ -125,7 +121,7 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
       </div>
 
       <div className="flex flex-col gap-3 w-full">
-        {type === bookingType.menu && (
+        {type === BookingType.menus && (
           <DropdownField
             value={filter}
             onChange={(e) => setFilter!(e.target.value)}
@@ -167,7 +163,6 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
         </div>
       </div>
 
-
       <Modal
         isVisible={isModalVisible}
         onClose={closeModal}
@@ -186,7 +181,7 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
         isVisible={isQuoteModalVisible}
         onClose={closeQuoteModal}
         children={
-          <ViewQuoteModal 
+          <ViewQuoteModal
             booking={booking}
             quote={currentQuote}
             enquiryProfileList={enquiryProfileList}

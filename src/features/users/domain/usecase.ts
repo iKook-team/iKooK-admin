@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import fetch from '../../../app/services/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
 import { useMemo } from 'react';
 import { UserType } from './types.ts';
@@ -59,4 +59,49 @@ export function useFetchUserQuery(type: UserType, id: string) {
     user: data?.data,
     error
   };
+}
+
+export function useToggleUserActive(type: UserType) {
+  return useMutation({
+    mutationFn: ({ id, disable }: { id: string; disable: boolean }) => {
+      const route = disable ? 'disable-user' : 'activate-user';
+      return fetch({
+        url: `/admin/${route}/${id}`,
+        method: 'PUT'
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+}
+
+export function useToggleUserVerificationStatus(type: UserType) {
+  return useMutation({
+    mutationFn: ({
+      id,
+      accept,
+      type,
+      message
+    }: {
+      id: string;
+      accept: boolean;
+      type: string;
+      message?: string;
+    }) => {
+      return fetch({
+        url: `/admin/update-verification-status`,
+        method: 'POST',
+        data: {
+          userId: id,
+          status: accept ? 'accept' : 'reject',
+          type,
+          message
+        }
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
 }

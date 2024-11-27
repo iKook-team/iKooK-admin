@@ -1,28 +1,25 @@
-import { useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import IdCell from '../../app/components/IdCell';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
-import PageTable, { PageTableAction, PageTableActions } from '../../app/components/page/PageTable';
+import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import UserNameAndImage from '../users/components/UserNameAndImage';
-import {
-  useDeleteBooking,
-  useEditBookingStatus,
-  useFetchBookingsQuery,
-} from './domain/usecase';
+import { useDeleteBooking, useEditBookingStatus, useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
 import Modal from './components/BookingsModal';
 import { DropdownField } from '../../app/components/InputField';
-import { Bookings } from './data/model';
+import { Booking } from './data/model';
 import ReAssignSearchComponent from './components/ReAssignBooking';
-
+import { BookingType } from './domain/types.ts';
+import { PageActionItem } from '../../app/components/page/types.ts';
+import PageAction from '../../app/components/page/PageAction.tsx';
 
 export default function BookingsScreen() {
   const {
     bookingType,
     setBookingType,
-    bookingTypes,
     isPending,
     error,
     bookings,
@@ -56,7 +53,7 @@ export default function BookingsScreen() {
     statuses: string[];
   }
 
-  const ModalContent: React.FC<ModalProps> = ({ modalTitle, status, statuses }) => {
+  const ModalContent: FC<ModalProps> = ({ modalTitle, status, statuses }) => {
     const { performDelete, loading: deleteLoading } = useDeleteBooking();
 
     const { performEditStatus, loading: statusLoading } = useEditBookingStatus();
@@ -100,10 +97,8 @@ export default function BookingsScreen() {
           </div>
         </>
       ) : modalTitle === 'Re-assign' ? (
-          <ReAssignSearchComponent bookingId={currentBookingId} closeModal={closeModal}/>
-      ) :
-       
-      modalTitle === 'Change Status' ? (
+        <ReAssignSearchComponent bookingId={currentBookingId} closeModal={closeModal} />
+      ) : modalTitle === 'Change Status' ? (
         <div>
           <DropdownField
             value={status}
@@ -131,29 +126,27 @@ export default function BookingsScreen() {
 
   const header = useMemo(
     () =>
-      bookingType === bookingTypes[1]
+      bookingType === BookingType.enquiries
         ? ['Booking ID', 'User', 'Location', 'Proposals', 'Number Of Guests']
         : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
-    [bookingType, bookingTypes]
+    [bookingType]
   );
 
-  const dropdown = useMemo(
+  const actionItems = useMemo(
     () => [
       { title: 'Edit', icon: 'edit' },
       { title: 'Change Status', icon: 'reset' },
-      { title: 'Cancel', icon: 'close' },
-      { title: 'Delete', icon: 'delete' },
-      { title: 'Re-assign', icon: 'check' }
+      { title: 'Delete', icon: 'delete' }
     ],
     []
   );
 
-  const handleClick = (entry: string, booking: Bookings): void => {
+  const onAction = (entry: PageActionItem, booking: Booking): void => {
     setIsModalVisible(true);
     setCurrentBookingId(booking.id);
     // setCurrentChefId(booking.id); // come back to set chefId here
 
-    switch (entry) {
+    switch (entry.title) {
       case 'Edit':
         navigate(`/bookings/${bookingType}s/${booking.id}`);
         break;
@@ -218,7 +211,7 @@ export default function BookingsScreen() {
                 />
               </td>
               <td className="capitalize">
-                {bookingType === bookingTypes[1]
+                {bookingType === BookingType.enquiries
                   ? booking.country
                   : booking.chef?.photo
                     ? `chef ${booking.chef?.firstName}`
@@ -226,7 +219,7 @@ export default function BookingsScreen() {
               </td>
 
               <td>
-                {bookingType === bookingTypes[1] ? (
+                {bookingType === BookingType.enquiries ? (
                   <BookingProposalImageStack proposalList={proposalList} />
                 ) : (
                   booking.menu
@@ -234,24 +227,18 @@ export default function BookingsScreen() {
               </td>
 
               <td>
-                {bookingType === bookingTypes[1] ? booking.number_of_guest : `€${booking.amount}`}
+                {bookingType === BookingType.enquiries
+                  ? booking.number_of_guest
+                  : `€${booking.amount}`}
               </td>
 
               {bookingType === bookingTypes[0] && <td> {booking.status}</td>}
-              <th onClick={(e) => e.stopPropagation()}>
-                <PageTableActions>
-                  {dropdown.map((entry) => (
-                    <PageTableAction
-                      key={entry.title}
-                      icon={entry.icon}
-                      text={entry.title}
-                      onClick={() => {
-                        handleClick(entry.title, booking);
-                      }}
-                    />
-                  ))}
-                </PageTableActions>
-              </th>
+              <td>
+                <PageAction
+                  items={actionItems}
+                  onItemClick={(action) => onAction(action, booking)}
+                />
+              </td>
             </tr>
           );
         })}

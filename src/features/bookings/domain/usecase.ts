@@ -6,18 +6,15 @@ import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { User } from '../../users/data/model.ts';
-
+import { BookingType } from './types.ts';
 
 export function useFetchBookingsQuery() {
   const filters = useMemo(() => ['all', 'processing', 'pending', 'enquiry', 'completed'], []);
 
-  const bookingTypes = useMemo(() => ['menu', 'enquiries'], []);
-
-  const [bookingType, setBookingType] = useState<string>(bookingTypes[0]);
-
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState<string>();
   const [filter, setFilter] = useState<string>(filters[0]);
+  const [bookingType, setBookingType] = useState<BookingType>(BookingType.enquiries);
 
   const { isPending, data, error } = useQuery({
     queryKey: ['bookings', bookingType, page],
@@ -25,7 +22,7 @@ export function useFetchBookingsQuery() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, bookingType, page] = queryKey;
       const response = await fetch({
-        url: `admin/get-bookings?type=${bookingType}&page_number=${page}&page_size=${20}`,
+        url: `admin/get-bookings?type=${bookingType}&page_number=${page}&page_size=20`,
         method: 'GET'
       });
       return response.data as GetAllBookingsResponse;
@@ -68,7 +65,6 @@ export function useFetchBookingsQuery() {
   return {
     bookingType,
     setBookingType,
-    bookingTypes,
     isPending,
     error,
     page,
@@ -104,53 +100,6 @@ export function useFetchBookingQuery(id: string) {
     error
   };
 }
-
-
-export function useFetchUsersQuery() {
-  const [query, setQuery] = useState<string>("");
-
-
-  const { isPending, data, error } = useQuery({
-    queryKey: ["chefs"],
-    queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [] = queryKey;
-      const response = await fetch({
-        url: `admin/get-all-users?user_type=chef`,
-        method: 'GET'
-      });
-      return response?.data as GenericResponse<User[]>;
-    }
-  });
-
-  const users = useMemo(() => {
-    const items = data?.data || [];
-    if (!query.trim()) {
-      return items;
-    }
-
-    const cleanedQuery = query.toLowerCase();
-
-
-    return items.filter((chef) =>
-      [chef.first_name, chef.last_name].some((field) =>
-        field.toLowerCase().includes(cleanedQuery)
-      )
-    );
-
-  }, [query, data]);
-
-  return {
-    isPending,
-    users ,
-    error,
-    query, 
-    setQuery
-  };
-}
-
-
-
 
 
 export function useEditBookingStatus() {

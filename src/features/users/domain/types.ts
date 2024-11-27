@@ -20,8 +20,3 @@ export interface UserPageProps {
   type: UserType;
   className?: string;
 }
-
-export enum bookingType {
-  menu = 'menu',
-  enquiry = 'enquiries'
-}
