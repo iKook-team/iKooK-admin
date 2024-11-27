@@ -1,5 +1,5 @@
 
-export interface BookingUser {
+export interface BookingsUser {
   firstName: string;
   lastName: string;
   photo: string;
@@ -65,7 +65,7 @@ export interface Quote {
 
 export interface Bookings {
   amount: number;
-  chef: BookingUser;
+  chef: BookingsUser;
   currency: string;
   country: string;
   id: string;
@@ -74,7 +74,18 @@ export interface Bookings {
   proposals: Proposal[];
   status: string;
   trxid: string;
-  user: BookingUser;
+  user: BookingsUser;
+}
+
+export interface BookingUser {
+  country : string ;
+  email : string;
+  first_name : string; 
+  last_name  : string;
+  id : string;
+  photo : string;
+  username : string;
+  verified : boolean;
 }
 
 export interface Booking {
@@ -92,17 +103,12 @@ export interface Booking {
     main: Menu[];
     dessert: Menu[];
   };
-  user : {
-    country : string ;
-    email : string;
-    first_name : string; 
-    last_name  : string;
-    id : string;
-    photo : string;
-    username : string;
-    verified : boolean;
-  }
+  user : BookingUser;
   quotes : Quote[]
   booking_type: string;
   custom_booking_type_selected : string;
+}
+
+export interface Chef{
+
 }

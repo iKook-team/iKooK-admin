@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking } from '../data/model.ts';
 import { toast } from 'react-toastify';
+import { User } from '../../users/data/model.ts';
 
 
 export function useFetchBookingsQuery() {
@@ -105,59 +106,48 @@ export function useFetchBookingQuery(id: string) {
 }
 
 
-// export function useFetchUsersQuery() {
-//   const { isPending, data, error } = useQuery({
-//     queryKey: [],
-//     queryFn: async ({ queryKey }) => {
-//       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//       const [] = queryKey;
-//       const response = await fetch({
-//         url: `admin/get-all-users?user_type=chef`,
-//         method: 'GET'
-//       });
-//       return response?.data as GenericResponse<User[]>;
-//     }
-//   });
+export function useFetchUsersQuery() {
+  const [query, setQuery] = useState<string>("");
 
-//   const users = useMemo(() => {
-//     const items = data?.data?.items || [];
-//     if (!query && (!filter || filter === 'all')) {
-//       return items;
-//     }
 
-//     return items.filter((booking) => {
-//       let cleanedQuery = '';
-//       if (query) {
-//         cleanedQuery = query.toLowerCase();
+  const { isPending, data, error } = useQuery({
+    queryKey: ["chefs"],
+    queryFn: async ({ queryKey }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [] = queryKey;
+      const response = await fetch({
+        url: `admin/get-all-users?user_type=chef`,
+        method: 'GET'
+      });
+      return response?.data as GenericResponse<User[]>;
+    }
+  });
 
-//         return (
-//           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
-//           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
-//           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
-//           booking.chef?.firstName.toLowerCase().includes(cleanedQuery)
-//         );
-//       } else if (query && filter != 'all') {
-//         const cleanedFilter = filter!.toLowerCase();
+  const users = useMemo(() => {
+    const items = data?.data || [];
+    if (!query.trim()) {
+      return items;
+    }
 
-//         return (
-//           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
-//           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
-//           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
-//           (booking.chef?.firstName.toLowerCase().includes(cleanedQuery) &&
-//             booking.status.toLowerCase() === cleanedFilter)
-//         );
-//       }
-//       const cleanedFilter = filter!.toLowerCase();
-//       return booking.status.toLowerCase() === cleanedFilter;
-//     });
-//   }, [query, filter, data]);
+    const cleanedQuery = query.toLowerCase();
 
-//   return {
-//     isPending,
-//     users : data?.data,
-//     error
-//   };
-// }
+
+    return items.filter((chef) =>
+      [chef.first_name, chef.last_name].some((field) =>
+        field.toLowerCase().includes(cleanedQuery)
+      )
+    );
+
+  }, [query, data]);
+
+  return {
+    isPending,
+    users ,
+    error,
+    query, 
+    setQuery
+  };
+}
 
 
 

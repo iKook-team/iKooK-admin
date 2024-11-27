@@ -44,7 +44,7 @@ export default function BookingsScreen() {
   const statuses = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
   const [status, setStatus] = useState(statuses[0]);
   const [currentBookingId, setCurrentBookingId] = useState('');
-  const [currentChefId, setCurrentChefId] = useState('');
+  // const [currentChefId, setCurrentChefId] = useState('');
   // const assignments = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
   // const [assign, setAssign] = useState(assignments[0]);
 
@@ -100,7 +100,7 @@ export default function BookingsScreen() {
           </div>
         </>
       ) : modalTitle === 'Re-assign' ? (
-          <ReAssignSearchComponent/>
+          <ReAssignSearchComponent bookingId={currentBookingId} closeModal={closeModal}/>
       ) :
        
       modalTitle === 'Change Status' ? (
@@ -151,7 +151,7 @@ export default function BookingsScreen() {
   const handleClick = (entry: string, booking: Bookings): void => {
     setIsModalVisible(true);
     setCurrentBookingId(booking.id);
-    setCurrentChefId(booking.id); // come back to set chefId here
+    // setCurrentChefId(booking.id); // come back to set chefId here
 
     switch (entry) {
       case 'Edit':
