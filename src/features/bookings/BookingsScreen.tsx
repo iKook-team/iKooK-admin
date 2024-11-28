@@ -10,7 +10,7 @@ import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
 import Modal from './components/BookingsModal';
 import { DropdownField } from '../../app/components/InputField';
-import { Booking } from './data/model';
+import { Bookings } from './data/model';
 import ReAssignSearchComponent from './components/ReAssignBooking';
 import { BookingType } from './domain/types.ts';
 import { PageActionItem } from '../../app/components/page/types.ts';
@@ -41,9 +41,6 @@ export default function BookingsScreen() {
   const statuses = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
   const [status, setStatus] = useState(statuses[0]);
   const [currentBookingId, setCurrentBookingId] = useState('');
-  // const [currentChefId, setCurrentChefId] = useState('');
-  // const assignments = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
-  // const [assign, setAssign] = useState(assignments[0]);
 
   const closeModal = () => setIsModalVisible(false);
 
@@ -136,15 +133,16 @@ export default function BookingsScreen() {
     () => [
       { title: 'Edit', icon: 'edit' },
       { title: 'Change Status', icon: 'reset' },
-      { title: 'Delete', icon: 'delete' }
+      { title: 'Cancel', icon: 'close' },
+      { title: 'Delete', icon: 'delete' },
+      { title: 'Re-assign', icon: 'check' }
     ],
     []
   );
 
-  const onAction = (entry: PageActionItem, booking: Booking): void => {
+  const onAction = (entry: PageActionItem, booking: Bookings): void => {
     setIsModalVisible(true);
     setCurrentBookingId(booking.id);
-    // setCurrentChefId(booking.id); // come back to set chefId here
 
     switch (entry.title) {
       case 'Edit':
@@ -232,7 +230,7 @@ export default function BookingsScreen() {
                   : `€${booking.amount}`}
               </td>
 
-              {bookingType === bookingTypes[0] && <td> {booking.status}</td>}
+              {bookingType === BookingType.menus && <td> {booking.status}</td>}
               <td>
                 <PageAction
                   items={actionItems}
