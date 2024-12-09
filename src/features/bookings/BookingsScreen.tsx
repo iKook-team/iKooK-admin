@@ -1,20 +1,21 @@
-import { FC, useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import IdCell from '../../app/components/IdCell';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
 import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import UserNameAndImage from '../users/components/UserNameAndImage';
-import { useDeleteBooking, useEditBookingStatus, useFetchBookingsQuery } from './domain/usecase';
+import { useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
-import Modal from './components/BookingsModal';
-import { DropdownField } from '../../app/components/InputField';
 import { Bookings } from './data/model';
-import ReAssignSearchComponent from './components/ReAssignBooking';
 import { BookingType } from './domain/types.ts';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import PageAction from '../../app/components/page/PageAction.tsx';
+import ReAssignBookingModal from './components/ReAssignBookingModal.tsx';
+import EditBookingStatusModal from './components/ChangeStatusModal.tsx';
+import DeleteBookingModal from './components/DeleteBookingModal.tsx';
+import CancelBookingModal from './components/CancelBookingModal.tsx';
 
 export default function BookingsScreen() {
   const {
@@ -34,92 +35,14 @@ export default function BookingsScreen() {
     numberOfPages
   } = useFetchBookingsQuery();
 
+  const reassignBookingRef = useRef<HTMLDialogElement>(null);
+  const editBookingStatusRef = useRef<HTMLDialogElement>(null);
+  const deleteBookingRef = useRef<HTMLDialogElement>(null);
+  const cancelBookingRef = useRef<HTMLDialogElement>(null);
+
   const navigate = useNavigate();
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const statuses = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
-  const [status, setStatus] = useState(statuses[0]);
-  const [currentBookingId, setCurrentBookingId] = useState('');
-
-  const closeModal = () => setIsModalVisible(false);
-
-  interface ModalProps {
-    modalTitle: string;
-    status: string;
-    statuses: string[];
-  }
-
-  const ModalContent: FC<ModalProps> = ({ modalTitle, status, statuses }) => {
-    const { performDelete, loading: deleteLoading } = useDeleteBooking();
-
-    const { performEditStatus, loading: statusLoading } = useEditBookingStatus();
-
-    const modalChildren =
-      modalTitle === 'Delete' ? (
-        <>
-          <h1>Are you sure you want to delete this menu?</h1>
-          <div className="flex  gap-4 justify-center">
-            <button
-              onClick={() => {
-                currentBookingId && performDelete(currentBookingId).then(() => closeModal());
-              }}
-              disabled={deleteLoading}
-              className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
-            >
-              {deleteLoading ? 'Deleting...' : 'Delete'}
-            </button>
-            <button onClick={closeModal} className="btn btn-primary flex  mt-3 w-[40%]">
-              Cancel
-            </button>
-          </div>
-        </>
-      ) : modalTitle === 'Cancel' ? (
-        <>
-          <h1>Are you sure you want to cancel this menu?</h1>
-
-          <div className="flex  gap-4 justify-center">
-            <button
-              disabled={statusLoading}
-              onClick={() => {
-                performEditStatus(currentBookingId, statuses[0]).then(() => closeModal());
-              }}
-              className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
-            >
-              {statusLoading ? 'Cancelling...' : 'Cancel'}
-            </button>
-            <button onClick={closeModal} className="btn btn-primary flex  mt-3 w-[40%]">
-              Back
-            </button>
-          </div>
-        </>
-      ) : modalTitle === 'Re-assign' ? (
-        <ReAssignSearchComponent bookingId={currentBookingId} closeModal={closeModal} />
-      ) : modalTitle === 'Change Status' ? (
-        <div>
-          <DropdownField
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-            }}
-            options={statuses || []}
-          />
-          <button
-            onClick={() => {
-              performEditStatus(currentBookingId, status).then(() => closeModal());
-            }}
-            disabled={statusLoading}
-            className="btn btn-primary flex mx-auto mt-3 w-32"
-          >
-            {statusLoading ? 'Updating...' : 'Update'}
-          </button>
-        </div>
-      ) : (
-        <div></div>
-      );
-
-    return <div>{modalChildren}</div>;
-  };
+  const [selectedBooking, setSelectedBooking] = useState<Bookings>();
 
   const header = useMemo(
     () =>
@@ -140,28 +63,29 @@ export default function BookingsScreen() {
     []
   );
 
-  const onAction = (entry: PageActionItem, booking: Bookings): void => {
-    setIsModalVisible(true);
-    setCurrentBookingId(booking.id);
+ 
 
-    switch (entry.title) {
-      case 'Edit':
+  const onAction = (action: PageActionItem, booking: Bookings) => {
+    setSelectedBooking(booking);
+
+    switch (action.icon) {
+      case 'edit':
         navigate(`/bookings/${bookingType}s/${booking.id}`);
         break;
-      case 'Delete':
-        setModalTitle('Delete');
+      case 'delete':
+        deleteBookingRef.current?.showModal();
         break;
-      case 'Change Status':
-        setModalTitle('Change Status');
+      case 'reset':
+        editBookingStatusRef.current?.showModal();
         break;
-      case 'Cancel':
-        setModalTitle('Cancel');
+      case 'close':
+        cancelBookingRef.current?.showModal();
         break;
-      case 'Re-assign':
-        setModalTitle('Re-assign');
+      case 'check':
+        reassignBookingRef.current?.showModal();
         break;
       default:
-        console.log(`Action for ${entry} triggered`);
+        console.log(`Action for ${action} triggered`);
         break;
     }
   };
@@ -246,13 +170,10 @@ export default function BookingsScreen() {
         pageItemCount={bookings.length}
         totalItemCount={totalCount}
       />
-      <Modal
-        isVisible={isModalVisible}
-        onClose={closeModal}
-        children={<ModalContent modalTitle={modalTitle} status={status} statuses={statuses} />}
-        title={modalTitle}
-        isQuote={false}
-      />
+      <ReAssignBookingModal ref={reassignBookingRef} booking={selectedBooking!} />
+      <EditBookingStatusModal ref={editBookingStatusRef} booking={selectedBooking!} />
+      <DeleteBookingModal ref={deleteBookingRef} booking={selectedBooking!} />
+      <CancelBookingModal ref={cancelBookingRef} booking={selectedBooking!} />
     </>
   );
 }
