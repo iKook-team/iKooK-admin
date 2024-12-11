@@ -75,3 +75,33 @@ export function useToggleUserActive(type: UserType) {
     }
   });
 }
+
+export function useToggleUserVerificationStatus(type: UserType) {
+  return useMutation({
+    mutationFn: ({
+      id,
+      accept,
+      type,
+      message
+    }: {
+      id: string;
+      accept: boolean;
+      type: string;
+      message?: string;
+    }) => {
+      return fetch({
+        url: `/admin/update-verification-status`,
+        method: 'POST',
+        data: {
+          userId: id,
+          status: accept ? 'accept' : 'reject',
+          type,
+          message
+        }
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+}

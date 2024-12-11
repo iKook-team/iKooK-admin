@@ -8,6 +8,7 @@ import UsersScreen from '../features/users/UsersScreen.tsx';
 import { UserType } from '../features/users/domain/types.ts';
 import MenusScreen from '../features/menus/MenusScreen.tsx';
 import UserScreen from '../features/users/UserScreen.tsx';
+import BookingsScreen from '../features/bookings/BookingsScreen.tsx';
 import useAuthStore from '../features/auth/domain/store.ts';
 
 export default function Routes() {
@@ -31,6 +32,7 @@ export default function Routes() {
                 }
               ]),
               { path: 'menus', element: <MenusScreen /> },
+              { path: 'bookings', element: <BookingsScreen /> },
               { path: '*', element: <NotFound /> }
             ]
           }

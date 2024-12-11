@@ -19,7 +19,10 @@ export default {
         red: '#FC3E03',
         'ghost-white': '#F7F9FB',
         'jordy-blue': '#95A4FC',
-        'purple-taupe': '#464255'
+        'purple-taupe': '#464255',
+        'soft-cream': '#FFFCF5',
+        'hard-cream': '#F9DF98',
+        'yellow-500': '#CDA027'
       },
       width: {
         max: '70%',
