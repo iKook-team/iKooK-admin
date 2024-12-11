@@ -68,14 +68,14 @@ apiClient.interceptors.response.use(
   }
 );
 
-function extractResponseForLog(response: AxiosResponse): unknown {
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    url: response.config.url,
-    ...response.data
-  };
-}
+// function extractResponseForLog(response: AxiosResponse): unknown {
+//   return {
+//     status: response.status,
+//     statusText: response.statusText,
+//     url: response.config.url,
+//     ...response.data
+//   };
+// }
 
 async function handleUnauthorizedError(request: AxiosRequestConfig<unknown>) {
   const refresh = useAuthStore.getState().refresh;

@@ -2,16 +2,17 @@ import React, { useMemo, useState } from 'react';
 import { DropdownField } from '../../../app/components/InputField';
 
 type MenuProps = {
-  starter: String[];
-  main: String[];
-  dessert: String[];
+  starter: string[];
+  main: string[];
+  dessert: string[];
   //   all : [starter[] ]
 };
 
 const EditMenuModalContent: React.FC<MenuProps> = ({ starter, main, dessert }) => {
   const filters = useMemo(() => ['in-progress', 'rejected', 'successful'], []);
 
-  const [filter, setFilter] = useState<string>(filters[0]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setFilter] = useState<string>(filters[0]);
 
   return (
     <div className="flex flex-col gap-3">

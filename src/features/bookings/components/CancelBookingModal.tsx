@@ -3,7 +3,7 @@ import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import { Bookings } from '../data/model.ts';
-import { useDeleteBooking, useEditBookingStatus } from '../domain/usecase.ts';
+import { useEditBookingStatus } from '../domain/usecase.ts';
 
 interface CancelBookingModalProps {
   booking: Bookings;
@@ -27,7 +27,7 @@ const CancelBookingModal = forwardRef<HTMLDialogElement, CancelBookingModalProps
 
         const response = await mutation.mutateAsync({
           bookingId: booking.id,
-          status : status,
+          status: status
         });
 
         toast(response.data.data, { type: 'success' });
