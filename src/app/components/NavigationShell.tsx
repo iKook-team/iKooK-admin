@@ -91,10 +91,20 @@ export default function NavigationShell() {
 function LoggedInUser() {
   const user = useAuthStore((state) => state.user);
   return (
-    <div className="flex flex-col items-start border border-primary px-5 py-2" onClick={resetStore}>
-      <p className="capitalize font-semibold">{user?.role}</p>
-      <p className="capitalize text-xs">{user?.first_name}</p>
-    </div>
+    <details className="dropdown">
+      <summary className="flex flex-row items-center gap-10 border border-primary px-5 py-2 rounded-xl">
+        <div className="flex flex-col items-start">
+          <p className="capitalize font-semibold">{user?.role}</p>
+          <p className="capitalize text-xs">{user?.first_name}</p>
+        </div>
+        <img src={getImageUrl(`icons/arrow-down.svg`)} alt="Dropdown" />
+      </summary>
+      <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] min-w-36 p-2 shadow">
+        <li>
+          <button onClick={resetStore}>Logout</button>
+        </li>
+      </ul>
+    </details>
   );
 }
 
