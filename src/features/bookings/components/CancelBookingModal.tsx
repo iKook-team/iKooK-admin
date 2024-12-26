@@ -12,11 +12,11 @@ interface CancelBookingModalProps {
 const CancelBookingModal = forwardRef<HTMLDialogElement, CancelBookingModalProps>(
   ({ booking }, ref) => {
     const title = 'Cancel Booking for ';
-    const status = 'Cancelled';
+    const status = 'cancelled';
 
     const [loading, setLoading] = useState(false);
 
-    const mutation = useEditBookingStatus(booking);
+    const mutation = useEditBookingStatus();
     const onSubmit = async () => {
       if (loading || booking === undefined) {
         return;
@@ -75,6 +75,6 @@ const CancelBookingModal = forwardRef<HTMLDialogElement, CancelBookingModalProps
   }
 );
 
-CancelBookingModal.displayName = 'DeleteBookingModal';
+CancelBookingModal.displayName = 'CancelBookingModal';
 
 export default CancelBookingModal;

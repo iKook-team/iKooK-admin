@@ -13,7 +13,7 @@ export function useFetchBookingsQuery() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState<string>();
   const [filter, setFilter] = useState<string>(filters[0]);
-  const [bookingType, setBookingType] = useState<BookingType>(BookingType.enquiries);
+  const [bookingType, setBookingType] = useState<BookingType>(BookingType.menus);
 
   const { isPending, data, error } = useQuery({
     queryKey: ['bookings', bookingType, page],
@@ -100,136 +100,34 @@ export function useFetchBookingQuery(id: string) {
   };
 }
 
-// export function useEditBookingStatus() {
-//   const [loading, setLoading] = useState(false);
-
-//   const mutation = useMutation({
-//     mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
-//       const response = await fetch({
-//         url: `admin/update-booking-status/${bookingId}`,
-//         method: 'GET',
-//         data: { status }
-//       });
-//       return response.data;
-//     }
-//   });
-
-//   return {
-//     performEditStatus: async (bookingId: string, status: string) => {
-//       if (loading) {
-//         return;
-//       }
-
-//       try {
-//         setLoading(true);
-//         await mutation.mutateAsync({ bookingId, status });
-//         toast(`Booking status updated successfully`, { type: 'success' });
-//       } catch (error) {
-//         toast(`Failed to update booking status`, { type: 'error' });
-//       } finally {
-//         setLoading(false);
-//       }
-//     },
-//     loading
-//   };
-// }
-
-export function useEditBookingStatus(booking: Bookings) {
+export function useEditBookingStatus() {
   return useMutation({
     mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
-     return fetch({
-        url: `admin/update-booking-status/${bookingId}`,
+      return fetch({
+        url :     `admin/update-booking-status/${bookingId}?booking_status=${status}`,
         method: 'GET',
-        data: { status }
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [booking] });
+      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
     }
   });
 }
 
-// export function useDeleteBooking() {
-//   const [loading, setLoading] = useState(false);
 
-//   const mutation = useMutation({
-//     mutationFn: async (bookingId: string) => {
-//       const response = await fetch({
-//         url: `admin/delete-booking/${bookingId}`,
-//         method: 'DELETE'
-//       });
-//       return response.data;
-//     }
-//   });
-
-//   return {
-//     performDelete: async (bookingId: string) => {
-//       if (loading) {
-//         return;
-//       }
-
-//       try {
-//         setLoading(true);
-//         await mutation.mutateAsync(bookingId);
-//         toast(`Booking deleted successfully`, { type: 'success' });
-//       } catch (error) {
-//         toast(`Failed to delete booking`, { type: 'error' });
-//       } finally {
-//         setLoading(false);
-//       }
-//     },
-//     loading
-//   };
-// }
-
-export function useDeleteBooking(booking: Bookings) {
+export function useDeleteBooking() {
   return useMutation({
-    mutationFn: async ({ bookingId }: { bookingId: string; }) => {
+    mutationFn: async ({ bookingId }: { bookingId: string }) => {
       return await fetch({
         url: `admin/delete-booking/${bookingId}`,
         method: 'DELETE'
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [booking] });
+      void queryClient.invalidateQueries({ queryKey: ["booking"] });
     }
   });
 }
-
-// export function useReassignBooking() {
-//   const [loading, setLoading] = useState(false);
-
-//   // Define the mutation function
-//   const mutation = useMutation({
-//     mutationFn: async ({ chefId, bookingId }: { chefId: string; bookingId: string }) => {
-//       const response = await fetch({
-//         url: 'admin-reassign-booking',
-//         method: 'POST',
-//         data: { chefId, bookingId }
-//       });
-//       return response.data;
-//     }
-//   });
-
-//   return {
-//     performReassign: async ({ chefId, bookingId }: { chefId: string; bookingId: string }) => {
-//       if (loading) {
-//         return;
-//       }
-
-//       try {
-//         setLoading(true);
-//         await mutation.mutateAsync({ chefId, bookingId });
-//         toast(`Booking successfully reassigned`, { type: 'success' });
-//       } catch (error) {
-//         toast(`Failed to reassign booking`, { type: 'error' });
-//       } finally {
-//         setLoading(false);
-//       }
-//     },
-//     loading
-//   };
-// }
 
 export function useReassignBooking(booking: Bookings) {
   return useMutation({
@@ -254,7 +152,6 @@ export function useAcceptQuote() {
       const response = await fetch({
         url: `quotes/accept-quote/${quoteId}`,
         method: 'GET'
-        // data: { quoteId }
       });
       return response.data;
     }

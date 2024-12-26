@@ -15,7 +15,7 @@ const DeleteBookingModal = forwardRef<HTMLDialogElement, DeleteBookingModalProps
 
     const [loading, setLoading] = useState(false);
 
-    const mutation = useDeleteBooking(booking);
+    const mutation = useDeleteBooking();
 
     const onSubmit = async () => {
       if (loading || booking === undefined) {
@@ -54,9 +54,7 @@ const DeleteBookingModal = forwardRef<HTMLDialogElement, DeleteBookingModalProps
           <h1>Are you sure you want to delete this booking?</h1>
           <div className="flex  gap-4 justify-center">
             <button
-              onClick={() => {
-                onSubmit;
-              }}
+              onClick={onSubmit}
               disabled={loading}
               className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
             >

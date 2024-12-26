@@ -14,7 +14,7 @@ interface ToggleUserActiveModalProps {
 const ToggleUserActiveModal = forwardRef<HTMLDialogElement, ToggleUserActiveModalProps>(
   ({ user, type }, ref) => {
     const title = user?.is_active ? 'Suspend' : 'Activate';
-
+    console.log(user)
     const [loading, setLoading] = useState(false);
 
     const mutation = useToggleUserActive(type);

@@ -1,4 +1,4 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
@@ -12,15 +12,22 @@ interface EditBookingStatusProps {
 
 const EditBookingStatusModal = forwardRef<HTMLDialogElement, EditBookingStatusProps>(
   ({ booking }, ref) => {
-    const statuses = ['Cancelled', 'Completed', 'Enquiry', 'Pending', 'Processing'];
-    const [status, setStatus] = useState(statuses[0]);
+    const statuses = ['cancelled', 'completed', 'enquiry', 'pending', 'processing'];
+
+    const [status, setStatus] = useState(booking?.status);
+
+    useEffect(() => {
+      setStatus(booking?.status);
+      console.log(`booking id is ${booking?.id}`)
+      console.log(booking)
+
+    }, [booking?.status]);
 
     const title = 'Change Status for ';
 
     const [loading, setLoading] = useState(false);
 
-    const mutation = useEditBookingStatus(booking);
-
+    const mutation = useEditBookingStatus();
 
     const onSubmit = async () => {
       if (loading || booking === undefined) {
@@ -34,6 +41,8 @@ const EditBookingStatusModal = forwardRef<HTMLDialogElement, EditBookingStatusPr
           bookingId: booking.id,
           status: status
         });
+
+        console.log(`the final status being sent to backend is ${status}`)
 
         toast(response.data.data, { type: 'success' });
         getCurrentFromRef(ref)?.close();

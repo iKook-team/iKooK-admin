@@ -52,18 +52,6 @@ export default function BookingsScreen() {
     [bookingType]
   );
 
-  const actionItems = useMemo(
-    () => [
-      { title: 'Edit', icon: 'edit' },
-      { title: 'Change Status', icon: 'reset' },
-      { title: 'Cancel', icon: 'close' },
-      { title: 'Delete', icon: 'delete' },
-      { title: 'Re-assign', icon: 'check' }
-    ],
-    []
-  );
-
- 
 
   const onAction = (action: PageActionItem, booking: Bookings) => {
     setSelectedBooking(booking);
@@ -157,7 +145,13 @@ export default function BookingsScreen() {
               {bookingType === BookingType.menus && <td> {booking.status}</td>}
               <td>
                 <PageAction
-                  items={actionItems}
+                  items={[
+                    { title: 'Edit', icon: 'edit' },
+                    { title: 'Change Status', icon: 'reset' },
+                    { title: 'Cancel', icon: 'close' },
+                    { title: 'Delete', icon: 'delete' },
+                    { title: 'Re-assign', icon: 'check' }
+                  ]}
                   onItemClick={(action) => onAction(action, booking)}
                 />
               </td>
