@@ -37,7 +37,7 @@ const ReAssignBookingModal = forwardRef<HTMLDialogElement, ReAssignBookingModalP
     const [loading, setLoading] = useState(false);
     const [loadingId, setLoadingId] = useState(true);
 
-    const mutation = useReassignBooking(booking);
+    const mutation = useReassignBooking();
 
     const onSubmit = async () => {
       if (loading || booking === undefined) {

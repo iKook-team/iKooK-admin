@@ -3,7 +3,7 @@ import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllBookingsResponse } from '../data/dto.ts';
 import { useMemo, useState } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
-import { Booking, Bookings } from '../data/model.ts';
+import { Booking } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { BookingType } from './types.ts';
 
@@ -124,12 +124,12 @@ export function useDeleteBooking() {
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["booking"] });
+      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
     }
   });
 }
 
-export function useReassignBooking(booking: Bookings) {
+export function useReassignBooking() {
   return useMutation({
     mutationFn: async ({ chefId, bookingId }: { chefId: string; bookingId: string }) => {
       return fetch({
@@ -142,7 +142,7 @@ export function useReassignBooking(booking: Bookings) {
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [booking] });
+      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
     }
   });
 }
