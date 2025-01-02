@@ -1,7 +1,7 @@
 import { UserType } from './domain/types.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
 import { ChangeEventHandler, useMemo, useRef, useState } from 'react';
-import UserNameAndImage from './components/UserNameAndImage.tsx';
+import UsernameAndImage from './components/UsernameAndImage.tsx';
 import { useFetchUsersQuery } from './domain/usecase.ts';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -141,7 +141,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 </label>
               </td>
               <td>
-                <UserNameAndImage
+                <UsernameAndImage
                   name={`${user.first_name} ${user.last_name}`}
                   image={user.photo}
                   isActive={user.is_active}

@@ -3,7 +3,7 @@ import IdCell from '../../app/components/IdCell';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
 import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
-import UserNameAndImage from '../users/components/UserNameAndImage';
+import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import { useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
@@ -114,7 +114,7 @@ export default function BookingsScreen() {
                 <IdCell id={booking.id} />
               </td>
               <td>
-                <UserNameAndImage
+                <UsernameAndImage
                   name={`${booking.user.firstName} ${booking.user.lastName}`}
                   image={booking.user?.photo ? booking?.user?.photo : ''}
                 />
