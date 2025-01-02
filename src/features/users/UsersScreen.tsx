@@ -19,8 +19,6 @@ type UsersScreenProps = {
 export default function UsersScreen({ type }: UsersScreenProps) {
   const navigate = useNavigate();
 
-  // const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
-
   const header = useMemo(
     () => [
       'Name',
@@ -34,8 +32,6 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
 
-  // const [query, setQuery] = useState<string>();
-  // const [filter, setFilter] = useState<string>(filters[0]);
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
 
@@ -54,8 +50,6 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     numberOfPages
   } = useFetchUsersQuery({
     type
-    // verified: filter === 'all' ? undefined : filter === 'verified',
-    // query
   });
 
   const toggleSelection = (id: string) => {
