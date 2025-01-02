@@ -13,7 +13,7 @@ import { BookingType } from './domain/types.ts';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import ReAssignBookingModal from './components/ReAssignBookingModal.tsx';
-import EditBookingStatusModal from './components/ChangeStatusModal.tsx';
+import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 
@@ -51,7 +51,6 @@ export default function BookingsScreen() {
         : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
     [bookingType]
   );
-
 
   const onAction = (action: PageActionItem, booking: Bookings) => {
     setSelectedBooking(booking);

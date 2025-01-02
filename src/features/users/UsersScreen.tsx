@@ -40,7 +40,6 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   const [selectedUser, setSelectedUser] = useState<User>();
 
   const {
-  
     isPending,
     error,
     users,
@@ -53,13 +52,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     page,
     setPage,
     numberOfPages
-  } = useFetchUsersQuery(
-    {
-    type,
+  } = useFetchUsersQuery({
+    type
     // verified: filter === 'all' ? undefined : filter === 'verified',
     // query
-  }
-);
+  });
 
   const toggleSelection = (id: string) => {
     if (selected.includes(id)) {

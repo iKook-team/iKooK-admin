@@ -6,23 +6,21 @@ import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
 
-export function useFetchUsersQuery(
-  request: GetAllUsersRequest
-) {
-
+export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
+
   const [filter, setFilter] = useState<string>(filters[0]);
   const [query, setQuery] = useState<string>();
-  const    verified = filter === 'all' ? undefined : filter === 'verified';
+  const [page, setPage] = useState(1);
 
-  const [page , setPage ] = useState(1);
+  const verified = filter === 'all' ? undefined : filter === 'verified';
+
   const { isPending, data, error } = useQuery({
     queryKey: [request.type, verified, page],
     queryFn: async ({ queryKey }) => {
       const [type, verified, page] = queryKey;
       const response = await fetch({
         url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}`,
-        // dmin/get-all-users?user_type=chef&verified=true&page_number=1&page_size=20&search_name=searchterm
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;
@@ -34,7 +32,6 @@ export function useFetchUsersQuery(
 
     if (!query || !data) {
       return items;
-
     }
 
     return items.filter((user) => {
@@ -49,7 +46,7 @@ export function useFetchUsersQuery(
   return {
     isPending,
     error,
-    page, 
+    page,
     setPage,
     users,
     query,

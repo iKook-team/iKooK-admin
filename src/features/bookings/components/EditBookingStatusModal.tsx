@@ -1,22 +1,31 @@
-import { Ref, useState } from 'react';
+import { Ref, useEffect, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import { Bookings } from '../data/model.ts';
 import { useEditBookingStatus } from '../domain/usecase.ts';
+import { DropdownField } from '../../../app/components/InputField.tsx';
 
-interface CancelBookingModalProps {
+interface EditBookingStatusProps {
   booking: Bookings;
   ref: Ref<HTMLDialogElement>;
 }
 
-export default function CancelBookingModal({ booking, ref }: CancelBookingModalProps) {
-  const title = 'Cancel Booking for ';
-  const status = 'cancelled';
+export default function EditBookingStatusModal({ booking, ref }: EditBookingStatusProps) {
+  const statuses = ['cancelled', 'completed', 'enquiry', 'pending', 'processing'];
+
+  const [status, setStatus] = useState(booking?.status);
+
+  useEffect(() => {
+    setStatus(booking?.status);
+  }, [booking?.status]);
+
+  const title = 'Change Status for ';
 
   const [loading, setLoading] = useState(false);
 
   const mutation = useEditBookingStatus();
+
   const onSubmit = async () => {
     if (loading || booking === undefined) {
       return;
@@ -30,6 +39,9 @@ export default function CancelBookingModal({ booking, ref }: CancelBookingModalP
         status: status
       });
 
+      console.log(response);
+      console.log(response.data.data);
+
       toast(response.data.data, { type: 'success' });
       getCurrentFromRef(ref)?.close();
     } finally {
@@ -40,7 +52,7 @@ export default function CancelBookingModal({ booking, ref }: CancelBookingModalP
   return (
     <PageModal
       ref={ref}
-      id="cancel-booking-modal"
+      id="suspend-user-modal"
       title={
         <>
           {title}
@@ -51,25 +63,22 @@ export default function CancelBookingModal({ booking, ref }: CancelBookingModalP
         </>
       }
     >
-      <>
-        <h1>Are you sure you want to cancel this menu?</h1>
-
-        <div className="flex  gap-4 justify-center">
-          <button
-            disabled={loading}
-            onClick={onSubmit}
-            className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
-          >
-            {loading ? 'Cancelling...' : 'Cancel'}
-          </button>
-          <button
-            onClick={() => getCurrentFromRef(ref)?.close()}
-            className="btn btn-primary flex  mt-3 w-[40%]"
-          >
-            Back
-          </button>
-        </div>
-      </>
+      <div>
+        <DropdownField
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value);
+          }}
+          options={statuses || []}
+        />
+        <button
+          onClick={onSubmit}
+          disabled={loading}
+          className="btn btn-primary flex mx-auto mt-3 w-32"
+        >
+          {loading ? 'Updating...' : 'Update'}
+        </button>
+      </div>
     </PageModal>
   );
 }
