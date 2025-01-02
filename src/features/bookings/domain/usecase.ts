@@ -133,9 +133,12 @@ export function useReassignBooking(booking: Bookings) {
   return useMutation({
     mutationFn: async ({ chefId, bookingId }: { chefId: string; bookingId: string }) => {
       return fetch({
-        url: 'admin-reassign-booking',
+        url: 'admin/reassign-booking',
         method: 'POST',
-        data: { chefId, bookingId }
+        data: {
+          chefId: chefId,
+          bookingId: bookingId
+         }
       });
     },
     onSuccess: () => {

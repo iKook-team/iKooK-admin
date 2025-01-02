@@ -66,7 +66,7 @@ export default function BookingsScreen() {
       case 'reset':
         editBookingStatusRef.current?.showModal();
         break;
-      case 'close':
+      case 'remove':
         cancelBookingRef.current?.showModal();
         break;
       case 'check':
@@ -148,7 +148,7 @@ export default function BookingsScreen() {
                   items={[
                     { title: 'Edit', icon: 'edit' },
                     { title: 'Change Status', icon: 'reset' },
-                    { title: 'Cancel', icon: 'close' },
+                    { title: 'Cancel', icon: 'remove' },
                     { title: 'Delete', icon: 'delete' },
                     { title: 'Re-assign', icon: 'check' }
                   ]}

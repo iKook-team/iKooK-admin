@@ -31,7 +31,7 @@ const ToggleUserActiveModal = forwardRef<HTMLDialogElement, ToggleUserActiveModa
           id: user!.id,
           disable: user?.is_active
         });
-
+          console.log(response);
         toast(response.data.data, { type: 'success' });
         getCurrentFromRef(ref)?.close();
       } finally {

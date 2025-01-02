@@ -19,7 +19,7 @@ type UsersScreenProps = {
 export default function UsersScreen({ type }: UsersScreenProps) {
   const navigate = useNavigate();
 
-  const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
+  // const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
 
   const header = useMemo(
     () => [
@@ -34,16 +34,32 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
 
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
+  // const [query, setQuery] = useState<string>();
+  // const [filter, setFilter] = useState<string>(filters[0]);
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
 
-  const { isPending, users, error } = useFetchUsersQuery({
+  const {
+  
+    isPending,
+    error,
+    users,
+    filter,
+    setFilter,
+    filters,
+    query,
+    setQuery,
+    totalCount,
+    page,
+    setPage,
+    numberOfPages
+  } = useFetchUsersQuery(
+    {
     type,
-    verified: filter === 'all' ? undefined : filter === 'verified',
-    query
-  });
+    // verified: filter === 'all' ? undefined : filter === 'verified',
+    // query
+  }
+);
 
   const toggleSelection = (id: string) => {
     if (selected.includes(id)) {
@@ -169,11 +185,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
             </tr>
           );
         })}
-        page={1}
-        numberOfPages={1}
-        totalItemCount={users.length}
+        page={page}
+        numberOfPages={numberOfPages}
+        totalItemCount={totalCount}
         pageItemCount={users.length}
-        onPageChange={() => {}}
+        onPageChange={setPage}
       />
       <ToggleUserActiveModal ref={suspendUserRef} type={type} user={selectedUser} />
     </>

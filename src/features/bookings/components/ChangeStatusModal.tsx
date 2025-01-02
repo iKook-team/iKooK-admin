@@ -18,9 +18,6 @@ const EditBookingStatusModal = forwardRef<HTMLDialogElement, EditBookingStatusPr
 
     useEffect(() => {
       setStatus(booking?.status);
-      console.log(`booking id is ${booking?.id}`)
-      console.log(booking)
-
     }, [booking?.status]);
 
     const title = 'Change Status for ';
@@ -42,7 +39,8 @@ const EditBookingStatusModal = forwardRef<HTMLDialogElement, EditBookingStatusPr
           status: status
         });
 
-        console.log(`the final status being sent to backend is ${status}`)
+        console.log(response);
+        console.log(response.data.data);
 
         toast(response.data.data, { type: 'success' });
         getCurrentFromRef(ref)?.close();

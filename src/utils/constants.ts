@@ -5,6 +5,10 @@ const Constants = {
   userUrl: `${assetUrl}/users`,
   verificationUrl: `${assetUrl}/verification`,
   getAssetUrl: (image: string, type: 'menus' | 'users' | 'verification') => {
+    if (!image) {
+      console.warn('getAssetUrl called with an undefined or null image');
+      return ''; // Return an empty string or a placeholder URL if needed
+    }
     if (image.startsWith('http')) {
       return image;
     }

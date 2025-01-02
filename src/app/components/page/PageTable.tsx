@@ -42,7 +42,7 @@ export default function PageTable(props: GenericTableProps) {
   );
 }
 
-function PaginationControls(props: PaginationControlsProps) {
+export function PaginationControls(props: PaginationControlsProps) {
   const range = useMemo(() => {
     const start = Math.max(1, props.page - 2);
     const end = Math.min(props.numberOfPages, start + 3);

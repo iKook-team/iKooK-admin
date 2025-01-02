@@ -1,18 +1,28 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
 
-export function useFetchUsersQuery(request: GetAllUsersRequest) {
+export function useFetchUsersQuery(
+  request: GetAllUsersRequest
+) {
+
+  const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
+  const [filter, setFilter] = useState<string>(filters[0]);
+  const [query, setQuery] = useState<string>();
+  const    verified = filter === 'all' ? undefined : filter === 'verified';
+
+  const [page , setPage ] = useState(1);
   const { isPending, data, error } = useQuery({
-    queryKey: [request.type, request.verified],
+    queryKey: [request.type, verified, page],
     queryFn: async ({ queryKey }) => {
-      const [type, verified] = queryKey;
+      const [type, verified, page] = queryKey;
       const response = await fetch({
-        url: `admin/get-all-users?user_type=${type}${verified !== undefined ? `&verified=${verified}` : ''}`,
+        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}`,
+        // dmin/get-all-users?user_type=chef&verified=true&page_number=1&page_size=20&search_name=searchterm
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;
@@ -20,23 +30,35 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
   });
 
   const users = useMemo(() => {
-    if (!request.query || !data) {
-      return data?.data || [];
+    const items = data?.data?.items || [];
+
+    if (!query || !data) {
+      return items;
+
     }
 
-    return data?.data?.filter((user) => {
-      const cleanedQuery = request.query!.toLowerCase();
+    return items.filter((user) => {
+      const cleanedQuery = query!.toLowerCase();
       return (
         user.first_name.toLowerCase().includes(cleanedQuery) ||
         user.last_name.toLowerCase().includes(cleanedQuery)
       );
     });
-  }, [request.query, data]);
+  }, [query, data]);
 
   return {
     isPending,
+    error,
+    page, 
+    setPage,
     users,
-    error
+    query,
+    setQuery,
+    filter,
+    setFilter,
+    filters,
+    totalCount: data?.data?.total_count || 0,
+    numberOfPages: data?.data?.number_of_pages || 0
   };
 }
 
