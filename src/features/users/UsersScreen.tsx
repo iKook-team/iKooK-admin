@@ -144,7 +144,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 <UsernameAndImage
                   name={`${user.first_name} ${user.last_name}`}
                   image={user.photo}
-                  isActive={user.is_active}
+                  status={user.is_active}
+                  statusText={user.status}
                 />
               </td>
               <td>{user.email}</td>

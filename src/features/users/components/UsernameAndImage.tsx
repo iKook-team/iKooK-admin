@@ -1,10 +1,11 @@
 import Constants from '../../../utils/constants.ts';
-import StatusPill from './StatusPill.tsx';
+import StatusPill, { StatusPillType } from './StatusPill.tsx';
 
 export default function UsernameAndImage(props: {
   name: string;
   image: string;
-  isActive?: boolean;
+  status?: boolean;
+  statusText?: string;
 }) {
   return (
     <div className="flex flex-row gap-2 items-center">
@@ -14,10 +15,10 @@ export default function UsernameAndImage(props: {
         className="w-6 aspect-square rounded-full"
       />
       <span className="capitalize">{props.name}</span>
-      {props.isActive !== undefined && (
+      {props.status !== undefined && (
         <StatusPill
-          status={props.isActive ? 'Active' : 'Suspended'}
-          type={props.isActive ? 'active' : 'inactive'}
+          status={props.statusText ?? (props.status ? 'Active' : 'Suspended')}
+          type={(props.statusText as StatusPillType) ?? (props.status ? 'active' : 'inactive')}
         />
       )}
     </div>
