@@ -19,36 +19,33 @@ export default function Routes() {
   const routes = useRoutes(
     isAuthenticated
       ? [
-        {
-          path: '/',
-          element: <NavigationShell />,
-          children: [
-            ...Object.values(UserType).flatMap((type) => [
-              {
-                path: `${type}s`,
-                element: <UsersScreen type={type} />
-              },
-              {
-                path: `${type}s/:id`,
-                element: <UserScreen />
-              }
-            ]),
+          {
+            path: '/',
+            element: <NavigationShell />,
+            children: [
+              ...Object.values(UserType).flatMap((type) => [
+                {
+                  path: `${type}s`,
+                  element: <UsersScreen key={type} type={type} />
+                },
+                {
+                  path: `${type}s/:id`,
+                  element: <UserScreen />
+                }
+              ]),
+              ...Object.values(BookingType).flatMap((type) => [
+                {
+                  path: `bookings/${type}s/:id`,
+                  element: <BookingEditScreen key={type} />
+                }
+              ]),
 
-
-            ...Object.values(BookingType).flatMap((type) => [
-              {
-                path: `bookings/${type}s/:id`,
-                element: <BookingEditScreen/>
-              },
-            ]),
-
-
-            { path: 'menus', element: <MenusScreen /> },
-            { path: 'bookings', element: <BookingsScreen /> },
-            { path: '*', element: <NotFound /> }
-          ]
-        }
-      ]
+              { path: 'menus', element: <MenusScreen /> },
+              { path: 'bookings', element: <BookingsScreen /> },
+              { path: '*', element: <NotFound /> }
+            ]
+          }
+        ]
       : [{ path: '*', element: <AuthScreen type={AuthType.login} /> }]
   );
 

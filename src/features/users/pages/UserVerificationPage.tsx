@@ -6,7 +6,7 @@ import { ReactSVG } from 'react-svg';
 import useBreakpoint from '../../../hooks/useBreakpoint.ts';
 import { useLocation } from 'react-router-dom';
 import { useToggleUserVerificationStatus } from '../domain/usecase.ts';
-import { forwardRef, useRef, useState } from 'react';
+import { Ref, useRef, useState } from 'react';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import InputField from '../../../app/components/InputField.tsx';
@@ -20,7 +20,7 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
   const mutation = useToggleUserVerificationStatus(type);
 
   const messageRef = useRef<HTMLDialogElement>(null);
-  const typeRef = useRef<string>();
+  const typeRef = useRef<string | null>(null);
 
   const [loading, setLoading] = useState<UserVerificationLoading>();
   const [image, setImage] = useState<string>();
@@ -178,10 +178,13 @@ function DocumentEntry(props: {
   );
 }
 
-const UserVerificationReasonModal = forwardRef<
-  HTMLDialogElement,
-  { onSave: (message: string) => void }
->(({ onSave }, ref) => {
+function UserVerificationReasonModal({
+  onSave,
+  ref
+}: {
+  onSave: (message: string) => void;
+  ref: Ref<HTMLDialogElement>;
+}) {
   const [reason, setReason] = useState('');
   return (
     <PageModal ref={ref} id="user-verification-reason-modal" title={'Reason'}>
@@ -210,9 +213,7 @@ const UserVerificationReasonModal = forwardRef<
       </div>
     </PageModal>
   );
-});
-
-UserVerificationReasonModal.displayName = 'UserVerificationReasonModal';
+}
 
 type UserVerificationLoading = {
   type: string;

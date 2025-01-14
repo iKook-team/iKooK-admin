@@ -1,4 +1,3 @@
-
 export interface BookingsUser {
   firstName: string;
   lastName: string;
@@ -6,9 +5,9 @@ export interface BookingsUser {
 }
 
 export interface EditBookingChef {
-  first_name : string;
-  last_name : string;
-  photo : string;
+  first_name: string;
+  last_name: string;
+  photo: string;
   country: string;
   rating: number;
   reviews: number;
@@ -29,38 +28,39 @@ export interface Location {
   coordinate: string[];
 }
 
-export interface Menu{
-  menuName : string;
-  description : string;
+export interface Menu {
+  menuName: string;
+  description: string;
 }
 
-export interface QuoteMenu{
-  menu_name : string;
-  menu_description : string;
-  price : number;
+export interface QuoteMenu {
+  menu_name: string;
+  menu_description: string;
+  price: number;
 }
 
 export interface QuoteChef {
-  city : string; 
-  first_name : string;
-  id : string;
-  last_name : string;
-  profile_picture : string ;
-  rating : number;
-  review : number ;
-  username : string;
+  city: string;
+  first_name: string;
+  id: string;
+  last_name: string;
+  profile_picture: string;
+  rating: number;
+  review: number;
+  username: string;
 }
 
 export interface Quote {
-    amount : number;
-    currency : string;
-    image : string;
-    dessert :  QuoteMenu[];
-    main : QuoteMenu[];
-    menuName : string;
-    side : QuoteMenu[]
-    starter : QuoteMenu[]
-    chef : QuoteChef
+  id: string;
+  amount: number;
+  currency: string;
+  image: string;
+  dessert: QuoteMenu[];
+  main: QuoteMenu[];
+  menuName: string;
+  side: QuoteMenu[];
+  starter: QuoteMenu[];
+  chef: QuoteChef;
 }
 
 export interface Bookings {
@@ -78,14 +78,14 @@ export interface Bookings {
 }
 
 export interface BookingUser {
-  country : string ;
-  email : string;
-  first_name : string; 
-  last_name  : string;
-  id : string;
-  photo : string;
-  username : string;
-  verified : boolean;
+  country: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  id: string;
+  photo: string;
+  username: string;
+  verified: boolean;
 }
 
 export interface Booking {
@@ -97,18 +97,16 @@ export interface Booking {
   message: string;
   event_type: string;
   xallergies: string[];
-  cuisines : string[];
-  menu:  {
+  cuisines: string[];
+  menu: {
     starter: Menu[];
     main: Menu[];
     dessert: Menu[];
   };
-  user : BookingUser;
-  quotes : Quote[]
+  user: BookingUser;
+  quotes: Quote[];
   booking_type: string;
-  custom_booking_type_selected : string;
+  custom_booking_type_selected: string;
 }
 
-export interface Chef{
-
-}
+export interface Chef {}

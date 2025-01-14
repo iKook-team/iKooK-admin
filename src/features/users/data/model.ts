@@ -11,6 +11,7 @@ export interface User extends CurrentUser {
   menus: string[];
   photo: string;
   verified: boolean;
+  status: string;
   verification?: {
     document?: {
       document_type: string;

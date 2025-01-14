@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import close from '../assets/icons/close.svg';
 import { FiDownload, FiMaximize, FiMinimize } from 'react-icons/fi';
@@ -9,7 +9,7 @@ interface ImageViewerDialogProps {
   onClose?: () => void;
 }
 
-const ImageViewerModal: FC<ImageViewerDialogProps> = ({ src, alt, onClose }) => {
+export default function ImageViewerModal({ src, alt, onClose }: ImageViewerDialogProps) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const handleDownload = () => {
@@ -67,8 +67,4 @@ const ImageViewerModal: FC<ImageViewerDialogProps> = ({ src, alt, onClose }) => 
       </div>
     </dialog>
   );
-};
-
-ImageViewerModal.displayName = 'ImageViewerModal';
-
-export default ImageViewerModal;
+}

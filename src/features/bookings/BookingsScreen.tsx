@@ -3,7 +3,7 @@ import IdCell from '../../app/components/IdCell';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
 import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
-import UserNameAndImage from '../users/components/UserNameAndImage';
+import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import { useFetchBookingsQuery } from './domain/usecase';
 import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
@@ -13,7 +13,7 @@ import { BookingType } from './domain/types.ts';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import ReAssignBookingModal from './components/ReAssignBookingModal.tsx';
-import EditBookingStatusModal from './components/ChangeStatusModal.tsx';
+import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 
@@ -52,19 +52,6 @@ export default function BookingsScreen() {
     [bookingType]
   );
 
-  const actionItems = useMemo(
-    () => [
-      { title: 'Edit', icon: 'edit' },
-      { title: 'Change Status', icon: 'reset' },
-      { title: 'Cancel', icon: 'close' },
-      { title: 'Delete', icon: 'delete' },
-      { title: 'Re-assign', icon: 'check' }
-    ],
-    []
-  );
-
- 
-
   const onAction = (action: PageActionItem, booking: Bookings) => {
     setSelectedBooking(booking);
 
@@ -78,7 +65,7 @@ export default function BookingsScreen() {
       case 'reset':
         editBookingStatusRef.current?.showModal();
         break;
-      case 'close':
+      case 'remove':
         cancelBookingRef.current?.showModal();
         break;
       case 'check':
@@ -127,7 +114,7 @@ export default function BookingsScreen() {
                 <IdCell id={booking.id} />
               </td>
               <td>
-                <UserNameAndImage
+                <UsernameAndImage
                   name={`${booking.user.firstName} ${booking.user.lastName}`}
                   image={booking.user?.photo ? booking?.user?.photo : ''}
                 />
@@ -157,7 +144,13 @@ export default function BookingsScreen() {
               {bookingType === BookingType.menus && <td> {booking.status}</td>}
               <td>
                 <PageAction
-                  items={actionItems}
+                  items={[
+                    { title: 'Edit', icon: 'edit' },
+                    { title: 'Change Status', icon: 'reset' },
+                    { title: 'Cancel', icon: 'remove' },
+                    { title: 'Delete', icon: 'delete' },
+                    { title: 'Re-assign', icon: 'check' }
+                  ]}
                   onItemClick={(action) => onAction(action, booking)}
                 />
               </td>

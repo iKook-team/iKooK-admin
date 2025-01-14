@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from 'react';
+import { ReactNode, Ref } from 'react';
 import close from '../../assets/icons/close.svg';
 import { ReactSVG } from 'react-svg';
 
@@ -6,11 +6,12 @@ interface PageModalProps {
   id: string;
   title: ReactNode;
   children: ReactNode;
+  ref: Ref<HTMLDialogElement>;
 }
 
-const PageModal = forwardRef<HTMLDialogElement, PageModalProps>((props, ref) => {
+export default function PageModal(props: PageModalProps) {
   return (
-    <dialog id={props.id} ref={ref} className="modal">
+    <dialog id={props.id} ref={props.ref} className="modal">
       <div className="modal-box pt-9 px-11 pb-11">
         <div className="flex flex-row gap-2 mb-6">
           <h1 className="flex-1 text-2xl font-semibold capitalize">{props.title}</h1>
@@ -27,8 +28,4 @@ const PageModal = forwardRef<HTMLDialogElement, PageModalProps>((props, ref) => 
       </form>
     </dialog>
   );
-});
-
-PageModal.displayName = 'PageModal';
-
-export default PageModal;
+}
