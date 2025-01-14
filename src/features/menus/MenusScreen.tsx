@@ -1,7 +1,7 @@
 import PageTable from '../../app/components/page/PageTable.tsx';
 import { useMemo, useRef, useState } from 'react';
 import { useFetchMenusQuery } from './domain/usecase.ts';
-import UserNameAndImage from '../users/components/UserNameAndImage.tsx';
+import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';
 import IdCell from '../../app/components/IdCell.tsx';
@@ -89,7 +89,7 @@ export default function MenusScreen() {
             </td>
             <td className="capitalize">{menu.menuName}</td>
             <td>
-              <UserNameAndImage
+              <UsernameAndImage
                 name={`${menu.chefID.first_name} ${menu.chefID.last_name}`}
                 image={menu.chefID.photo}
               />

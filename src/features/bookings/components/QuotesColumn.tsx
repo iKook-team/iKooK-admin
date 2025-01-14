@@ -63,7 +63,7 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
     <div className="flex flex-col aspect-[370/600] rounded-xl shadow-xl border border-gray-300 bg-white px-10 justify-evenly items-center h-min gap-3 py-5 max-w-[500px] ">
       {type != BookingType.menus && (
         <button
-          onClick={type ? openModal : () => performAcceptQuote(currentQuote?.image!)}
+          onClick={type ? openModal : () => performAcceptQuote(currentQuote!.id)}
           className="btn btn-primary w-full h-min capitalize"
           disabled={acceptingQuote}
         >

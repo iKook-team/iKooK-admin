@@ -1,7 +1,7 @@
 import { UserType } from './domain/types.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
 import { ChangeEventHandler, useMemo, useRef, useState } from 'react';
-import UserNameAndImage from './components/UserNameAndImage.tsx';
+import UsernameAndImage from './components/UsernameAndImage.tsx';
 import { useFetchUsersQuery } from './domain/usecase.ts';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -19,8 +19,6 @@ type UsersScreenProps = {
 export default function UsersScreen({ type }: UsersScreenProps) {
   const navigate = useNavigate();
 
-  const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
-
   const header = useMemo(
     () => [
       'Name',
@@ -34,15 +32,24 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
 
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
 
-  const { isPending, users, error } = useFetchUsersQuery({
-    type,
-    verified: filter === 'all' ? undefined : filter === 'verified',
-    query
+  const {
+    isPending,
+    error,
+    users,
+    filter,
+    setFilter,
+    filters,
+    query,
+    setQuery,
+    totalCount,
+    page,
+    setPage,
+    numberOfPages
+  } = useFetchUsersQuery({
+    type
   });
 
   const toggleSelection = (id: string) => {
@@ -128,10 +135,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                 </label>
               </td>
               <td>
-                <UserNameAndImage
+                <UsernameAndImage
                   name={`${user.first_name} ${user.last_name}`}
                   image={user.photo}
-                  isActive={user.is_active}
+                  status={user.is_active}
+                  statusText={user.status}
                 />
               </td>
               <td>{user.email}</td>
@@ -169,11 +177,11 @@ export default function UsersScreen({ type }: UsersScreenProps) {
             </tr>
           );
         })}
-        page={1}
-        numberOfPages={1}
-        totalItemCount={users.length}
+        page={page}
+        numberOfPages={numberOfPages}
+        totalItemCount={totalCount}
         pageItemCount={users.length}
-        onPageChange={() => {}}
+        onPageChange={setPage}
       />
       <ToggleUserActiveModal ref={suspendUserRef} type={type} user={selectedUser} />
     </>

@@ -1,4 +1,4 @@
-import { FormEvent, forwardRef, useRef, useState } from 'react';
+import { FormEvent, Ref, useRef, useState, useTransition } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { Menu } from '../data/model.ts';
 import InputField, { DropdownField } from '../../../app/components/InputField.tsx';
@@ -6,83 +6,88 @@ import { useUpdateMenuStatus } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 
-interface ChangeMenuStatusModalProps {
-  menu?: Menu;
+export default function ChangeMenuStatusModal({ menu, ref }: ChangeMenuStatusModalProps) {
+  const form = useRef<HTMLFormElement>(null);
+
+  const mutation = useUpdateMenuStatus();
+  const [state, setState] = useState<ChangeMenuStatusModalState>(initialState);
+  const [isPending, startTransition] = useTransition();
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!form.current?.checkValidity() || isPending) {
+      return;
+    }
+
+    startTransition(async () => {
+      await mutation.mutateAsync({
+        id: menu!.id,
+        ...state
+      });
+      toast(`${menu?.menuName} updated successfully`, { type: 'success' });
+      getCurrentFromRef(ref)?.close();
+      setState(initialState);
+    });
+  };
+
+  return (
+    <PageModal
+      ref={ref}
+      id="change-menu-status-modal"
+      title={
+        <>
+          Update <span className="text-jordy-blue">{`Chef ${menu?.chefID.username}'s `}</span>
+          <span className="text-purple-taupe">{menu?.menuName}</span> status
+        </>
+      }
+    >
+      <form ref={form} onSubmit={onSubmit}>
+        <DropdownField
+          value={state.status}
+          label="Status"
+          onChange={(event) =>
+            setState((prevState) => ({
+              ...prevState,
+              status: event.target.value as ChangeMenuStatus
+            }))
+          }
+          options={['approve', 'unapprove']}
+          required={true}
+        />
+        {state.status === 'unapprove' && (
+          <InputField
+            value={state.reason}
+            label="Reason"
+            placeholder="Enter reason"
+            required={true}
+            onChange={(event) =>
+              setState((prevState) => ({ ...prevState, reason: event.target.value }))
+            }
+            className="mt-4"
+          />
+        )}
+        <button type="submit" className="btn btn-primary w-full mt-8" disabled={isPending}>
+          Update
+          {isPending && <span className="loading loading-spinner"></span>}
+        </button>
+      </form>
+    </PageModal>
+  );
 }
 
-const ChangeMenuStatusModal = forwardRef<HTMLDialogElement, ChangeMenuStatusModalProps>(
-  ({ menu }, ref) => {
-    const form = useRef<HTMLFormElement>(null);
+type ChangeMenuStatusModalProps = {
+  menu?: Menu;
+  ref: Ref<HTMLDialogElement>;
+};
 
-    const mutation = useUpdateMenuStatus();
+type ChangeMenuStatus = 'approve' | 'unapprove';
 
-    const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState<string>();
-    const [reason, setReason] = useState<string>();
+type ChangeMenuStatusModalState = {
+  status: ChangeMenuStatus;
+  reason: string;
+};
 
-    const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if (!form.current?.checkValidity() || loading) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-
-        await mutation.mutateAsync({
-          id: menu!.id,
-          // @ts-expect-error status is either approve or unapprove
-          status: status!,
-          reason
-        });
-        toast(`${menu?.menuName} updated successfully`, { type: 'success' });
-        getCurrentFromRef(ref)?.close();
-        setStatus('approve');
-        setReason(undefined);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return (
-      <PageModal
-        ref={ref}
-        id="change-menu-status-modal"
-        title={
-          <>
-            Update <span className="text-jordy-blue">{`Chef ${menu?.chefID.username}'s `}</span>
-            <span className="text-purple-taupe">{menu?.menuName}</span> status
-          </>
-        }
-      >
-        <form ref={form} onSubmit={onSubmit}>
-          <DropdownField
-            value={status}
-            label="Status"
-            onChange={(event) => setStatus(event.target.value)}
-            options={['approve', 'unapprove']}
-            required={true}
-          />
-          {status === 'unapprove' && (
-            <InputField
-              value={reason}
-              label="Reason"
-              placeholder="Enter reason"
-              required={true}
-              onChange={(event) => setReason(event.target.value)}
-              className="mt-4"
-            />
-          )}
-          <button type="submit" className="btn btn-primary w-full mt-8" disabled={loading}>
-            Update
-            {loading && <span className="loading loading-spinner"></span>}
-          </button>
-        </form>
-      </PageModal>
-    );
-  }
-);
-
-ChangeMenuStatusModal.displayName = 'ChangeMenuStatusModal';
-
-export default ChangeMenuStatusModal;
+const initialState: ChangeMenuStatusModalState = {
+  status: 'approve',
+  reason: ''
+};

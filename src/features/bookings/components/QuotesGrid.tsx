@@ -18,6 +18,8 @@ const QuoteCardGrid: React.FC<QuoteCardGridProps> = ({
     setCurrentQuote(quote);
   }
 
+  console.log(quotesList);
+
   return (
     <div
       className={`flex flex-col md:flex-col xl:grid gap-4 ${quotesList.length > 1 ? 'xl:grid-cols-2' : 'place-items-center'}`}
