@@ -167,7 +167,7 @@ const sidebarItems = [
   {
     title: 'Gift Experience',
     icon: 'gift',
-    route: '/gift'
+    route: '/promotions'
   },
   {
     title: 'Discounts',

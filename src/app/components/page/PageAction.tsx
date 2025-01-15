@@ -6,13 +6,7 @@ import { MdOutlineMoreHoriz } from 'react-icons/md';
 
 interface PageActionProps {
   items: PageActionItem[];
-  onItemClick: (item: PageActionItem) => void;
-}
-
-interface PageActionItemProps {
-  icon: string;
-  text: string;
-  onClick: () => void;
+  onItemClick?: (item: PageActionItem) => void;
 }
 
 export default function PageAction({ items, onItemClick }: PageActionProps) {
@@ -39,7 +33,7 @@ export default function PageAction({ items, onItemClick }: PageActionProps) {
           icon={item.icon}
           text={item.title}
           onClick={() => {
-            onItemClick(item);
+            onItemClick?.(item);
             closeDropdown();
           }}
         />
@@ -48,7 +42,7 @@ export default function PageAction({ items, onItemClick }: PageActionProps) {
   );
 }
 
-function ActionItem(props: PageActionItemProps) {
+function ActionItem(props: { icon: string; text: string; onClick: () => void }) {
   return (
     <li>
       <button

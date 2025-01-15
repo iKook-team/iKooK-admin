@@ -15,11 +15,13 @@ export default function PageSearchRow(props: {
     <div
       className={`w-full flex flex-row gap-3 items-center ${props.className ? props.className : ''}`}
     >
-      <DropdownField
-        value={props.dropdown}
-        onChange={(e) => props.onDropdown?.(e.target.value)}
-        options={props.dropdownOptions || []}
-      />
+      {props.dropdownOptions && (
+        <DropdownField
+          value={props.dropdown}
+          onChange={(e) => props.onDropdown?.(e.target.value)}
+          options={props.dropdownOptions}
+        />
+      )}
       <div className="flex-1">
         <InputField
           className="w-full max-w-80"

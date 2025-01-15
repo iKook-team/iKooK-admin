@@ -5,7 +5,6 @@ import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import { useFetchBookingsQuery } from './domain/usecase';
-import BookingTypeButtonRow from './components/BookingTypeButtonRow';
 import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
 import { Bookings } from './data/model';
@@ -16,6 +15,7 @@ import ReAssignBookingModal from './components/ReAssignBookingModal.tsx';
 import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
+import Pills from '../../app/components/Pills.tsx';
 
 export default function BookingsScreen() {
   const {
@@ -80,7 +80,12 @@ export default function BookingsScreen() {
   return (
     <>
       <PageTitle title="Bookings Management" />
-      <BookingTypeButtonRow activeButton={bookingType} setBookingType={setBookingType} />
+      <Pills
+        active={bookingType}
+        setActive={setBookingType}
+        items={Object.values(BookingType)}
+        getLabel={(e) => (e === BookingType.menus ? 'bookings' : e)}
+      />
       <PageSearchRow
         className="mt-4 mb-6 w-full"
         search={query}
