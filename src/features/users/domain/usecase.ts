@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
+import { toast } from 'react-toastify';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
@@ -123,4 +124,96 @@ export function useToggleUserVerificationStatus(type: UserType) {
       void queryClient.invalidateQueries({ queryKey: [type] });
     }
   });
+}
+
+export function useCreateNewUser(type: UserType) {
+
+  const [loading, setLoading] = useState(false);
+
+
+   const mutation = useMutation({
+      mutationFn: async (request:  {
+        first_name: string;
+        last_name: string;
+        username: string;
+        email: string;
+        mobile: string;
+        role: UserType;
+      }) => {
+        const response = await fetch({
+          url: `/UserManagement/create-user`,
+          method: 'POST',
+          data: request
+        });
+        return response.data ;
+      }
+    });
+
+
+    return {
+      createUser: async (request: {
+        first_name: string;
+        last_name: string;
+        username: string;
+        email: string;
+        mobile: string;
+        role: UserType;
+      }) => {
+        if (loading) {
+          return;
+        }
+  
+        try {
+          setLoading(true);
+  
+          const response = await mutation.mutateAsync(request);
+  
+         
+            toast(`${type} ${response.data.first_name} created successfully`, {
+              type: 'success'
+            });
+        
+        } catch (_) {
+          // setButtonText('Login');
+          // setUserId(undefined);
+        } finally {
+          setLoading(false);
+        }
+      },
+      loading,
+      // userId,
+      // buttonText
+    };
+
+  // return useMutation({
+  //   mutationFn: ({
+  //     first_name,
+  //     last_name,
+  //     username,
+  //     email,
+  //     mobile,
+  //     role
+  //   }: {
+  //     first_name: string;
+  //     last_name: string;
+  //     username: string;
+  //     email: string;
+  //     mobile: string;
+  //     role: UserType;
+  //   }) => {
+  //     return fetch({
+  //       url: `/UserManagement/create-user`,
+  //       method: 'POST',
+  //       data: {
+  //         first_name: first_name,
+  //         last_name: last_name,
+  //         username: username,
+  //         email: email,
+  //         mobile: mobile,
+  //         role: role
+  //       }
+  //     });
+  //   },
+   
+  // });
 }

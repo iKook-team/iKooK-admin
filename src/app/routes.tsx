@@ -13,6 +13,7 @@ import useAuthStore from '../features/auth/domain/store.ts';
 import { BookingType } from '../features/bookings/domain/types.ts';
 import BookingEditScreen from '../features/bookings/BookingEditScreen.tsx';
 import PromotionsScreen from '../features/promotions/PromotionsScreen.tsx';
+import NewUser from '../features/users/pages/NewUserPage.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -32,6 +33,10 @@ export default function Routes() {
                 {
                   path: `${type}s/:id`,
                   element: <UserScreen />
+                },
+                {
+                  path: `${type}s/new`,
+                  element: <NewUser />
                 }
               ]),
               ...Object.values(BookingType).flatMap((type) => [

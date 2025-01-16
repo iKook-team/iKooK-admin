@@ -34,7 +34,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
   );
 }
 
-function ProfileField({
+export function ProfileField({
   field,
   value,
   onChange
