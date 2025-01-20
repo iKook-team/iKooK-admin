@@ -32,7 +32,7 @@ export function DropdownField(
         className={`w-full capitalize select select-bordered ${props.error ? 'select-error' : ''}`}
       >
         {props.placeholder && (
-          <option disabled className="w-full">
+          <option disabled className="w-full" value="">
             {props.placeholder}
           </option>
         )}

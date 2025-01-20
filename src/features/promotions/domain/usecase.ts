@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import fetch from '../../../app/services/api.ts';
+import { useCallback, useMemo, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import fetch, { queryClient } from '../../../app/services/api.ts';
 import { PromotionType } from './types.ts';
-import { GetAllGiftCardsResponse } from './dto.ts';
+import { CreateGiftCardRequest, GetAllGiftCardsResponse } from './dto.ts';
+import { CURRENCIES } from '../../../utils/formatter.ts';
+import { toast } from 'react-toastify';
 
 export function useFetchPromotionsQuery() {
   const [tab, setTab] = useState<PromotionType>(PromotionType.gifts);
-  const filters = useMemo(() => ['NGN', 'GBP', 'CAD', 'RAND'], []);
+  const filters = CURRENCIES;
   const [filter, setFilter] = useState<string>(filters[0]);
   const [query, setQuery] = useState<string>();
   const [page, setPage] = useState(1);
@@ -63,4 +65,46 @@ export function useFetchPromotionsQuery() {
     totalCount: data?.data?.total_count ?? 0,
     numberOfPages: data?.data?.number_of_pages ?? 0
   };
+}
+
+export function useCreateGiftCard() {
+  const [state, setState] = useState<CreateGiftCardRequest>({
+    currency: '',
+    amount: 0
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: CreateGiftCardRequest) => {
+      return fetch({
+        url: `/promotions/create-gift-card`,
+        method: 'POST',
+        data
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['promotions', 'gift'] });
+      toast('Gift card created successfully', { type: 'success' });
+      setState({ currency: '', amount: 0 });
+    }
+  });
+
+  const submit = useCallback(() => {
+    if (mutation.isPending) {
+      return;
+    }
+
+    const { amount, currency } = state;
+
+    if (amount <= 0) {
+      toast('Amount must be greater than 0', { type: 'error' });
+      return;
+    } else if (!currency) {
+      toast('Please select a currency', { type: 'error' });
+      return;
+    }
+
+    return mutation.mutate({ amount, currency });
+  }, [mutation, state]);
+
+  return { state, setState, submit, isPending: mutation.isPending };
 }

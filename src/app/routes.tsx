@@ -13,6 +13,7 @@ import useAuthStore from '../features/auth/domain/store.ts';
 import { BookingType } from '../features/bookings/domain/types.ts';
 import BookingEditScreen from '../features/bookings/BookingEditScreen.tsx';
 import PromotionsScreen from '../features/promotions/PromotionsScreen.tsx';
+import CreateGiftScreen from '../features/promotions/CreateGiftScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -43,7 +44,14 @@ export default function Routes() {
 
               { path: 'menus', element: <MenusScreen /> },
               { path: 'bookings', element: <BookingsScreen /> },
-              { path: 'promotions', element: <PromotionsScreen /> },
+              {
+                path: 'promotions',
+                element: <PromotionsScreen />
+              },
+              {
+                path: 'promotions/gifts/new',
+                element: <CreateGiftScreen />
+              },
               { path: '*', element: <NotFound /> }
             ]
           }

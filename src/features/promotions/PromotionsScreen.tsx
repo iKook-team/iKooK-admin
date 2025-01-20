@@ -13,6 +13,7 @@ import { formatCurrency } from '../../utils/formatter.ts';
 import EmptyCell from '../../app/components/EmptyCell.tsx';
 import moment from 'moment';
 import GiftCardItem from './components/GiftCardItem.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function PromotionsScreen() {
   const {
@@ -31,6 +32,7 @@ export default function PromotionsScreen() {
     numberOfPages,
     totalCount
   } = useFetchPromotionsQuery();
+  const navigate = useNavigate();
 
   const isGifts = tab === PromotionType.gifts;
   const isPurchase = tab === PromotionType.purchased;
@@ -61,6 +63,9 @@ export default function PromotionsScreen() {
         button={
           isGifts ? 'New Gift' : tab === PromotionType.purchased ? 'Send Gift' : 'New Promo Code'
         }
+        onButton={() =>
+          navigate(tab === PromotionType.gifts ? '/promotions/gifts/new' : '/promotions/new')
+        }
       />
       <PageTable
         isFetching={isPending}
@@ -80,7 +85,7 @@ export default function PromotionsScreen() {
         useDefaultWrapper={!isGifts}
         body={
           isGifts ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-8 xl:gap-y-16">
               {items.map((item) => (
                 <GiftCardItem key={item.id} {...item} />
               ))}
