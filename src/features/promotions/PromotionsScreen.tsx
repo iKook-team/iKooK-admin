@@ -12,6 +12,7 @@ import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { formatCurrency } from '../../utils/formatter.ts';
 import EmptyCell from '../../app/components/EmptyCell.tsx';
 import moment from 'moment';
+import GiftCardItem from './components/GiftCardItem.tsx';
 
 export default function PromotionsScreen() {
   const {
@@ -76,9 +77,14 @@ export default function PromotionsScreen() {
             </tr>
           )
         }
+        useDefaultWrapper={!isGifts}
         body={
           isGifts ? (
-            <>Promotion</>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-16">
+              {items.map((item) => (
+                <GiftCardItem key={item.id} {...item} />
+              ))}
+            </div>
           ) : (
             items.map((item) => {
               const user = item.purchased_by;

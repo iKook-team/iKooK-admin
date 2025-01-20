@@ -14,6 +14,11 @@ interface GenericTableProps extends PaginationControlsProps {
   emptyMessage?: string;
   header: ReactNode;
   body: ReactNode;
+
+  /**
+   * If undefined/true, the default table wrapper will be used. If false, the body will be rendered directly.
+   */
+  useDefaultWrapper?: boolean;
 }
 
 export default function PageTable(props: GenericTableProps) {
@@ -27,7 +32,7 @@ export default function PageTable(props: GenericTableProps) {
         </div>
       ) : props.emptyMessage ? (
         <p className="text-center">{props.emptyMessage}</p>
-      ) : (
+      ) : props.useDefaultWrapper !== false ? (
         <div className="overflow-x-auto flex-1 relative">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead className="text-black/40">{props.header}</thead>
@@ -36,6 +41,8 @@ export default function PageTable(props: GenericTableProps) {
             </tbody>
           </table>
         </div>
+      ) : (
+        props.body
       )}
       <PaginationControls {...props} />
     </>
