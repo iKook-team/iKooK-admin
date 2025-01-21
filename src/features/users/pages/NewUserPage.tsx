@@ -1,12 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import PageBackButton from '../../../app/components/page/PageBackButton';
-import { use, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UserType } from '../domain/types';
 import PageTitle from '../../../app/components/page/PageTitle';
 import { chefProfileFields, hostProfileFields } from '../domain/fields';
 import { ProfileField } from './UserProfilePage';
 import DragAndDropImage from '../components/ImageDraggable';
-import { useCreateNewUser } from '../domain/usecase';
+import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from '../domain/usecase';
 
 export default function NewUser() {
   const { pathname } = useLocation();
@@ -18,14 +18,20 @@ export default function NewUser() {
   const fields = type === UserType.host ? hostProfileFields : chefProfileFields;
   const firstName = useMemo(() => fields.find((field) => field.id === 'first_name')!, [fields]);
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name')!, [fields]);
+  const userName = useMemo(() => fields.find((field) => field.id === 'user_name')!, [fields]);
 
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
-    const [username, setUserName] = useState('username');
-
+  const [username, setUserName] = useState('');
   const { createUser, loading } = useCreateNewUser(type);
+  const { isPending, err, successmsg, status } = useCheckUserNameValidity(username);
+  const { roles, error } = useGetRole({ isAdmin: true });
+
+  const types = type === 'host' ? 'user' : 'chef';
+
+  const role = roles.filter((item) => item.name === types).map((item) => item.id)[0];
 
   return (
     <>
@@ -54,8 +60,24 @@ export default function NewUser() {
               />
             </div>
           </div>
+          <div className="flex-1">
+            <ProfileField
+              field={userName}
+              value={username}
+              onChange={(e) => {
+                setUserName(e);
+              }}
+            />
+          </div>
+          {username && (
+            <div>
+              {isPending && <p className="text-blue-500">Checking username...</p>}
+              {err && !isPending && <p className="text-red"> {err}</p>}
+              {successmsg && !isPending && <p className="text-green"> {successmsg}</p>}
+            </div>
+          )}
           {fields.map((field) => {
-            if (field.id === 'first_name' || field.id === 'last_name') {
+            if (field.id === 'first_name' || field.id === 'last_name' || field.id === 'user_name') {
               return null;
             }
 
@@ -73,14 +95,16 @@ export default function NewUser() {
             }
 
             return (
-              <ProfileField
-                key={field.id}
-                field={field}
-                value={value}
-                onChange={(e) => {
-                  onchangeFunc(e);
-                }}
-              />
+              <div key={field.id}>
+                <ProfileField
+                  key={field.id}
+                  field={field}
+                  value={value}
+                  onChange={(e) => {
+                    onchangeFunc(e);
+                  }}
+                />
+              </div>
             );
           })}
         </form>
@@ -90,14 +114,21 @@ export default function NewUser() {
       </div>
 
       <h1 className="font-poppins mt-20 text-base">
-        A password will be generated and send to the {type}'s email
+        A password will be generated and sent to the {type}'s email
       </h1>
 
       <button
         onClick={() => {
-          createUser({ first_name, last_name, email, mobile, role: type, username });
+          createUser({
+            first_name: first_name,
+            last_name: last_name,
+            username: username,
+            email: email,
+            mobile: mobile,
+            role: role
+          });
         }}
-        disabled={loading}
+        disabled={loading || !status}
         className="btn btn-primary h-min w-[200px] mt-4"
       >
         Create new user
