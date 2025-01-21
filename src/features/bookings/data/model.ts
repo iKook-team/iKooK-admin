@@ -107,6 +107,7 @@ export interface Booking {
   quotes: Quote[];
   booking_type: string;
   custom_booking_type_selected: string;
+  currency:string;
 }
 
 export interface Chef {}

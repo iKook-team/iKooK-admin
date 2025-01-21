@@ -31,7 +31,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ budget,  cuisines, eventType, a
         <img src={getImageUrl("icons/warning.svg")} alt="Warning Icon" />
         <div className="flex flex-col">
           <h1 className="font-light">Your budget</h1>
-          <h1 className="font-extrabold text-2xl">£{budget}</h1>
+          <h1 className="font-extrabold text-2xl">NGN {budget}</h1>
         </div>
       </div>
 
