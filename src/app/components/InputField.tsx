@@ -1,6 +1,14 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
 import { removeFields } from '../../utils/fieldManipulation.ts';
 
+interface InputContainerProps {
+  label?: string;
+  'label-class-name'?: string;
+  error?: string;
+  className?: string;
+  children: ReactNode;
+}
+
 export default function InputField(
   props: InputHTMLAttributes<HTMLInputElement> &
     Omit<InputContainerProps, 'children'> & {
@@ -12,7 +20,10 @@ export default function InputField(
       <div
         className={`w-full input input-bordered flex items-center gap-2 ${props.error ? 'input-error' : ''}`}
       >
-        <input {...removeFields(props, 'label', 'error', 'className')} className="w-full flex-1" />
+        <input
+          {...removeFields(props, 'label', 'label-class-name', 'error', 'className')}
+          className="w-full flex-1"
+        />
         {props.trailing && <>{props.trailing}</>}
       </div>
     </InputContainer>
@@ -28,7 +39,7 @@ export function DropdownField(
   return (
     <InputContainer {...props}>
       <select
-        {...removeFields(props, 'label', 'error', 'className')}
+        {...removeFields(props, 'label', 'label-class-name', 'error', 'className')}
         className={`w-full capitalize select select-bordered ${props.error ? 'select-error' : ''}`}
       >
         {props.placeholder && (
@@ -46,23 +57,45 @@ export function DropdownField(
   );
 }
 
-interface InputContainerProps {
-  label?: string;
-  error?: string;
-  className?: string;
-  children: ReactNode;
+export function ToggleField(
+  props: InputHTMLAttributes<HTMLInputElement> &
+    Omit<Omit<InputContainerProps, 'children'>, 'error'>
+) {
+  return (
+    <div className={`relative form-control ${props.className ? props.className : ''}`}>
+      <label className="label cursor-pointer p-0">
+        <InputLabel title={props.label ?? ''} className={props['label-class-name']} />
+        <input
+          {...removeFields(props, 'label', 'className')}
+          type="checkbox"
+          className="toggle toggle-primary"
+        />
+      </label>
+    </div>
+  );
+}
+
+export function InputLabel(props: { title: string; className?: string }) {
+  return (
+    <span
+      className={`label label-text text-sm text-charcoal font-medium capitalize ${props.className ? props.className : ''}`}
+    >
+      {props.title}
+    </span>
+  );
 }
 
 function InputContainer(props: InputContainerProps) {
   return (
     <label className={`relative form-control ${props.className ? props.className : ''}`}>
       {props.label && (
-        <span className="label label-text p-0 pb-2 text-sm text-charcoal font-medium capitalize">
-          {props.label}
-        </span>
+        <InputLabel
+          title={props.label}
+          className={`p-0 pb-2 ${props['label-class-name'] ? props['label-class-name'] : ''}`}
+        />
       )}
       {props.children}
-      {props.error ? <span className="label label-text-alt">{props.error}</span> : null}
+      {props.error ? <span className="label label-text-alt text-red">{props.error}</span> : null}
     </label>
   );
 }

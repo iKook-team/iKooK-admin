@@ -7,3 +7,15 @@ export type CreateGiftCardRequest = {
   currency: string;
   amount: number;
 };
+
+export type CreatePromoCodeRequest = {
+  title: string;
+  description: string;
+  percentage?: number;
+  coupon_code: string;
+  currency?: string;
+  no_of_users: number;
+  from_duration?: string;
+  to_duration?: string;
+  menu?: string;
+};
