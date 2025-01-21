@@ -3,35 +3,58 @@ import InputField, { DropdownField } from '../../app/components/InputField.tsx';
 import { CURRENCIES } from '../../utils/formatter.ts';
 import { useCreateGiftCard } from './domain/usecase.ts';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
+import { Formik } from 'formik';
+import { CreateGiftCardSchema, getCreateGiftCardInitialValues } from './domain/schema.ts';
+import { withZodSchema } from '../../utils/zodValidator.ts';
+import { toast } from 'react-toastify';
 
 export default function CreateGiftScreen() {
-  const { state, setState, isPending, submit } = useCreateGiftCard();
+  const mutation = useCreateGiftCard();
   return (
-    <div className="max-w-[50rem]">
-      <PageTitle title="Create Gift" />
-      <DropdownField
-        label="Currency"
-        placeholder="Select currency"
-        options={CURRENCIES}
-        className="mt-4"
-        value={state.currency}
-        onChange={(e) => setState((state) => ({ ...state, currency: e.target.value }))}
-      />
-      <InputField
-        label="Amount"
-        placeholder="Enter amount"
-        type="number"
-        className="mt-4"
-        value={state.amount}
-        onChange={(e) => setState((state) => ({ ...state, amount: Number(e.target.value) }))}
-      />
-      <button
-        className="btn btn-primary w-fit mt-[3.3125rem]"
-        onClick={submit}
-        disabled={isPending}
-      >
-        <LoadingSpinner isLoading={isPending}>Save Changes</LoadingSpinner>
-      </button>
-    </div>
+    <Formik
+      initialValues={getCreateGiftCardInitialValues()}
+      validate={withZodSchema(CreateGiftCardSchema)}
+      onSubmit={(values, { resetForm }) => {
+        mutation.mutateAsync(values).then(() => {
+          toast('Gift card created successfully', { type: 'success' });
+          resetForm();
+        });
+      }}
+    >
+      {({ values, touched, errors, handleChange, handleSubmit }) => {
+        return (
+          <form className="max-w-[50rem]" onSubmit={handleSubmit}>
+            <PageTitle title="Create Gift" />
+            <DropdownField
+              label="Currency"
+              name="currency"
+              placeholder="Select currency"
+              options={CURRENCIES}
+              className="mt-4"
+              value={values['currency']}
+              error={touched['currency'] ? errors['currency'] : undefined}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Amount"
+              name="amount"
+              placeholder="Enter amount"
+              type="number"
+              className="mt-4"
+              value={values['amount']}
+              error={touched['amount'] ? errors['amount'] : undefined}
+              onChange={handleChange}
+            />
+            <button
+              className="btn btn-primary w-fit mt-[3.3125rem]"
+              type="submit"
+              disabled={mutation.isPending}
+            >
+              <LoadingSpinner isLoading={mutation.isPending}>Save Changes</LoadingSpinner>
+            </button>
+          </form>
+        );
+      }}
+    </Formik>
   );
 }

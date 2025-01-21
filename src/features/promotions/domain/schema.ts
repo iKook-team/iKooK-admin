@@ -23,6 +23,11 @@ const CreatePromoCodeBaseSchema = z.object({
   has_menu: z.boolean().default(false) // Switch to include menu
 });
 
+export const CreateGiftCardSchema = z.object({
+  currency: z.string().min(1, 'Currency is required'),
+  amount: z.number().min(1, 'Amount is required')
+});
+
 export const CreatePromoCodeSchema = z
   .discriminatedUnion('has_duration', [
     CreatePromoCodeBaseSchema.extend({
@@ -44,6 +49,10 @@ export const CreatePromoCodeSchema = z
       })
     ])
   );
+
+export function getCreateGiftCardInitialValues() {
+  return extractInitialValues(CreateGiftCardSchema);
+}
 
 export function getCreatePromoInitialValues() {
   return extractInitialValues(

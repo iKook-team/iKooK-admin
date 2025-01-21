@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api.ts';
 import { PromotionType } from './types.ts';
 import { CreateGiftCardRequest, CreatePromoCodeRequest, GetAllGiftCardsResponse } from './dto.ts';
 import { CURRENCIES } from '../../../utils/formatter.ts';
-import { toast } from 'react-toastify';
 
 export function useFetchPromotionsQuery() {
   const [tab, setTab] = useState<PromotionType>(PromotionType.gifts);
@@ -68,12 +67,7 @@ export function useFetchPromotionsQuery() {
 }
 
 export function useCreateGiftCard() {
-  const [state, setState] = useState<CreateGiftCardRequest>({
-    currency: '',
-    amount: 0
-  });
-
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: (data: CreateGiftCardRequest) => {
       return fetch({
         url: `/promotions/create-gift-card`,
@@ -83,30 +77,8 @@ export function useCreateGiftCard() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['promotions', 'gift'] });
-      toast('Gift card created successfully', { type: 'success' });
-      setState({ currency: '', amount: 0 });
     }
   });
-
-  const submit = useCallback(() => {
-    if (mutation.isPending) {
-      return;
-    }
-
-    const { amount, currency } = state;
-
-    if (amount <= 0) {
-      toast('Amount must be greater than 0', { type: 'error' });
-      return;
-    } else if (!currency) {
-      toast('Please select a currency', { type: 'error' });
-      return;
-    }
-
-    return mutation.mutate({ amount, currency });
-  }, [mutation, state]);
-
-  return { state, setState, submit, isPending: mutation.isPending };
 }
 
 export function useCreatePromoCode() {
