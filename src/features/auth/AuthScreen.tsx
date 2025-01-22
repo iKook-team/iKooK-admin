@@ -8,6 +8,7 @@ import logo from '../../app/assets/icons/logo.svg';
 import { FormEvent, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import InputField from '../../app/components/InputField.tsx';
+import { ReactSVG } from 'react-svg';
 
 type AuthScreenProps = {
   type: AuthType;
@@ -47,7 +48,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
   return (
     <main className="w-full h-full bg-lotion flex flex-col items-center px-4">
       <div className="flex-1"></div>
-      <img src={logo} alt="iKooK" />
+      <ReactSVG src={logo} className="w-[10%] text-primary" wrapper="svg" />
       <div className="flex-2"></div>
       <h1 className="font-poppins font-medium text-black text-xl text-center">
         Login to Admin Dashboard

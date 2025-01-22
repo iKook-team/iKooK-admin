@@ -7,6 +7,7 @@ import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
@@ -16,41 +17,26 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const [page, setPage] = useState(1);
 
   const verified = filter === 'all' ? undefined : filter === 'verified';
+  const debouncedQuery = useDebouncedValue(query, 500);
 
   const { isPending, data, error } = useQuery({
-    queryKey: [request.type, verified, page],
+    queryKey: [request.type, verified, page, debouncedQuery],
     queryFn: async ({ queryKey }) => {
-      const [type, verified, page] = queryKey;
+      const [type, verified, page, query] = queryKey;
       const response = await fetch({
-        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}`,
+        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}${query ? `&search_name=${query}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;
     }
   });
 
-  const users = useMemo(() => {
-    const items = data?.data?.items || [];
-
-    if (!query || !data) {
-      return items;
-    }
-
-    return items.filter((user) => {
-      const cleanedQuery = query!.toLowerCase();
-      return (
-        user.first_name.toLowerCase().includes(cleanedQuery) ||
-        user.last_name.toLowerCase().includes(cleanedQuery)
-      );
-    });
-  }, [query, data]);
-
   return {
     isPending,
     error,
     page,
     setPage,
-    users,
+    users: data?.data?.items ?? [],
     query,
     setQuery,
     filter,

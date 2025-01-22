@@ -11,6 +11,7 @@ import ChangeMenuStatusModal from './components/ChangeMenuStatusModal.tsx';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import { Menu } from './data/model.ts';
+import { formatCurrency } from '../../utils/formatter.ts';
 
 export default function MenusScreen() {
   const [selectedMenu, setSelectedMenu] = useState<Menu>();
@@ -95,7 +96,7 @@ export default function MenusScreen() {
               />
             </td>
             <td></td>
-            <td></td>
+            <td>{formatCurrency(Number(menu.menuPrice), menu.currency)}</td>
             <td>
               <VerificationStatus
                 title={capitalize(menu.status)}
