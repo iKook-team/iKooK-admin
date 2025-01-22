@@ -11,6 +11,6 @@ export default function StatusPill({ status, type }: StatusPillProps) {
       ? 'bg-green/10 text-green'
       : type === 'pending'
         ? 'bg-yellow-500/10 text-yellow-500'
-        : 'bg-red/10 text-red';
+        : 'bg-red-base/10 text-red-base';
   return <span className={`px-3 py-1 rounded-full capitalize ${className}`}>{status}</span>;
 }

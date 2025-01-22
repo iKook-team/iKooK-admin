@@ -15,8 +15,8 @@ const ProposalImageStack: React.FC<ProposalImageStackProps> = ({ proposalList })
 
   return proposalList.length === 1 ? (
     <img
-    src={`${Constants.userUrl}/${proposalList[0].photo}`}
-    alt={proposalList[0].username}
+      src={`${Constants.userUrl}/${proposalList[0].photo}`}
+      alt={proposalList[0].username}
       className="w-6 aspect-square rounded-full"
     />
   ) : proposalList.length === 2 ? (
@@ -45,7 +45,7 @@ const ProposalImageStack: React.FC<ProposalImageStackProps> = ({ proposalList })
         />
       ))}
       <div className="flex bg-gray-200 h-6 w-6 rounded-full absolute left-8 z-30 items-center justify-center">
-        <h2 className="text-black text-xs">{`+${proposalList.length - 2}`}</h2>
+        <h2 className="text-black-base text-xs">{`+${proposalList.length - 2}`}</h2>
       </div>
     </div>
   );

@@ -146,7 +146,7 @@ function DocumentEntry(props: {
             <ReactSVG src={close} className="w-6 h-6" />
           </button>
           <button
-            className="absolute bottom-0 left-0 btn btn-primary rounded-b-lg rounded-t-none w-full text-black"
+            className="absolute bottom-0 left-0 btn btn-primary rounded-b-lg rounded-t-none w-full text-black-base"
             onClick={props.onImage}
           >
             View Document
@@ -198,7 +198,7 @@ function UserVerificationReasonModal({
           Cancel
         </button>
         <button
-          className="btn btn-primary border-none bg-red"
+          className="btn btn-primary border-none bg-red-base"
           onClick={() => {
             if (!reason) {
               toast('Please enter a reason', { type: 'error' });

@@ -91,7 +91,7 @@ export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingMo
           {users.map((chef, index) => (
             <li key={index}>
               <div
-                className="text-center border border-black bg-primary mb-1 font-bold cursor-pointer hover:bg-gray-100"
+                className="text-center border border-black-base bg-primary mb-1 font-bold cursor-pointer hover:bg-gray-100"
                 onClick={() => {
                   setQuery(chef.last_name + ' ' + chef.first_name);
                   setChefId(chef.id);

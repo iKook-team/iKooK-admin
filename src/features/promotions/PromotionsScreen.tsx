@@ -54,7 +54,7 @@ export default function PromotionsScreen() {
     <ReactSVG
       src={CalendarIcon}
       wrapper="svg"
-      className="text-black/40 w-3 h-3 inline-block mr-1"
+      className="text-black-base/40 w-3 h-3 inline-block mr-1"
     />
   );
 
@@ -148,8 +148,8 @@ export default function PromotionsScreen() {
                             ? 'Unused'
                             : 'Expired'
                       }
-                      circleColor={active ? 'bg-green' : 'bg-red'}
-                      textColor={active ? 'text-green' : 'text-red'}
+                      circleColor={active ? 'bg-green' : 'bg-red-base'}
+                      textColor={active ? 'text-green' : 'text-red-base'}
                     />
                   </td>
                   <td>{_PageAction}</td>

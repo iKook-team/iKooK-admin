@@ -111,7 +111,7 @@ export default function MenusScreen() {
                   menu.status === 'approved'
                     ? 'text-green'
                     : menu.status === 'deleted' || menu.status === 'unapproved'
-                      ? 'text-red'
+                      ? 'text-red-base'
                       : 'text-jordy-blue'
                 }
               />

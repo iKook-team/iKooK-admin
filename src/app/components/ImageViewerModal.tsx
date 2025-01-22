@@ -24,7 +24,7 @@ export default function ImageViewerModal({ src, alt, onClose }: ImageViewerDialo
   };
 
   return (
-    <dialog className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+    <dialog className="fixed inset-0 z-50 flex items-center justify-center bg-black-base bg-opacity-75 p-4">
       <div
         className={`relative bg-white rounded-lg shadow-2xl transition-all duration-300 ease-in-out ${
           isFullScreen ? 'w-full h-full max-w-none max-h-none' : 'max-w-4xl max-h-[90vh] w-full'

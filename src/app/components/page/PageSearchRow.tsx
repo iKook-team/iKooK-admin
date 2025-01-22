@@ -31,9 +31,11 @@ export default function PageSearchRow(props: {
           trailing={<FaSearch />}
         />
       </div>
-      <button onClick={props.onButton} className="btn btn-primary">
-        {props.button}
-      </button>
+      {props.button && (
+        <button onClick={props.onButton} className="btn btn-primary">
+          {props.button}
+        </button>
+      )}
     </div>
   );
 }
