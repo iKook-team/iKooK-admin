@@ -1,21 +1,6 @@
 import Field from '../../../app/domain/field.ts';
 import { CURRENCIES } from '../../../utils/formatter.ts';
 
-export const createGiftFields: Field[] = [
-  {
-    id: 'currency',
-    label: 'Currency',
-    placeholder: 'Select currency',
-    type: 'select'
-  },
-  {
-    id: 'amount',
-    label: 'Amount',
-    placeholder: 'Enter amount',
-    type: 'number'
-  }
-];
-
 export const createPromoFields: Field[] = [
   {
     id: 'title',
@@ -30,12 +15,15 @@ export const createPromoFields: Field[] = [
   {
     id: 'percentage',
     placeholder: 'Discount percentage (%)',
-    type: 'number'
+    type: 'number',
+    min: 1,
+    max: 100
   },
   {
-    id: 'coupon_code',
+    id: 'promo_code',
     placeholder: 'Custom Code',
-    type: 'text'
+    type: 'text',
+    maxLength: 15
   },
   {
     id: 'currency',
@@ -44,7 +32,7 @@ export const createPromoFields: Field[] = [
     options: CURRENCIES
   },
   {
-    id: 'no_of_users',
+    id: 'number_of_users',
     placeholder: 'Number of users',
     type: 'number'
   },

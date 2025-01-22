@@ -9,4 +9,8 @@ export default interface Field {
   hidden?: boolean;
   readonly?: boolean;
   options?: string[];
+  maxLength?: number;
+  minLength?: number;
+  min?: number;
+  max?: number;
 }
