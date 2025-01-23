@@ -27,7 +27,7 @@ export default function NewUser() {
   const [username, setUserName] = useState('');
   const { createUser, loading } = useCreateNewUser(type);
   const { isPending, err, successmsg, status } = useCheckUserNameValidity(username);
-  const { roles, error } = useGetRole({ isAdmin: true });
+  const { roles } = useGetRole({ isAdmin: true });
 
   const types = type === 'host' ? 'user' : 'chef';
 
@@ -82,6 +82,7 @@ export default function NewUser() {
             }
 
             let onchangeFunc = (e: string) => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
               e;
             };
             let value = '';
@@ -114,7 +115,7 @@ export default function NewUser() {
       </div>
 
       <h1 className="font-poppins mt-20 text-base">
-        A password will be generated and sent to the {type}'s email
+        A password will be generated and sent to the {type}&#39;s email
       </h1>
 
       <button

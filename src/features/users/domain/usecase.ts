@@ -1,6 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
-import { GetAllUsersRequest, GetAllUsersResponse, GetRoleRequest, GetRoleResponse } from '../data/dto.ts';
+import {
+  GetAllUsersRequest,
+  GetAllUsersResponse,
+  GetRoleRequest,
+  GetRoleResponse
+} from '../data/dto.ts';
 import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
@@ -149,7 +154,7 @@ export function useCreateNewUser(type: UserType) {
       try {
         setLoading(true);
 
-         await mutation.mutateAsync(request);
+        await mutation.mutateAsync(request);
 
         toast(`${type}  created successfully`, {
           type: 'success'
@@ -167,13 +172,13 @@ export function useCreateNewUser(type: UserType) {
   };
 }
 
-export function useCheckUserNameValidity(username  : string) {
+export function useCheckUserNameValidity(username: string) {
   const [successmsg, setSuccess] = useState('');
   const [err, setError] = useState('');
   const [status, setStatus] = useState(false);
 
   const { isPending } = useQuery({
-    queryKey: ['usernameValidity', username ],
+    queryKey: ['usernameValidity', username],
     queryFn: async ({ queryKey }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, username] = queryKey;
@@ -191,7 +196,7 @@ export function useCheckUserNameValidity(username  : string) {
         setSuccess(response.data.message);
         setError('');
         setStatus(true);
-        return response.data ;
+        return response.data;
       } catch (err) {
         if (axios.isAxiosError(err)) {
           // Handle AxiosError specifically
@@ -223,7 +228,7 @@ export function useGetRole(request: GetRoleRequest) {
   const { isPending, data, error } = useQuery({
     queryKey: [request.isAdmin],
     queryFn: async ({ queryKey }) => {
-      const [isAdmin] = queryKey;
+      const [_] = queryKey;
       const response = await fetch({
         // url: '/roleClaims/get-roles?admin=true',
         url: '/roleClaims/get-roles',
@@ -246,7 +251,7 @@ export function useGetRole(request: GetRoleRequest) {
   return {
     isPending,
     error,
-    roles,
+    roles
     // totalCount: data?.data?.total_count || 0,
     // numberOfPages: data?.data?.number_of_pages || 0
   };
