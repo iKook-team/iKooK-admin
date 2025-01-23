@@ -1,25 +1,17 @@
 import PageTable from '../../app/components/page/PageTable.tsx';
 import { useMemo, useRef, useState } from 'react';
 import { useFetchMenusQuery } from './domain/usecase.ts';
-import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
-import VerificationStatus from '../../app/components/VerificationStatus.tsx';
-import { capitalize } from '../../utils/strings.ts';
-import IdCell from '../../app/components/IdCell.tsx';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 import ChangeMenuStatusModal from './components/ChangeMenuStatusModal.tsx';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import { Menu } from './data/model.ts';
-import { formatCurrency } from '../../utils/formatter.ts';
+import MenuRow from './components/MenuRow.tsx';
+import MenuHeader from './components/MenuHeader.tsx';
 
 export default function MenusScreen() {
   const [selectedMenu, setSelectedMenu] = useState<Menu>();
-
-  const header = useMemo(
-    () => ['ID', 'Menu', 'Chef', 'Availability', 'Starting Price', 'Status'],
-    []
-  );
 
   const actionItems = useMemo<PageActionItem[]>(
     () => [
@@ -72,54 +64,18 @@ export default function MenusScreen() {
         isFetching={isPending}
         emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
         header={
-          <tr>
-            {header.map((title) => (
-              <th key={title} className="text-left">
-                {title}
-              </th>
-            ))}
+          <MenuHeader>
             <th>
               <PageAction items={actionItems} onItemClick={onAction} />
             </th>
-          </tr>
+          </MenuHeader>
         }
         body={menus.map((menu) => (
-          <tr key={menu.id}>
-            <td>
-              <IdCell id={menu.id} />
-            </td>
-            <td className="capitalize">{menu.menuName}</td>
-            <td>
-              <UsernameAndImage
-                name={`${menu.chefID.first_name} ${menu.chefID.last_name}`}
-                image={menu.chefID.photo}
-              />
-            </td>
-            <td></td>
-            <td>{formatCurrency(Number(menu.menuPrice), menu.currency)}</td>
-            <td>
-              <VerificationStatus
-                title={capitalize(menu.status)}
-                circleColor={
-                  menu.status === 'approved'
-                    ? 'bg-green'
-                    : menu.status === 'deleted' || menu.status === 'unapproved'
-                      ? 'bg-red'
-                      : 'bg-jordy-blue'
-                }
-                textColor={
-                  menu.status === 'approved'
-                    ? 'text-green'
-                    : menu.status === 'deleted' || menu.status === 'unapproved'
-                      ? 'text-red-base'
-                      : 'text-jordy-blue'
-                }
-              />
-            </td>
+          <MenuRow key={menu.id} {...menu}>
             <td>
               <PageAction items={actionItems} onItemClick={(action) => onAction(action, menu)} />
             </td>
-          </tr>
+          </MenuRow>
         ))}
         page={page}
         numberOfPages={numberOfPages}
