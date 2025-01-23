@@ -1,3 +1,4 @@
+import CalendarIcon from '../../app/assets/icons/calendar.svg';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import Pills from '../../app/components/Pills.tsx';
 import { PromotionType } from './domain/types.ts';
@@ -11,9 +12,10 @@ import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { formatCurrency } from '../../utils/formatter.ts';
 import EmptyCell from '../../app/components/EmptyCell.tsx';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import GiftCardItem from './components/GiftCardItem.tsx';
 import { useNavigate } from 'react-router-dom';
+import { ReactSVG } from 'react-svg';
 
 export default function PromotionsScreen() {
   const {
@@ -48,6 +50,13 @@ export default function PromotionsScreen() {
     [isPurchase]
   );
   const _PageAction = useMemo(() => <PageAction items={[]} />, []);
+  const DateIcon = () => (
+    <ReactSVG
+      src={CalendarIcon}
+      wrapper="svg"
+      className="text-black-base/40 w-3 h-3 inline-block mr-1"
+    />
+  );
 
   return (
     <>
@@ -75,7 +84,13 @@ export default function PromotionsScreen() {
             <tr>
               {header.map((title) => (
                 <th key={title} className="text-left">
-                  {title}
+                  {title === 'Date' ? (
+                    <>
+                      <DateIcon /> Date
+                    </>
+                  ) : (
+                    title
+                  )}
                 </th>
               ))}
               <th>{_PageAction}</th>
@@ -92,7 +107,7 @@ export default function PromotionsScreen() {
             </div>
           ) : (
             items.map((item) => {
-              const user = item.purchased_by;
+              const user = isPurchase ? item.purchased_by : item?.created_by;
               const active = isPurchase ? item.redeemed : item.is_active;
               return (
                 <tr
@@ -102,7 +117,7 @@ export default function PromotionsScreen() {
                   <td>
                     <IdCell id={item.id} />
                   </td>
-                  <td>{item.card_number}</td>
+                  <td>{isPurchase ? item.card_number : item.promo_code}</td>
                   <td>
                     {user ? (
                       <UsernameAndImage
@@ -113,8 +128,15 @@ export default function PromotionsScreen() {
                       <EmptyCell />
                     )}
                   </td>
-                  <td>{moment(item.created_at).format('ll')}</td>
-                  <td>{formatCurrency(item.amount, item.currency)}</td>
+                  <td>
+                    <DateIcon />
+                    {isPurchase
+                      ? getDate(item.created_at, true)
+                      : `${getDate(item.duration_to)} - ${getDate(item.duration_from)}`}
+                  </td>
+                  <td>
+                    {isPurchase ? formatCurrency(item.amount, item.currency) : item.percentage}
+                  </td>
                   <td>
                     <VerificationStatus
                       title={
@@ -126,8 +148,8 @@ export default function PromotionsScreen() {
                             ? 'Unused'
                             : 'Expired'
                       }
-                      circleColor={active ? 'bg-green' : 'bg-red'}
-                      textColor={active ? 'text-green' : 'text-red'}
+                      circleColor={active ? 'bg-green' : 'bg-red-base'}
+                      textColor={active ? 'text-green' : 'text-red-base'}
                     />
                   </td>
                   <td>{_PageAction}</td>
@@ -144,4 +166,14 @@ export default function PromotionsScreen() {
       />
     </>
   );
+}
+
+function getDate(date: string | undefined, isPurchase: boolean = false) {
+  const dateTime = DateTime.fromISO(date ?? new Date().toISOString());
+
+  if (isPurchase) {
+    return dateTime.toFormat(`${dateTime.day} MMMM, yyyy`);
+  } else {
+    return dateTime.toFormat(`${dateTime.day} MMM`);
+  }
 }

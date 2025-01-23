@@ -95,7 +95,9 @@ function InputContainer(props: InputContainerProps) {
         />
       )}
       {props.children}
-      {props.error ? <span className="label label-text-alt text-red">{props.error}</span> : null}
+      {props.error ? (
+        <span className="label label-text-alt text-red-base">{props.error}</span>
+      ) : null}
     </label>
   );
 }

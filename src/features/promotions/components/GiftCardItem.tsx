@@ -15,7 +15,7 @@ export default function GiftCardItem(props: GiftCard) {
             <span className="font-semibold leading-8">iKooK</span>
             <span className="text-xs leading-3">Gift Card</span>
           </div>
-          <button className="btn text-xs bg-white text-black rounded-full w-[7.1875rem] min-h-fit max-h-[2.3125rem]">
+          <button className="btn text-xs bg-white text-black-base rounded-full w-[7.1875rem] min-h-fit max-h-[2.3125rem]">
             Choose card
           </button>
         </div>

@@ -16,6 +16,7 @@ import PromotionsScreen from '../features/promotions/PromotionsScreen.tsx';
 import NewUser from '../features/users/pages/NewUserPage.tsx';
 import CreateGiftScreen from '../features/promotions/CreateGiftScreen.tsx';
 import CreatePromoScreen from '../features/promotions/CreatePromoScreen.tsx';
+import SupportScreen from '../features/support/SupportScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -61,6 +62,10 @@ export default function Routes() {
               {
                 path: 'promotions/new',
                 element: <CreatePromoScreen />
+              },
+              {
+                path: 'support',
+                element: <SupportScreen />
               },
               { path: '*', element: <NotFound /> }
             ]

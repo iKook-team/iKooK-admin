@@ -46,8 +46,8 @@ export default function CreatePromoScreen() {
             : {}),
           ...(values.has_menu ? { menu: values.menu } : {})
         };
-        mutation.mutateAsync(request).then(() => {
-          toast(`${values.coupon_code} has been created successfully`, { type: 'success' });
+        mutation.mutateAsync(request).then((response) => {
+          toast(response.data.data, { type: 'success' });
           resetForm();
         });
       }}
@@ -123,6 +123,9 @@ function Entry(field: Field & { className?: string }) {
       className={
         field.className ? field.className : `mt-4 ${type === 'toggle' ? 'max-w-72 mt-9' : ''}`
       }
+      maxLength={field.maxLength}
+      min={field.min}
+      max={field.max}
       label-class-name="!text-lg"
     />
   );

@@ -135,7 +135,10 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
               Cancel
             </button>
 
-            <button onClick={() => {}} className="btn bg-black text-white w-full h-min capitalize">
+            <button
+              onClick={() => {}}
+              className="btn bg-black-base text-white w-full h-min capitalize"
+            >
               Delete
             </button>
           </>

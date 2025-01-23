@@ -17,7 +17,7 @@ export function useFetchPromotionsQuery() {
     queryFn: async ({ queryKey }) => {
       const [_, tab, currency, page] = queryKey;
       const baseUrl =
-        tab === undefined ? 'promotions/get-gift-cards' : 'promotions/get-all-gift-cards';
+        tab === 'promo' ? 'promotions/get-all-coupons' : 'promotions/get-all-gift-cards';
       const response = await fetch({
         url: `${baseUrl}?page_number=${page}&page_size=20&currency=${currency}`,
         method: 'GET'
@@ -40,7 +40,7 @@ export function useFetchPromotionsQuery() {
 
     return items.filter((card) => {
       return (
-        card.card_number.includes(cleanedQuery) ||
+        (card.card_number ?? card.promo_code)?.includes(cleanedQuery) ||
         card?.purchased_by?.username?.toLowerCase().includes(cleanedQuery) ||
         card?.purchased_by?.first_name.toLowerCase().includes(cleanedQuery) ||
         card?.purchased_by?.last_name.toLowerCase().includes(cleanedQuery)
@@ -85,7 +85,7 @@ export function useCreatePromoCode() {
   return useMutation({
     mutationFn: (data: CreatePromoCodeRequest) => {
       return fetch({
-        url: `/promotions/create-coupon-code`,
+        url: `/promotions/create-coupon`,
         method: 'POST',
         data
       });

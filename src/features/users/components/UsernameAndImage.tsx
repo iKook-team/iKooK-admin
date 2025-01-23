@@ -3,9 +3,10 @@ import StatusPill, { StatusPillType } from './StatusPill.tsx';
 
 export default function UsernameAndImage(props: {
   name: string;
-  image: string;
+  image?: string;
   status?: boolean;
   statusText?: string;
+  'name-class-name'?: string;
 }) {
   return (
     <div className="flex flex-row gap-2 items-center">
@@ -14,7 +15,9 @@ export default function UsernameAndImage(props: {
         alt={props.name}
         className="w-6 aspect-square rounded-full"
       />
-      <span className="capitalize">{props.name}</span>
+      <span className={`capitalize ${props['name-class-name'] ? props['name-class-name'] : ''}`}>
+        {props.name}
+      </span>
       {props.status !== undefined && (
         <StatusPill
           status={props.statusText ?? (props.status ? 'Active' : 'Suspended')}

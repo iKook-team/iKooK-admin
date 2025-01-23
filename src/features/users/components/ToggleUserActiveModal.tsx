@@ -53,7 +53,7 @@ export default function ToggleUserActiveModal({ user, type, ref }: ToggleUserAct
           Cancel
         </button>
         <button
-          className={`btn btn-primary border-0 ${user?.is_active ? 'bg-red' : 'bg-green'}`}
+          className={`btn btn-primary border-0 ${user?.is_active ? 'bg-red-base' : 'bg-green'}`}
           disabled={isPending}
           onClick={onSubmit}
         >

@@ -16,9 +16,9 @@ const CreatePromoCodeBaseSchema = z.object({
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(3, 'Description is required'),
   percentage: z.number(),
-  coupon_code: z.string().min(3, 'Coupon code is required'),
+  promo_code: z.string().min(3, 'Promo code is required'),
   currency: z.string(),
-  no_of_users: z.number().min(1, 'Number of users is required'),
+  number_of_users: z.number().min(1, 'Number of users is required'),
   has_duration: z.boolean().default(false), // Switch to include duration
   has_menu: z.boolean().default(false) // Switch to include menu
 });

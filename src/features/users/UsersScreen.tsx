@@ -156,8 +156,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
               <td>
                 <VerificationStatus
                   title={user.verified ? 'Verified' : 'Not verified'}
-                  circleColor={user.verified ? 'bg-green' : 'bg-red'}
-                  textColor={user.verified ? 'text-green' : 'text-red'}
+                  circleColor={user.verified ? 'bg-green' : 'bg-red-base'}
+                  textColor={user.verified ? 'text-green' : 'text-red-base'}
                 />
               </td>
               <td>

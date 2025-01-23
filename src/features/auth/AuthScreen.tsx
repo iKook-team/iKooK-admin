@@ -50,7 +50,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
       <div className="flex-1"></div>
       <ReactSVG src={logo} className="w-[10%] text-primary" wrapper="svg" />
       <div className="flex-2"></div>
-      <h1 className="font-poppins font-medium text-black text-xl text-center">
+      <h1 className="font-poppins font-medium text-black-base text-xl text-center">
         Login to Admin Dashboard
       </h1>
       <form
@@ -75,7 +75,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
           />
         ))}
         {type === AuthType.login && (
-          <Link className="text-black-olive font-poppins" to="/forgot-password">
+          <Link className="text-black-base-olive font-poppins" to="/forgot-password">
             Forgot your password?
           </Link>
         )}

@@ -22,7 +22,7 @@ export default function NavigationShell() {
   }, [location]);
 
   return (
-    <div className="h-screen drawer lg:drawer-open lg:grid-cols-[2fr_8fr]">
+    <div className="h-screen drawer md:drawer-open md:grid-cols-[2fr_8fr]">
       <input id="navigation-bar-drawer" type="checkbox" className="drawer-toggle" />
 
       {/* Content */}
@@ -30,7 +30,7 @@ export default function NavigationShell() {
         {/* Top Bar */}
         <nav className="navbar flex items-center justify-between px-5 py-4 gap-2 border-b">
           {/* Mobile Navigation Icon */}
-          <label htmlFor="navigation-bar-drawer" className="drawer-button block lg:hidden">
+          <label htmlFor="navigation-bar-drawer" className="drawer-button block md:hidden">
             <RiMenu5Line size={48} />
           </label>
 
@@ -61,7 +61,7 @@ export default function NavigationShell() {
           className="drawer-overlay"
         />
 
-        <div className="h-full bg-white flex flex-col py-10 border-r items-center overflow-y-scroll">
+        <div className="h-full w-fit md:w-full bg-white flex flex-col py-10 border-r items-center overflow-y-scroll">
           <img src={logo} alt="iKooK" className="w-20" />
           <div className="flex flex-col flex-1 mt-12 w-full">
             {sidebarItems.map((item) => {
