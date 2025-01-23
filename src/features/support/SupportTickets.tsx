@@ -2,9 +2,14 @@ import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 import { useFetchSupportTicketsQuery } from './domain/usecase.ts';
 import SupportTicketItem from './components/SupportTicketItem.tsx';
 import { PaginationControls } from '../../app/components/page/PageTable.tsx';
-import { useSearchParams } from 'react-router-dom';
 
-export function SupportTickets() {
+export function SupportTickets({
+  selected,
+  setSelected
+}: {
+  selected: string;
+  setSelected: (id: string) => void;
+}) {
   const {
     query,
     setQuery,
@@ -19,8 +24,6 @@ export function SupportTickets() {
     numberOfPages,
     totalCount
   } = useFetchSupportTicketsQuery();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selected = searchParams.get('ticket_id');
   return (
     <div>
       <PageSearchRow
@@ -40,7 +43,7 @@ export function SupportTickets() {
             <SupportTicketItem
               key={ticket.ticket_id}
               {...ticket}
-              onClick={() => setSearchParams({ ticket_id: ticket.ticket_id })}
+              onClick={() => setSelected(ticket.ticket_id)}
               isActive={selected === ticket.ticket_id}
             />
           ))}

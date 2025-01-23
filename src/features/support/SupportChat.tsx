@@ -1,13 +1,20 @@
-import { useGetSupportTicket } from './domain/usecase.ts';
-import { useSearchParams } from 'react-router-dom';
+import { useGetSupportTicket, useReplyTicket } from './domain/usecase.ts';
 import SupportChatItem from './components/SupportChatItem.tsx';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
+import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 
-export function SupportChat() {
-  const [params, _] = useSearchParams();
-  const ticket = useGetSupportTicket(params.get('ticket_id') ?? '');
+export function SupportChat({
+  ticketId,
+  includeBorder = true
+}: {
+  ticketId: string;
+  includeBorder?: boolean;
+}) {
+  const ticket = useGetSupportTicket(ticketId);
+  const reply = useReplyTicket(ticketId);
+  const [message, setMessage] = useState('');
   return (
-    <div className="w-full border-x border-x-black-neutral-4">
+    <div className={`w-full ${includeBorder ? 'border-x border-x-black-neutral-4' : ''}`}>
       {ticket ? (
         <div>
           <h2 className="text-sm font-bold text-black-base p-5 pb-6 border-b border-b-black-neutral-4 mb-10">
@@ -27,7 +34,23 @@ export function SupportChat() {
             <textarea
               className="w-full h-32 p-4 rounded-md border border-black-neutral-4"
               placeholder="Type your message here"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
             />
+          </div>
+          <div className="flex justify-end mt-2 mr-3">
+            <button
+              className="btn btn-primary bg-primal-base border-primal-base"
+              disabled={reply.isPending}
+              onClick={() => {
+                if (message) {
+                  reply.mutate(message);
+                  setMessage('');
+                }
+              }}
+            >
+              <LoadingSpinner isLoading={reply.isPending}>Respond</LoadingSpinner>
+            </button>
           </div>
         </div>
       ) : (

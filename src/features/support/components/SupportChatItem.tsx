@@ -1,5 +1,6 @@
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
 import { DateTime } from 'luxon';
+import LinkPreview from '../../../app/components/LinkPreview.tsx';
 
 interface SupportChatItemProps {
   user: {
@@ -13,7 +14,7 @@ interface SupportChatItemProps {
 
 export default function SupportChatItem(props: SupportChatItemProps) {
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="flex flex-col">
       <div className="flex flex-row justify-between items-center">
         <UsernameAndImage
           name={props.user ? `${props.user?.first_name} ${props.user?.last_name}` : 'iKooK Support'}
@@ -24,7 +25,8 @@ export default function SupportChatItem(props: SupportChatItemProps) {
           {DateTime.fromISO(props.date).toFormat('MMMM dd, hh:mm')}
         </p>
       </div>
-      <p className="text-xs text-gray-granite">{props.content}</p>
+      <p className={`text-xs text-gray-granite ${props.user ? 'mt-2' : 'mt-3'}`}>{props.content}</p>
+      <LinkPreview text={props.content} className="mt-4" />
     </div>
   );
 }
