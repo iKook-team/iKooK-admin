@@ -16,6 +16,8 @@ import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
+import VerificationStatus from '../../app/components/VerificationStatus.tsx';
+import { capitalize } from '../../utils/strings.ts';
 
 export default function BookingsScreen() {
   const {
@@ -146,7 +148,27 @@ export default function BookingsScreen() {
                   : `${booking.currency} ${booking.amount}`}
               </td>
 
-              {bookingType === BookingType.menus && <td> {booking.status}</td>}
+              {bookingType === BookingType.menus && (
+                <td>
+                  <VerificationStatus
+                    title={capitalize(booking.status)}
+                    circleColor={
+                      booking.status === 'completed'
+                        ? 'bg-green'
+                        : booking.status === 'pending'   ? 'bg-primary':  booking.status === 'cancelled'
+                          ? 'bg-red'
+                          : booking.status === "enquiry" ? 'bg-secondary' : 'bg-jordy-blue'
+                    }
+                    textColor={
+                      booking.status === 'completed'
+                        ? 'text-green'
+                        : booking.status === 'pending'   ? 'text-primary' :  booking.status === 'cancelled'
+                          ? 'text-red'
+                          : booking.status === 'enquiry' ? 'text-secondary' : 'text-jordy-blue'
+                    }
+                  />
+                </td>
+              )}
               <td>
                 <PageAction
                   items={[

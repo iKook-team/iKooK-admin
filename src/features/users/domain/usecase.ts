@@ -151,7 +151,7 @@ export function useCreateNewUser(type: UserType) {
 
          await mutation.mutateAsync(request);
 
-        toast(`${type}  created successfully`, {
+        toast(`${type} created successfully`, {
           type: 'success'
         });
       } catch (error) {
@@ -169,7 +169,7 @@ export function useCreateNewUser(type: UserType) {
 
 export function useCheckUserNameValidity(username  : string) {
   const [successmsg, setSuccess] = useState('');
-  const [err, setError] = useState('');
+  const [err, setErrorMsg] = useState('');
   const [status, setStatus] = useState(false);
 
   const { isPending } = useQuery({
@@ -182,30 +182,37 @@ export function useCheckUserNameValidity(username  : string) {
         return;
       }
 
+      if (username.length <= 3){
+        setErrorMsg("Username should not be less than 3");
+        setSuccess('');
+        return;
+      }
+
       try {
         const response = await fetch({
           url: `registration/username/validity-check/${username}`,
-          method: 'GET'
+          method: 'GET',
+          showError : false
         });
 
         setSuccess(response.data.message);
-        setError('');
+        setErrorMsg('');
         setStatus(true);
-        return response.data ;
-      } catch (err) {
+        return response.data;
+      } 
+      catch (err) {
         if (axios.isAxiosError(err)) {
           // Handle AxiosError specifically
           if (err.response?.status === 409) {
-            setError('Username already in use');
+            setErrorMsg('Username already in use');
             setSuccess('');
             setStatus(false);
           } else {
             return;
           }
-        } else {
-          // toast("an error occured")
+        } 
+        else {
           return;
-          // throw err;
         }
       }
     }

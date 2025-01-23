@@ -3,7 +3,7 @@ import PageBackButton from '../../../app/components/page/PageBackButton';
 import { useMemo, useState } from 'react';
 import { UserType } from '../domain/types';
 import PageTitle from '../../../app/components/page/PageTitle';
-import { chefProfileFields, hostProfileFields } from '../domain/fields';
+import { hostProfileFields } from '../domain/fields';
 import { ProfileField } from './UserProfilePage';
 import DragAndDropImage from '../components/ImageDraggable';
 import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from '../domain/usecase';
@@ -15,7 +15,7 @@ export default function NewUser() {
     return [type.slice(0, 4) as UserType];
   }, [pathname]);
 
-  const fields = type === UserType.host ? hostProfileFields : chefProfileFields;
+  const fields = hostProfileFields;
   const firstName = useMemo(() => fields.find((field) => field.id === 'first_name')!, [fields]);
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name')!, [fields]);
   const userName = useMemo(() => fields.find((field) => field.id === 'user_name')!, [fields]);
@@ -27,7 +27,7 @@ export default function NewUser() {
   const [username, setUserName] = useState('');
   const { createUser, loading } = useCreateNewUser(type);
   const { isPending, err, successmsg, status } = useCheckUserNameValidity(username);
-  const { roles, error } = useGetRole({ isAdmin: true });
+  const { roles } = useGetRole({ isAdmin: true });
 
   const types = type === 'host' ? 'user' : 'chef';
 
@@ -39,7 +39,7 @@ export default function NewUser() {
       <div className="m-3"></div>
       <PageTitle title={type === UserType.host ? 'New User' : 'New Chef'} />
       <div className="flex flex-col items-center justify-center">
-        <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-10">
+        <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-5">
           <div className="flex flex-row gap-4">
             <div className="flex-1">
               <ProfileField
@@ -113,20 +113,31 @@ export default function NewUser() {
         <DragAndDropImage />
       </div>
 
-      <h1 className="font-poppins mt-20 text-base">
+      <h1 className="font-poppins mt-10 text-base">
         A password will be generated and sent to the {type}'s email
       </h1>
 
       <button
         onClick={() => {
-          createUser({
-            first_name: first_name,
-            last_name: last_name,
-            username: username,
-            email: email,
-            mobile: mobile,
-            role: role
-          });
+          try {
+            createUser({
+              first_name: first_name,
+              last_name: last_name,
+              username: username,
+              email: email,
+              mobile: mobile,
+              role: role
+            });
+            setUserName('');
+            setMobile('');
+            setEmail('');
+            setFirstName('');
+            setLastName('');
+          } catch (e) {
+            console.log(e);
+          } finally {
+         
+          }
         }}
         disabled={loading || !status}
         className="btn btn-primary h-min w-[200px] mt-4"
