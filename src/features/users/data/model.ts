@@ -44,3 +44,8 @@ export interface User extends CurrentUser {
     };
   };
 }
+
+export interface Role{
+  id : string;
+  name : string;
+}

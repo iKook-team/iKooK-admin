@@ -23,7 +23,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
           </div>
         </div>
         {fields.map((field) => {
-          if (field.id === 'first_name' || field.id === 'last_name') {
+          if (field.id === 'first_name' || field.id === 'last_name' || field.id === 'user_name') {
             return null;
           }
           // @ts-expect-error key is a string
@@ -34,7 +34,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
   );
 }
 
-function ProfileField({
+export function ProfileField({
   field,
   value,
   onChange

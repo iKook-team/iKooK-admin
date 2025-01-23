@@ -105,18 +105,18 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
 
       <div className="flex flex-col gap-1 w-full">
         <div className="flex justify-between">
-          <h1>{booking.no_of_guest || 0} Guests * £20</h1>
-          <h1>£ {booking.no_of_guest * 20}</h1>
+          <h1>{booking.no_of_guest || 0} Guests * {booking.currency} 20</h1>
+          <h1>{booking.currency} {booking.no_of_guest * 20}</h1>
         </div>
 
         <div className="flex justify-between pb-5 border-b">
           <h1>Platform Fees 2.5%</h1>
-          <h1>£ {booking.no_of_guest * 20 * 0.025}</h1>
+          <h1>{booking.currency} {booking.no_of_guest * 20 * 0.025}</h1>
         </div>
 
         <div className="flex justify-between">
           <h1 className="font-bold uppercase">Total</h1>
-          <h1>£ {(booking.no_of_guest * 20 * 1.025).toFixed(2)}</h1>
+          <h1>{booking.currency } {(booking.no_of_guest * 20 * 1.025).toFixed(2)}</h1>
         </div>
       </div>
 

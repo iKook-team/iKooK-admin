@@ -13,6 +13,11 @@ export const hostProfileFields: Field[] = [
     type: 'text'
   },
   {
+    id: 'user_name',
+    placeholder: 'BullockUsername',
+    type: 'text'
+  },
+  {
     id: 'email',
     label: 'Email Address',
     placeholder: 'sandrabullock@ikook.co.uk',

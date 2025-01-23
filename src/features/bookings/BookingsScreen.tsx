@@ -143,7 +143,7 @@ export default function BookingsScreen() {
               <td>
                 {bookingType === BookingType.enquiries
                   ? booking.number_of_guest
-                  : `€${booking.amount}`}
+                  : `${booking.currency} ${booking.amount}`}
               </td>
 
               {bookingType === BookingType.menus && <td> {booking.status}</td>}

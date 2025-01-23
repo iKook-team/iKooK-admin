@@ -84,6 +84,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         dropdownOptions={filters}
         onDropdown={setFilter}
         button={type === UserType.host ? 'New User' : 'New Chef'}
+        onButton={() => navigate(`/${type}s/new`)}
       />
       <PageTable
         isFetching={isPending}
