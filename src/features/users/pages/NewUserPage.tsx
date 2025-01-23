@@ -7,6 +7,7 @@ import { hostProfileFields } from '../domain/fields';
 import { ProfileField } from './UserProfilePage';
 import DragAndDropImage from '../components/ImageDraggable';
 import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from '../domain/usecase';
+import { toast } from 'react-toastify';
 
 export default function NewUser() {
   const { pathname } = useLocation();
@@ -19,14 +20,14 @@ export default function NewUser() {
   const firstName = useMemo(() => fields.find((field) => field.id === 'first_name')!, [fields]);
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name')!, [fields]);
   const userName = useMemo(() => fields.find((field) => field.id === 'user_name')!, [fields]);
-
+  const [creating, setCreating] = useState(false);
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
   const [username, setUserName] = useState('');
-  const { createUser, loading } = useCreateNewUser(type);
-  const { isPending, err, successmsg, status } = useCheckUserNameValidity(username);
+  const { createUser } = useCreateNewUser(type);
+  const { isPending, successMsg, errorMsg } = useCheckUserNameValidity(username);
   const { roles } = useGetRole({ isAdmin: true });
 
   const types = type === 'host' ? 'user' : 'chef';
@@ -72,8 +73,8 @@ export default function NewUser() {
           {username && (
             <div>
               {isPending && <p className="text-blue-500">Checking username...</p>}
-              {err && !isPending && <p className="text-red"> {err}</p>}
-              {successmsg && !isPending && <p className="text-green"> {successmsg}</p>}
+              {errorMsg && !isPending && <p className="text-red-500"> {errorMsg}</p>}
+              {successMsg && !isPending && <p className="text-green"> {successMsg}</p>}
             </div>
           )}
           {fields.map((field) => {
@@ -118,9 +119,15 @@ export default function NewUser() {
       </h1>
 
       <button
-        onClick={() => {
+        onClick={async () => {
+          if (creating) {
+            return;
+          }
+
           try {
-            createUser({
+            setCreating(true);
+
+            await createUser({
               first_name: first_name,
               last_name: last_name,
               username: username,
@@ -128,18 +135,18 @@ export default function NewUser() {
               mobile: mobile,
               role: role
             });
+            toast(`${type} created successfully`, { type: 'success' });
             setUserName('');
             setMobile('');
             setEmail('');
             setFirstName('');
             setLastName('');
-          } catch (e) {
-            console.log(e);
           } finally {
-         
+            setCreating(false);
+            
           }
         }}
-        disabled={loading || !status}
+        disabled={errorMsg != undefined || username.length <= 3 || isPending}
         className="btn btn-primary h-min w-[200px] mt-4"
       >
         Create new user
