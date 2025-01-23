@@ -133,6 +133,9 @@ export function useCreateNewUser(type: UserType) {
         data: request
       });
       return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
     }
   });
 
@@ -199,7 +202,8 @@ export function useGetRole(request: GetRoleRequest) {
   const { isPending, data, error } = useQuery({
     queryKey: [request.isAdmin],
     queryFn: async ({ queryKey }) => {
-      const [isAdmin] = queryKey;   //This endpoint is a bit faulty, I will fix this after the endpoint is okay
+      // const [isAdmin] = queryKey;
+      const [] = queryKey;  //This endpoint is a bit faulty, I will fix this after the endpoint is okay
       const response = await fetch({
         // url: `/roleClaims/get-roles?admin={isAdmin}`,
         url: `/roleClaims/get-roles`,
