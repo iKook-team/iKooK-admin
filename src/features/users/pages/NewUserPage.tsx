@@ -83,6 +83,7 @@ export default function NewUser() {
             }
 
             let onchangeFunc = (e: string) => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
               e;
             };
             let value = '';

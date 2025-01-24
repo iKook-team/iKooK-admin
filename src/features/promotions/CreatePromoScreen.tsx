@@ -12,16 +12,18 @@ import {
   createPromoFields,
   createPromoMenuFields
 } from './domain/fields.ts';
-import { Fragment } from 'react';
+import { Fragment, RefObject, useRef } from 'react';
 import { CreatePromoCodeSchema, getCreatePromoInitialValues } from './domain/schema.ts';
 import Field from '../../app/domain/field.ts';
 import { withZodSchema } from '../../utils/zodValidator.ts';
 import { toast } from 'react-toastify';
 import { removeFields } from '../../utils/fieldManipulation.ts';
 import { CreatePromoCodeRequest } from './domain/dto.ts';
+import SearchMenuModal from '../menus/components/SearchMenuModal.tsx';
 
 export default function CreatePromoScreen() {
   const mutation = useCreatePromoCode();
+  const modal = useRef<HTMLDialogElement>(null);
   return (
     <Formik
       initialValues={getCreatePromoInitialValues()}
@@ -64,7 +66,7 @@ export default function CreatePromoScreen() {
                     <DurationEntries />
                   )}
                   {field.id === 'has_menu' && values['has_menu'] === true && (
-                    <Entry {...createPromoMenuFields[0]} />
+                    <Entry {...createPromoMenuFields[0]} modal={modal} />
                   )}
                 </Fragment>
               );
@@ -100,33 +102,45 @@ function DurationEntries() {
   );
 }
 
-function Entry(field: Field & { className?: string }) {
+function Entry(field: Field & { className?: string; modal?: RefObject<HTMLDialogElement | null> }) {
   const type = field.type;
   const Element = type === 'select' ? DropdownField : type === 'toggle' ? ToggleField : InputField;
   const formik = useFormikContext<Record<string, any>>();
   return (
-    <Element
-      id={field.id}
-      error={
-        formik.touched[field.id] && formik.errors[field.id]
-          ? (formik.errors[field.id] as string)
-          : undefined
-      }
-      name={field.id}
-      type={field.type}
-      label={field.label}
-      placeholder={field.placeholder}
-      value={formik.values[field.id]}
-      onChange={formik.handleChange}
-      // @ts-expect-error too lazy to fix
-      options={field.options}
-      className={
-        field.className ? field.className : `mt-4 ${type === 'toggle' ? 'max-w-72 mt-9' : ''}`
-      }
-      maxLength={field.maxLength}
-      min={field.min}
-      max={field.max}
-      label-class-name="!text-lg"
-    />
+    <>
+      <Element
+        id={field.id}
+        error={
+          formik.touched[field.id] && formik.errors[field.id]
+            ? (formik.errors[field.id] as string)
+            : undefined
+        }
+        name={field.id}
+        type={field.type}
+        label={field.label}
+        placeholder={field.placeholder}
+        value={formik.values[field.id]}
+        onChange={formik.handleChange}
+        // @ts-expect-error too lazy to fix
+        options={field.options}
+        className={
+          field.className ? field.className : `mt-4 ${type === 'toggle' ? 'max-w-72 mt-9' : ''}`
+        }
+        maxLength={field.maxLength}
+        min={field.min}
+        max={field.max}
+        label-class-name="!text-lg"
+        onClick={field.modal ? () => field.modal?.current?.showModal() : undefined}
+        readOnly={!!field.modal}
+      />
+      {field.modal && (
+        <SearchMenuModal
+          ref={field.modal}
+          onMenuSelected={(menuId: string) => {
+            void formik.setFieldValue('menu', menuId);
+          }}
+        />
+      )}
+    </>
   );
 }

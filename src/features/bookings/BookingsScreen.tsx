@@ -16,8 +16,7 @@ import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
-import VerificationStatus from '../../app/components/VerificationStatus.tsx';
-import { capitalize } from '../../utils/strings.ts';
+import { formatCurrency } from '../../utils/formatter.ts';
 
 export default function BookingsScreen() {
   const {
@@ -145,7 +144,7 @@ export default function BookingsScreen() {
               <td>
                 {bookingType === BookingType.enquiries
                   ? booking.number_of_guest
-                  : `${booking.currency} ${booking.amount}`}
+                  : formatCurrency(booking.amount, booking.currency)}
               </td>
 
               {bookingType === BookingType.menus && (
