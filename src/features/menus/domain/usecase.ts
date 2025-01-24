@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { useMemo, useState } from 'react';
-import { GetAllMenusResponse } from '../data/dto.ts';
+import { GetAllMenusResponse, GetMenuResponse } from '../data/dto.ts';
 import { UpdateMenuStatusRequest } from './types.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
@@ -17,7 +17,6 @@ export function useFetchMenusQuery() {
   const { isPending, data, error } = useQuery({
     queryKey: ['menu', page, filter, debouncedQuery],
     queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, page, filter, query] = queryKey;
       const response = await fetch({
         url: `admin/get-menus?page_number=${page}${filter === 'all' ? '' : `&menu_status=${filter}`}&page_size=20${query ? `&search_name=${query}` : ''}`,
@@ -43,11 +42,27 @@ export function useFetchMenusQuery() {
   };
 }
 
+export function useFetchMenuQuery(id: string) {
+  return useQuery({
+    queryKey: ['menu', id],
+    queryFn: async ({ queryKey }) => {
+      const [_, id] = queryKey;
+      const response = await fetch({
+        url: `menus/get-menu-detail/${id}`,
+        method: 'GET'
+      });
+      return (response.data as GetMenuResponse).data;
+    },
+    enabled: !!id
+  });
+}
+
 export function useUpdateMenuStatus() {
   return useMutation({
     mutationFn: (request: UpdateMenuStatusRequest) => {
+      const id = request.menuId;
       return fetch({
-        url: `/admin/approve-menus/${request.id}?status=${request.status}&${request.reason ? `reason=${request.reason}` : ''}`,
+        url: `/admin/approve-menus/${id}?menuId=${id}&status=${request.status}&${request.message ? `message=${request.message}` : ''}`,
         method: 'GET'
       });
     },

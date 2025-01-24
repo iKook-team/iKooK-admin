@@ -33,10 +33,14 @@ export default {
           neutral: {
             3: '#EDEDF2',
             4: '#D6D6D6'
-          }
+          },
+          100: '#E7E7E7'
         },
         blue: {
-          400: '#4040E9'
+          400: '#4040E9',
+          dark: {
+            electric: '#546881'
+          }
         },
         orange: {
           base: '#D49A07'
@@ -49,7 +53,10 @@ export default {
         gray: {
           granite: '#676767'
         },
-        caramel: '#F9DD98'
+        caramel: '#F9DD98',
+        silver: {
+          american: '#CFCFCE'
+        }
       },
       width: {
         max: '70%',

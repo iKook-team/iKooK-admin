@@ -1,4 +1,6 @@
-import { Menu } from './model.ts';
+import { Menu, MenuDetails } from './model.ts';
 import { GenericResponse, PagedResponse } from '../../../app/data/dto.ts';
 
-export interface GetAllMenusResponse extends GenericResponse<PagedResponse<Menu>> {}
+export type GetAllMenusResponse = GenericResponse<PagedResponse<Menu>>;
+
+export type GetMenuResponse = GenericResponse<MenuDetails>;

@@ -101,7 +101,10 @@ async function handleUnauthorizedError(request: AxiosRequestConfig<unknown>) {
 }
 
 interface ApiClientRequestConfig<T = unknown> extends AxiosRequestConfig<T> {
-  // If true (default), the error will be shown as a toast
+  /**
+   * Whether to show the error toast on non-success status codes
+   * If true (default), the error will be shown as a toast
+   */
   showError?: boolean;
 }
 

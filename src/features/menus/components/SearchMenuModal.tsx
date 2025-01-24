@@ -34,35 +34,33 @@ export default function SearchMenuModal({ ref, onMenuSelected }: SearchMenuModal
 
   return (
     <PageModal ref={ref} id="search-menu-modal" title="Select Menu" className="lg:min-w-[50rem]">
-      <>
-        <InputField
-          className="w-full mb-6"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name of Menu"
-          trailing={<FaSearch />}
-        />
-        <PageTable
-          isFetching={isPending}
-          emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
-          header={<MenuHeader />}
-          body={menus.map((menu) => (
-            <MenuRow
-              key={menu.id}
-              {...menu}
-              onClick={() => {
-                onMenuSelected(menu.id);
-                getCurrentFromRef(ref)?.close();
-              }}
-            />
-          ))}
-          page={page}
-          numberOfPages={numberOfPages}
-          onPageChange={setPage}
-          pageItemCount={menus.length}
-          totalItemCount={totalCount}
-        />
-      </>
+      <InputField
+        className="w-full mb-6"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search by name of Menu"
+        trailing={<FaSearch />}
+      />
+      <PageTable
+        isFetching={isPending}
+        emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
+        header={<MenuHeader />}
+        body={menus.map((menu) => (
+          <MenuRow
+            key={menu.id}
+            {...menu}
+            onClick={() => {
+              onMenuSelected(menu.id);
+              getCurrentFromRef(ref)?.close();
+            }}
+          />
+        ))}
+        page={page}
+        numberOfPages={numberOfPages}
+        onPageChange={setPage}
+        pageItemCount={menus.length}
+        totalItemCount={totalCount}
+      />
     </PageModal>
   );
 }
