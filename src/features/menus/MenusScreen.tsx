@@ -9,20 +9,22 @@ import { PageActionItem } from '../../app/components/page/types.ts';
 import { Menu } from './data/model.ts';
 import MenuRow from './components/MenuRow.tsx';
 import MenuHeader from './components/MenuHeader.tsx';
+import MenuDetailsModal from './components/MenuDetailsModal.tsx';
 
 export default function MenusScreen() {
   const [selectedMenu, setSelectedMenu] = useState<Menu>();
 
   const actionItems = useMemo<PageActionItem[]>(
     () => [
-      { title: 'Edit', icon: 'edit' },
-      { title: 'Change Status', icon: 'reset' },
-      { title: 'Delete', icon: 'delete' }
+      // { title: 'Edit', icon: 'edit' },
+      { title: 'Change Status', icon: 'reset' }
+      // { title: 'Delete', icon: 'delete' }
     ],
     []
   );
 
   const changeStatusRef = useRef<HTMLDialogElement>(null);
+  const menuDetailsRef = useRef<HTMLDialogElement>(null);
 
   const {
     isPending,
@@ -44,6 +46,8 @@ export default function MenusScreen() {
     setSelectedMenu(menu);
     if (icon === 'reset') {
       changeStatusRef.current?.showModal();
+    } else if (icon === 'show') {
+      menuDetailsRef.current?.showModal();
     }
     console.log(action);
   };
@@ -71,7 +75,11 @@ export default function MenusScreen() {
           </MenuHeader>
         }
         body={menus.map((menu) => (
-          <MenuRow key={menu.id} {...menu}>
+          <MenuRow
+            key={menu.id}
+            {...menu}
+            onClick={() => onAction({ title: 'Edit', icon: 'show' }, menu)}
+          >
             <td>
               <PageAction items={actionItems} onItemClick={(action) => onAction(action, menu)} />
             </td>
@@ -83,7 +91,19 @@ export default function MenusScreen() {
         pageItemCount={menus.length}
         totalItemCount={totalCount}
       />
-      <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />
+      <ChangeMenuStatusModal
+        ref={changeStatusRef}
+        menu={
+          selectedMenu
+            ? {
+                id: selectedMenu.id,
+                chefUsername: selectedMenu.chefID.username,
+                name: selectedMenu.menuName
+              }
+            : undefined
+        }
+      />
+      <MenuDetailsModal ref={menuDetailsRef} id={selectedMenu?.id ?? ''} />
     </>
   );
 }

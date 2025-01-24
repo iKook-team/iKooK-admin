@@ -1,5 +1,5 @@
 export interface UpdateMenuStatusRequest {
-  id: string;
+  menuId: string;
   status: 'approve' | 'unapprove';
-  reason?: string;
+  message?: string;
 }

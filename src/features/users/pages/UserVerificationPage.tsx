@@ -20,6 +20,7 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
   const mutation = useToggleUserVerificationStatus(type);
 
   const messageRef = useRef<HTMLDialogElement>(null);
+  const imageViewerRef = useRef<HTMLDialogElement>(null);
   const typeRef = useRef<string | null>(null);
 
   const [loading, setLoading] = useState<UserVerificationLoading>();
@@ -35,7 +36,11 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
   };
 
   const onImage = (image?: string) => {
-    setImage(image ? Constants.getAssetUrl(image, 'verification') : undefined);
+    const src = image ? Constants.getAssetUrl(image, 'verification') : undefined;
+    if (src) {
+      setImage(src);
+      getCurrentFromRef(imageViewerRef)?.showModal();
+    }
   };
 
   const onSubmit = async (accept: boolean, type: string, message?: string) => {
@@ -86,7 +91,7 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
         ref={messageRef}
         onSave={(message) => onSubmit(false, typeRef.current!, message)}
       />
-      {image && <ImageViewerModal src={image} onClose={() => setImage(undefined)} />}
+      <ImageViewerModal ref={imageViewerRef} src={image} />
     </div>
   );
 }

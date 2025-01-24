@@ -17,8 +17,8 @@ import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
 import { formatCurrency } from '../../utils/formatter.ts';
-import { capitalize } from '../../utils/strings.ts';
 import VerificationStatus from '../../app/components/VerificationStatus.tsx';
+import { capitalize } from '../../utils/strings.ts';
 
 export default function BookingsScreen() {
   const {
@@ -156,16 +156,24 @@ export default function BookingsScreen() {
                     circleColor={
                       booking.status === 'completed'
                         ? 'bg-green'
-                        : booking.status === 'pending'   ? 'bg-primary':  booking.status === 'cancelled'
-                          ? 'bg-red'
-                          : booking.status === "enquiry" ? 'bg-secondary' : 'bg-jordy-blue'
+                        : booking.status === 'pending'
+                          ? 'bg-primary'
+                          : booking.status === 'cancelled'
+                            ? 'bg-red-base'
+                            : booking.status === 'enquiry'
+                              ? 'bg-secondary'
+                              : 'bg-jordy-blue'
                     }
                     textColor={
                       booking.status === 'completed'
                         ? 'text-green'
-                        : booking.status === 'pending'   ? 'text-primary' :  booking.status === 'cancelled'
-                          ? 'text-red'
-                          : booking.status === 'enquiry' ? 'text-secondary' : 'text-jordy-blue'
+                        : booking.status === 'pending'
+                          ? 'text-primary'
+                          : booking.status === 'cancelled'
+                            ? 'text-red'
+                            : booking.status === 'enquiry'
+                              ? 'text-secondary'
+                              : 'text-jordy-blue'
                     }
                   />
                 </td>

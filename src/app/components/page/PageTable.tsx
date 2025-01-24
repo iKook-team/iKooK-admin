@@ -1,5 +1,6 @@
 import { ReactNode, useMemo } from 'react';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
+import PageLoading from './PageLoading.tsx';
 
 interface PaginationControlsProps {
   page: number;
@@ -25,11 +26,7 @@ export default function PageTable(props: GenericTableProps) {
   return (
     <>
       {props.isFetching ? (
-        <div className="flex flex-row gap-2">
-          <div className="skeleton h-4 w-full" />
-          <div className="skeleton h-4 w-full" />
-          <div className="skeleton h-4 w-full" />
-        </div>
+        <PageLoading />
       ) : props.emptyMessage ? (
         <p className="text-center">{props.emptyMessage}</p>
       ) : props.useDefaultWrapper !== false ? (

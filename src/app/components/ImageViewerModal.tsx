@@ -1,18 +1,22 @@
-import { useState } from 'react';
+import { Ref, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import close from '../assets/icons/close.svg';
 import { FiDownload, FiMaximize, FiMinimize } from 'react-icons/fi';
 
 interface ImageViewerDialogProps {
-  src: string;
+  src?: string;
   alt?: string;
-  onClose?: () => void;
+  ref: Ref<HTMLDialogElement>;
 }
 
-export default function ImageViewerModal({ src, alt, onClose }: ImageViewerDialogProps) {
+export default function ImageViewerModal({ ref, src, alt }: ImageViewerDialogProps) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const handleDownload = () => {
+    if (!src) {
+      return;
+    }
+
     const link = document.createElement('a');
     link.href = src;
     link.download = alt || 'downloaded-image';
@@ -24,30 +28,27 @@ export default function ImageViewerModal({ src, alt, onClose }: ImageViewerDialo
   };
 
   return (
-    <dialog className="fixed inset-0 z-50 flex items-center justify-center bg-black-base bg-opacity-75 p-4">
+    <dialog id="image-viewer-dialog" className="modal" ref={ref}>
       <div
-        className={`relative bg-white rounded-lg shadow-2xl transition-all duration-300 ease-in-out ${
+        className={`modal-box p-0 relative bg-white rounded-lg shadow-2xl transition-all duration-300 ease-in-out ${
           isFullScreen ? 'w-full h-full max-w-none max-h-none' : 'max-w-4xl max-h-[90vh] w-full'
         }`}
       >
         {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ReactSVG src={close} className="w-6 h-6" />
-        </button>
+        <form method="dialog" className="modal-backdrop">
+          <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition-colors">
+            <ReactSVG src={close} className="w-6 h-6" />
+          </button>
+        </form>
 
         {/* Image Container */}
-        <div className="flex items-center justify-center h-full p-4">
-          <img
-            src={src}
-            alt={alt}
-            className={`object-contain w-full h-full ${
-              isFullScreen ? 'max-w-full max-h-full' : 'max-h-[80vh]'
-            }`}
-          />
-        </div>
+        <img
+          src={src}
+          alt={alt}
+          className={`object-contain w-full h-full ${
+            isFullScreen ? 'max-w-full max-h-full' : 'max-h-[80vh]'
+          }`}
+        />
 
         {/* Action Buttons */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">

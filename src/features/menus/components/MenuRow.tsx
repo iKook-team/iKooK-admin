@@ -33,7 +33,7 @@ export default function MenuRow(props: MenuRowProps) {
             props.status === 'approved'
               ? 'bg-green'
               : props.status === 'deleted' || props.status === 'unapproved'
-                ? 'bg-red'
+                ? 'bg-red-base'
                 : 'bg-jordy-blue'
           }
           textColor={
