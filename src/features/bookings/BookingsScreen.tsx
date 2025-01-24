@@ -147,7 +147,27 @@ export default function BookingsScreen() {
                   : formatCurrency(booking.amount, booking.currency)}
               </td>
 
-              {bookingType === BookingType.menus && <td> {booking.status}</td>}
+              {bookingType === BookingType.menus && (
+                <td>
+                  <VerificationStatus
+                    title={capitalize(booking.status)}
+                    circleColor={
+                      booking.status === 'completed'
+                        ? 'bg-green'
+                        : booking.status === 'pending'   ? 'bg-primary':  booking.status === 'cancelled'
+                          ? 'bg-red'
+                          : booking.status === "enquiry" ? 'bg-secondary' : 'bg-jordy-blue'
+                    }
+                    textColor={
+                      booking.status === 'completed'
+                        ? 'text-green'
+                        : booking.status === 'pending'   ? 'text-primary' :  booking.status === 'cancelled'
+                          ? 'text-red'
+                          : booking.status === 'enquiry' ? 'text-secondary' : 'text-jordy-blue'
+                    }
+                  />
+                </td>
+              )}
               <td>
                 <PageAction
                   items={[

@@ -10,7 +10,6 @@ import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
-import { toast } from 'react-toastify';
 import axios from 'axios';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
@@ -119,7 +118,6 @@ export function useToggleUserVerificationStatus(type: UserType) {
 }
 
 export function useCreateNewUser(type: UserType) {
-  const [loading, setLoading] = useState(false);
   const mutation = useMutation({
     mutationFn: async (request: {
       first_name: string;
@@ -135,6 +133,9 @@ export function useCreateNewUser(type: UserType) {
         data: request
       });
       return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
     }
   });
 
@@ -147,80 +148,53 @@ export function useCreateNewUser(type: UserType) {
       mobile: string;
       role: string;
     }) => {
-      if (loading) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-
-        await mutation.mutateAsync(request);
-
-        toast(`${type}  created successfully`, {
-          type: 'success'
-        });
-      } catch (error) {
-        console.log(error);
-        toast(` ${type} Account creation Unsuccefful`, {
-          type: 'error'
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    loading
+      await mutation.mutateAsync(request);
+    }
   };
 }
 
 export function useCheckUserNameValidity(username: string) {
-  const [successmsg, setSuccess] = useState('');
-  const [err, setError] = useState('');
-  const [status, setStatus] = useState(false);
-
-  const { isPending } = useQuery({
+  const { isPending, data, error } = useQuery({
     queryKey: ['usernameValidity', username],
     queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, username] = queryKey;
 
-      if (username === '') {
-        return;
+      // const regex = ; // Matches any digit (0-9)
+
+      if (!username || username.length <= 3) {
+        throw new Error('Username should not be empty or less than 3 characters');
+      }
+
+      if (!/^[a-zA-Z\s]+$/.test(username)) {
+        throw new Error('Username should not contain a number or symbol');
       }
 
       try {
         const response = await fetch({
           url: `registration/username/validity-check/${username}`,
-          method: 'GET'
+          method: 'GET',
+          showError: false
         });
 
-        setSuccess(response.data.message);
-        setError('');
-        setStatus(true);
         return response.data;
       } catch (err) {
         if (axios.isAxiosError(err)) {
-          // Handle AxiosError specifically
           if (err.response?.status === 409) {
-            setError('Username already in use');
-            setSuccess('');
-            setStatus(false);
-          } else {
-            return;
+            throw new Error('Username already in use');
           }
-        } else {
-          // toast("an error occured")
-          return;
-          // throw err;
         }
+        // Rethrow any other errors
+        throw new Error('Unknown error');
       }
-    }
+    },
+    enabled: !!username, // Avoid querying if username is falsy
+    retry: false
   });
 
   return {
     isPending,
-    err,
-    successmsg,
-    status
+    successMsg: data?.message,
+    errorMsg: error?.message
   };
 }
 
@@ -228,10 +202,11 @@ export function useGetRole(request: GetRoleRequest) {
   const { isPending, data, error } = useQuery({
     queryKey: [request.isAdmin],
     queryFn: async ({ queryKey }) => {
-      const [_] = queryKey;
+      // const [isAdmin] = queryKey;
+      const [] = queryKey;  //This endpoint is a bit faulty, I will fix this after the endpoint is okay
       const response = await fetch({
-        // url: '/roleClaims/get-roles?admin=true',
-        url: '/roleClaims/get-roles',
+        // url: `/roleClaims/get-roles?admin={isAdmin}`,
+        url: `/roleClaims/get-roles`,
         method: 'GET'
       });
       return response.data as GetRoleResponse;
@@ -252,7 +227,5 @@ export function useGetRole(request: GetRoleRequest) {
     isPending,
     error,
     roles
-    // totalCount: data?.data?.total_count || 0,
-    // numberOfPages: data?.data?.number_of_pages || 0
   };
 }

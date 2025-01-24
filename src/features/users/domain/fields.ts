@@ -14,7 +14,7 @@ export const hostProfileFields: Field[] = [
   },
   {
     id: 'user_name',
-    placeholder: 'BullockUsername',
+    placeholder: 'sandy',
     type: 'text'
   },
   {
