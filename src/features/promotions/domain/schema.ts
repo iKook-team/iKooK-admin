@@ -28,6 +28,11 @@ export const CreateGiftCardSchema = z.object({
   amount: z.number().min(1, 'Amount is required')
 });
 
+export const SendGiftCardSchema = z.object({
+  gift: z.string().min(3, 'Gift is required'),
+  email: z.string().email('Invalid email').min(3, 'Email is required')
+});
+
 export const CreatePromoCodeSchema = z
   .discriminatedUnion('has_duration', [
     CreatePromoCodeBaseSchema.extend({
@@ -49,10 +54,6 @@ export const CreatePromoCodeSchema = z
       })
     ])
   );
-
-export function getCreateGiftCardInitialValues() {
-  return extractInitialValues(CreateGiftCardSchema);
-}
 
 export function getCreatePromoInitialValues() {
   return extractInitialValues(

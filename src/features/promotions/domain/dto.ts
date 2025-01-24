@@ -8,6 +8,11 @@ export type CreateGiftCardRequest = {
   amount: number;
 };
 
+export type SendGiftCardRequest = {
+  gift: string;
+  email: string;
+};
+
 export type CreatePromoCodeRequest = {
   title: string;
   description: string;

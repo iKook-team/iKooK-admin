@@ -5,7 +5,7 @@ import { FaSearch } from 'react-icons/fa';
 import PageTable from '../../../app/components/page/PageTable.tsx';
 import { useFetchMenusQuery } from '../domain/usecase.ts';
 import MenuRow from './MenuRow.tsx';
-import MenuHeader from './MenuHeader.tsx';
+import MenusHeader from './MenusHeader.tsx';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 interface SearchMenuModalProps {
@@ -44,7 +44,7 @@ export default function SearchMenuModal({ ref, onMenuSelected }: SearchMenuModal
       <PageTable
         isFetching={isPending}
         emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
-        header={<MenuHeader />}
+        header={<MenusHeader />}
         body={menus.map((menu) => (
           <MenuRow
             key={menu.id}

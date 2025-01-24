@@ -2,7 +2,12 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api.ts';
 import { PromotionType } from './types.ts';
-import { CreateGiftCardRequest, CreatePromoCodeRequest, GetAllGiftCardsResponse } from './dto.ts';
+import {
+  CreateGiftCardRequest,
+  CreatePromoCodeRequest,
+  GetAllGiftCardsResponse,
+  SendGiftCardRequest
+} from './dto.ts';
 import { CURRENCIES } from '../../../utils/formatter.ts';
 
 export function useFetchPromotionsQuery() {
@@ -92,6 +97,21 @@ export function useCreatePromoCode() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['promotions', 'promo'] });
+    }
+  });
+}
+
+export function useSendGiftCard() {
+  return useMutation({
+    mutationFn: (data: SendGiftCardRequest) => {
+      return fetch({
+        url: `/promotions/send-gift-card`,
+        method: 'POST',
+        data
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['promotions', 'gift'] });
     }
   });
 }
