@@ -17,6 +17,8 @@ import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
 import { formatCurrency } from '../../utils/formatter.ts';
+import { capitalize } from '../../utils/strings.ts';
+import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 
 export default function BookingsScreen() {
   const {
