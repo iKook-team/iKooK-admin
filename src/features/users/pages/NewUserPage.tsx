@@ -3,10 +3,11 @@ import PageBackButton from '../../../app/components/page/PageBackButton';
 import { useMemo, useState } from 'react';
 import { UserType } from '../domain/types';
 import PageTitle from '../../../app/components/page/PageTitle';
-import { chefProfileFields, hostProfileFields } from '../domain/fields';
+import { hostProfileFields } from '../domain/fields';
 import { ProfileField } from './UserProfilePage';
 import DragAndDropImage from '../components/ImageDraggable';
 import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from '../domain/usecase';
+import { toast } from 'react-toastify';
 
 export default function NewUser() {
   const { pathname } = useLocation();
@@ -15,18 +16,18 @@ export default function NewUser() {
     return [type.slice(0, 4) as UserType];
   }, [pathname]);
 
-  const fields = type === UserType.host ? hostProfileFields : chefProfileFields;
+  const fields = hostProfileFields;
   const firstName = useMemo(() => fields.find((field) => field.id === 'first_name')!, [fields]);
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name')!, [fields]);
   const userName = useMemo(() => fields.find((field) => field.id === 'user_name')!, [fields]);
-
+  const [creating, setCreating] = useState(false);
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
   const [username, setUserName] = useState('');
-  const { createUser, loading } = useCreateNewUser(type);
-  const { isPending, err, successmsg, status } = useCheckUserNameValidity(username);
+  const { createUser } = useCreateNewUser(type);
+  const { isPending, successMsg, errorMsg } = useCheckUserNameValidity(username);
   const { roles } = useGetRole({ isAdmin: true });
 
   const types = type === 'host' ? 'user' : 'chef';
@@ -39,7 +40,7 @@ export default function NewUser() {
       <div className="m-3"></div>
       <PageTitle title={type === UserType.host ? 'New User' : 'New Chef'} />
       <div className="flex flex-col items-center justify-center">
-        <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-10">
+        <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-5">
           <div className="flex flex-row gap-4">
             <div className="flex-1">
               <ProfileField
@@ -72,8 +73,8 @@ export default function NewUser() {
           {username && (
             <div>
               {isPending && <p className="text-blue-500">Checking username...</p>}
-              {err && !isPending && <p className="text-red"> {err}</p>}
-              {successmsg && !isPending && <p className="text-green"> {successmsg}</p>}
+              {errorMsg && !isPending && <p className="text-red-500"> {errorMsg}</p>}
+              {successMsg && !isPending && <p className="text-green"> {successMsg}</p>}
             </div>
           )}
           {fields.map((field) => {
@@ -114,22 +115,39 @@ export default function NewUser() {
         <DragAndDropImage />
       </div>
 
-      <h1 className="font-poppins mt-20 text-base">
-        A password will be generated and sent to the {type}&#39;s email
+      <h1 className="font-poppins mt-10 text-base">
+        A password will be generated and sent to the {type}'s email
       </h1>
 
       <button
-        onClick={() => {
-          createUser({
-            first_name: first_name,
-            last_name: last_name,
-            username: username,
-            email: email,
-            mobile: mobile,
-            role: role
-          });
+        onClick={async () => {
+          if (creating) {
+            return;
+          }
+
+          try {
+            setCreating(true);
+
+            await createUser({
+              first_name: first_name,
+              last_name: last_name,
+              username: username,
+              email: email,
+              mobile: mobile,
+              role: role
+            });
+            toast(`${type} created successfully`, { type: 'success' });
+            setUserName('');
+            setMobile('');
+            setEmail('');
+            setFirstName('');
+            setLastName('');
+          } finally {
+            setCreating(false);
+            
+          }
         }}
-        disabled={loading || !status}
+        disabled={errorMsg != undefined || username.length <= 3 || isPending}
         className="btn btn-primary h-min w-[200px] mt-4"
       >
         Create new user
