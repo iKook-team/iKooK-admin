@@ -74,3 +74,44 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
     }
   ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }))
 );
+
+export const chefAccountFields: Field[] = [
+  {
+    id: 'billing address',
+    placeholder: 'Enter address',
+    type: 'text'
+  },
+  {
+    id: 'city',
+    placeholder: 'Enter city',
+    type: 'text',
+    readonly: true
+  },
+  {
+    id: 'postcode',
+    placeholder: 'Enter postcode',
+    type: 'text',
+  },
+  {
+    id: 'bank',
+    placeholder: 'Select Bank',
+    type: 'select',
+    readonly: true
+  },
+  {
+    id: 'account number',
+    placeholder: 'Enter Account number',
+    type: 'text'
+  },
+  {
+    id: 'account number',
+    label: 'Postal Code',
+    placeholder: 'Enter Account Number or IBAN',
+    type: 'text'
+  },
+  {
+    id: 'Sort code or SWIFT/BIC code',
+    placeholder: 'Enter Sort code or SWIFT/BIC code',
+    type: 'text'
+  }
+].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));

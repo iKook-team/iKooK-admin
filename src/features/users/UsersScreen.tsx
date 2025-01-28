@@ -11,6 +11,8 @@ import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import ToggleUserActiveModal from './components/ToggleUserActiveModal.tsx';
 import { User } from './data/model.ts';
+import DeleteUserModal from './components/DeleteUserModal.tsx';
+import ResetUserModal from './components/ResetUserPassword.tsx';
 
 type UsersScreenProps = {
   type: UserType;
@@ -31,6 +33,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
   );
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
+  const deleteUserRef = useRef<HTMLDialogElement>(null);
+  const resetPasswordRef = useRef<HTMLDialogElement>(null);
 
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
@@ -69,6 +73,18 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     switch (action.icon) {
       case 'suspend':
         suspendUserRef.current?.showModal();
+        break;
+      case 'edit':
+        navigate(`/${type}s/${user!.id}`);
+        break;
+      case 'delete':
+        deleteUserRef.current?.showModal();
+        break;
+      case 'reset':
+        resetPasswordRef.current?.showModal();
+        break;
+      case 'check':
+        console.log("for verification")
         break;
     }
   };
@@ -185,6 +201,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         onPageChange={setPage}
       />
       <ToggleUserActiveModal ref={suspendUserRef} type={type} user={selectedUser} />
+      <ResetUserModal ref={resetPasswordRef} user={selectedUser} usertype={type} />
+      <DeleteUserModal ref={deleteUserRef} user={selectedUser} usertype={type} />
     </>
   );
 }

@@ -203,7 +203,7 @@ export function useGetRole(request: GetRoleRequest) {
     queryKey: [request.isAdmin],
     queryFn: async ({ queryKey }) => {
       // const [isAdmin] = queryKey;
-      const [] = queryKey;  //This endpoint is a bit faulty, I will fix this after the endpoint is okay
+      const [] = queryKey; //This endpoint is a bit faulty, I will fix this after the endpoint is okay
       const response = await fetch({
         // url: `/roleClaims/get-roles?admin={isAdmin}`,
         url: `/roleClaims/get-roles`,
@@ -227,5 +227,41 @@ export function useGetRole(request: GetRoleRequest) {
     isPending,
     error,
     roles
+  };
+}
+
+export function useDeleteAccount(type: UserType) {
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return await fetch({
+        url: `UserManagement/delete-account/${id}`,
+        method: 'DELETE'
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+}
+
+export function useResetPassword(type: UserType) {
+  const mutation = useMutation({
+    mutationFn: async (request: { email: string }) => {
+      const response = await fetch({
+        url: `user-management/password-reset`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    resetPassword: async (request: { email: string }) => {
+      await mutation.mutateAsync(request);
+    }
   };
 }

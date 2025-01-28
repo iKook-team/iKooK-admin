@@ -7,6 +7,7 @@ import UserHeader from './components/UserHeader.tsx';
 import { User } from './data/model.ts';
 import UserProfilePage from './pages/UserProfilePage.tsx';
 import UserVerificationPage from './pages/UserVerificationPage.tsx';
+import UserAccountPage from './pages/UserAccountPage.tsx';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
@@ -48,6 +49,8 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
       return <UserProfilePage user={user} type={type} />;
     case UserHeaderTab.verification:
       return <UserVerificationPage user={user} type={type} />;
+    case UserHeaderTab.account:
+      return <UserAccountPage user={user} type={type} />
     default:
       return null;
   }
