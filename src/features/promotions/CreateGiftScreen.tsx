@@ -4,15 +4,15 @@ import { CURRENCIES } from '../../utils/formatter.ts';
 import { useCreateGiftCard } from './domain/usecase.ts';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import { Formik } from 'formik';
-import { CreateGiftCardSchema, getCreateGiftCardInitialValues } from './domain/schema.ts';
-import { withZodSchema } from '../../utils/zodValidator.ts';
+import { CreateGiftCardSchema } from './domain/schema.ts';
+import { extractInitialValues, withZodSchema } from '../../utils/zodValidator.ts';
 import { toast } from 'react-toastify';
 
 export default function CreateGiftScreen() {
   const mutation = useCreateGiftCard();
   return (
     <Formik
-      initialValues={getCreateGiftCardInitialValues()}
+      initialValues={extractInitialValues(CreateGiftCardSchema)}
       validate={withZodSchema(CreateGiftCardSchema)}
       onSubmit={(values, { resetForm }) => {
         mutation.mutateAsync(values).then(() => {

@@ -4,7 +4,7 @@ interface MenuHeaderProps {
   children?: ReactNode;
 }
 
-export default function MenuHeader({ children }: MenuHeaderProps) {
+export default function MenusHeader({ children }: MenuHeaderProps) {
   const header = useMemo(
     () => ['ID', 'Menu', 'Chef', 'Availability', 'Starting Price', 'Status'],
     []

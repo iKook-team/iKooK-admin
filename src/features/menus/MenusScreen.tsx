@@ -8,7 +8,7 @@ import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import { Menu } from './data/model.ts';
 import MenuRow from './components/MenuRow.tsx';
-import MenuHeader from './components/MenuHeader.tsx';
+import MenusHeader from './components/MenusHeader.tsx';
 import MenuDetailsModal from './components/MenuDetailsModal.tsx';
 
 export default function MenusScreen() {
@@ -68,11 +68,11 @@ export default function MenusScreen() {
         isFetching={isPending}
         emptyMessage={error?.message || (menus.length == 0 ? 'No menus found' : undefined)}
         header={
-          <MenuHeader>
+          <MenusHeader>
             <th>
               <PageAction items={actionItems} onItemClick={onAction} />
             </th>
-          </MenuHeader>
+          </MenusHeader>
         }
         body={menus.map((menu) => (
           <MenuRow
