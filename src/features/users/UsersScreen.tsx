@@ -1,9 +1,7 @@
 import { UserType } from './domain/types.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
-import { ChangeEventHandler, useMemo, useRef, useState } from 'react';
-import UsernameAndImage from './components/UsernameAndImage.tsx';
+import { ChangeEventHandler, useRef, useState } from 'react';
 import { useFetchUsersQuery } from './domain/usecase.ts';
-import VerificationStatus from '../../app/components/VerificationStatus.tsx';
 import { useNavigate } from 'react-router-dom';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
@@ -13,6 +11,8 @@ import ToggleUserActiveModal from './components/ToggleUserActiveModal.tsx';
 import { User } from './data/model.ts';
 import DeleteUserModal from './components/DeleteUserModal.tsx';
 import ResetUserModal from './components/ResetUserPassword.tsx';
+import UsersHeader from './components/UsersHeader.tsx';
+import UserRow from './components/UserRow.tsx';
 
 type UsersScreenProps = {
   type: UserType;
@@ -20,17 +20,6 @@ type UsersScreenProps = {
 
 export default function UsersScreen({ type }: UsersScreenProps) {
   const navigate = useNavigate();
-
-  const header = useMemo(
-    () => [
-      'Name',
-      'Email',
-      'Address',
-      ...(type == UserType.host ? ['Phone No'] : ['Wallet', 'Rating']),
-      'Status'
-    ],
-    [type]
-  );
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
   const deleteUserRef = useRef<HTMLDialogElement>(null);
@@ -113,69 +102,47 @@ export default function UsersScreen({ type }: UsersScreenProps) {
             : undefined)
         }
         header={
-          <tr>
-            <th>
-              <label>
-                <input className="checkbox" type="checkbox" onChange={selectAll} />
-              </label>
-            </th>
-            {header.map((title) => (
-              <th key={title} className="text-left">
-                {title}
+          <UsersHeader
+            type={type}
+            leading={
+              <th>
+                <label>
+                  <input className="checkbox" type="checkbox" onChange={selectAll} />
+                </label>
               </th>
-            ))}
+            }
+          >
             <th>
               <PageAction items={[]} onItemClick={onAction} />
             </th>
-          </tr>
+          </UsersHeader>
         }
         body={users.map((user) => {
           const isSelected = selected.includes(user.id);
           return (
-            <tr
+            <UserRow
               key={user.id}
-              className={isSelected ? 'active' : undefined}
+              {...user}
+              type={type}
+              isSelected={isSelected}
               onClick={() => navigate(`/${type}s/${user.id}`)}
+              leading={
+                <td>
+                  <label>
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      checked={isSelected}
+                      onClick={(event) => {
+                        toggleSelection(user.id);
+                        event.stopPropagation();
+                      }}
+                      readOnly={true}
+                    />
+                  </label>
+                </td>
+              }
             >
-              <td>
-                <label>
-                  <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked={isSelected}
-                    onClick={(event) => {
-                      toggleSelection(user.id);
-                      event.stopPropagation();
-                    }}
-                    readOnly={true}
-                  />
-                </label>
-              </td>
-              <td>
-                <UsernameAndImage
-                  name={`${user.first_name} ${user.last_name}`}
-                  image={user.photo}
-                  status={user.is_active}
-                  statusText={user.status}
-                />
-              </td>
-              <td>{user.email}</td>
-              <td>{user.address}</td>
-              {type === UserType.host ? (
-                <td>{user.mobile}</td>
-              ) : (
-                <>
-                  <td>Wallet</td>
-                  <td>{user.rating}</td>
-                </>
-              )}
-              <td>
-                <VerificationStatus
-                  title={user.verified ? 'Verified' : 'Not verified'}
-                  circleColor={user.verified ? 'bg-green' : 'bg-red-base'}
-                  textColor={user.verified ? 'text-green' : 'text-red-base'}
-                />
-              </td>
               <td>
                 <PageAction
                   items={[
@@ -191,7 +158,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
                   onItemClick={(action) => onAction(action, user)}
                 />
               </td>
-            </tr>
+            </UserRow>
           );
         })}
         page={page}

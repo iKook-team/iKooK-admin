@@ -2,7 +2,7 @@ import { Menu } from '../data/model.ts';
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
 import { formatCurrency } from '../../../utils/formatter.ts';
-import VerificationStatus from '../../../app/components/VerificationStatus.tsx';
+import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../../utils/strings.ts';
 import { ReactNode } from 'react';
 
@@ -27,7 +27,7 @@ export default function MenuRow(props: MenuRowProps) {
       <td></td>
       <td>{formatCurrency(Number(props.menuPrice), props.currency)}</td>
       <td>
-        <VerificationStatus
+        <ItemStatus
           title={capitalize(props.status)}
           circleColor={
             props.status === 'approved'

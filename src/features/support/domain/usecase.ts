@@ -5,6 +5,7 @@ import fetch, { queryClient } from '../../../app/services/api.ts';
 import { GetAllSupportTicketsResponse } from './dto.ts';
 import { SupportTicket } from './types.ts';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { toast } from 'react-toastify';
 
 function useQueryInfo() {
   const filters = useMemo(() => ['all', 'open', 'closed', 'in-progress'], []);
@@ -124,6 +125,21 @@ export function useReplyTicket(ticketId: string) {
           message
         }
       });
+    }
+  });
+}
+
+export function useCloseTicket(id: string) {
+  return useMutation({
+    mutationFn: () => {
+      return fetch({
+        url: `/support/close-tickets/${id}`,
+        method: 'POST'
+      });
+    },
+    onSuccess: (response) => {
+      toast(response.data.data ?? 'Ticket closed', { type: 'success' });
+      void queryClient.invalidateQueries({ queryKey: ['support'] });
     }
   });
 }
