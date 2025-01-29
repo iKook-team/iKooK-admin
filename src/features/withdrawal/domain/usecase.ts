@@ -62,17 +62,3 @@ export function useCreateWithdrawal() {
     }
   });
 }
-
-export function useApproveWithdrawal() {
-  return useMutation({
-    mutationFn: (userId: string) => {
-      return fetch({
-        url: `/admin/approve-withdrawal/${userId}`,
-        method: 'GET'
-      });
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['withdrawals'] });
-    }
-  });
-}

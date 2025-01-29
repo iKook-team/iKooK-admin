@@ -1,16 +1,13 @@
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
-import { useApproveWithdrawal, useFetchWithdrawalsQuery } from './domain/usecase.ts';
+import { useFetchWithdrawalsQuery } from './domain/usecase.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
-import PageAction from '../../app/components/page/PageAction.tsx';
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import CalendarIcon from '../../app/components/CalendarIcon.tsx';
 import { formatCurrency, getDateWithOrdinal } from '../../utils/formatter.ts';
 import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import ItemStatus from '../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';
-import { PageActionItem } from '../../app/components/page/types.ts';
-import { Withdrawal } from './domain/types.ts';
 import CreateWithdrawalModal from './components/CreateWithdrawalModal.tsx';
 
 export default function WithdrawalScreen() {
@@ -33,24 +30,6 @@ export default function WithdrawalScreen() {
     totalCount
   } = useFetchWithdrawalsQuery();
 
-  const approveWithdrawal = useApproveWithdrawal();
-
-  const _PageAction = useMemo(() => <PageAction items={[]} />, []);
-
-  const onAction = useCallback(
-    (action: PageActionItem, withdrawal: Withdrawal) => {
-      switch (action.icon) {
-        case 'accept':
-          if (!withdrawal.chef || approveWithdrawal.isPending) {
-            return;
-          }
-          approveWithdrawal.mutate(withdrawal.chef!.id);
-          break;
-      }
-    },
-    [approveWithdrawal]
-  );
-
   return (
     <>
       <PageTitle title="Withdrawal" />
@@ -63,7 +42,6 @@ export default function WithdrawalScreen() {
         onDropdown={setFilter}
         button="Withdrawal"
         onButton={() => createWithdrawalRef.current?.showModal()}
-        isLoading={approveWithdrawal.isPending}
       />
       <PageTable
         isFetching={isPending}
@@ -81,7 +59,6 @@ export default function WithdrawalScreen() {
                 )}
               </th>
             ))}
-            <th>{_PageAction}</th>
           </tr>
         }
         body={withdrawals.map((withdrawal) => {
@@ -113,12 +90,6 @@ export default function WithdrawalScreen() {
                   textColor={
                     isSuccessful ? 'text-green' : isPending ? 'text-primary' : 'text-red-base'
                   }
-                />
-              </td>
-              <td>
-                <PageAction
-                  items={[...(isPending && chef ? [{ title: 'Accept', icon: 'accept' }] : [])]}
-                  onItemClick={(action) => onAction(action, withdrawal)}
                 />
               </td>
             </tr>
