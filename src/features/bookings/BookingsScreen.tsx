@@ -17,7 +17,7 @@ import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
 import { formatCurrency } from '../../utils/formatter.ts';
-import VerificationStatus from '../../app/components/VerificationStatus.tsx';
+import ItemStatus from '../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';
 
 export default function BookingsScreen() {
@@ -151,7 +151,7 @@ export default function BookingsScreen() {
 
               {bookingType === BookingType.menus && (
                 <td>
-                  <VerificationStatus
+                  <ItemStatus
                     title={capitalize(booking.status)}
                     circleColor={
                       booking.status === 'completed'

@@ -1,14 +1,10 @@
-interface VerificationStatusProps {
+interface ItemStatusProps {
   title: string;
   circleColor: string;
   textColor: string;
 }
 
-export default function VerificationStatus({
-  title,
-  circleColor,
-  textColor
-}: VerificationStatusProps) {
+export default function ItemStatus({ title, circleColor, textColor }: ItemStatusProps) {
   return (
     <div className="flex flex-row gap-1 items-center">
       <span className={`w-1.5 aspect-square rounded-full ${circleColor}`} />

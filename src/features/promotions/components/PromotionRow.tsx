@@ -1,13 +1,11 @@
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
-import { formatCurrency } from '../../../utils/formatter.ts';
-import VerificationStatus from '../../../app/components/VerificationStatus.tsx';
+import { formatCurrency, getDateWithOrdinal } from '../../../utils/formatter.ts';
+import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { ReactNode } from 'react';
 import { GiftCard } from '../domain/types.ts';
 import EmptyCell from '../../../app/components/EmptyCell.tsx';
-import { DateTime } from 'luxon';
-import CalendarIcon from '../../../app/assets/icons/calendar.svg';
-import { ReactSVG } from 'react-svg';
+import CalendarIcon from '../../../app/components/CalendarIcon.tsx';
 
 interface PromotionRowProps extends GiftCard {
   children?: ReactNode;
@@ -32,18 +30,14 @@ export default function PromotionRow(props: PromotionRowProps) {
         )}
       </td>
       <td>
-        <ReactSVG
-          src={CalendarIcon}
-          wrapper="svg"
-          className="text-black-base/40 w-3 h-3 inline-block mr-1"
-        />
+        <CalendarIcon />
         {props.isPurchase
-          ? getDate(props.created_at, true)
-          : `${getDate(props.duration_to)} - ${getDate(props.duration_from)}`}
+          ? getDateWithOrdinal(props.created_at, true)
+          : `${getDateWithOrdinal(props.duration_to)} - ${getDateWithOrdinal(props.duration_from)}`}
       </td>
       <td>{props.isPurchase ? formatCurrency(props.amount, props.currency) : props.percentage}</td>
       <td>
-        <VerificationStatus
+        <ItemStatus
           title={
             active
               ? props.isPurchase
@@ -60,14 +54,4 @@ export default function PromotionRow(props: PromotionRowProps) {
       {props.children}
     </tr>
   );
-}
-
-function getDate(date: string | undefined, isPurchase: boolean = false) {
-  const dateTime = DateTime.fromISO(date ?? new Date().toISOString());
-
-  if (isPurchase) {
-    return dateTime.toFormat(`${dateTime.day} MMMM, yyyy`);
-  } else {
-    return dateTime.toFormat(`${dateTime.day} MMM`);
-  }
 }

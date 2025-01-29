@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export const CURRENCIES = ['NGN', 'GBP', 'CAD', 'RAND'];
 
 export function formatCurrency(amount: number, currency: string = 'NGN') {
@@ -7,16 +9,23 @@ export function formatCurrency(amount: number, currency: string = 'NGN') {
   }).format(amount);
 }
 
-export function getDayWithOrdinal(number: number) {
-  let selector;
+function getOrdinalSuffix(day: number) {
+  const j = day % 10;
+  const k = day % 100;
 
-  if (number <= 0) {
-    selector = 4;
-  } else if ((number > 3 && number < 21) || number % 10 > 3) {
-    selector = 0;
+  if (j === 1 && k !== 11) return 'st';
+  if (j === 2 && k !== 12) return 'nd';
+  if (j === 3 && k !== 13) return 'rd';
+  return 'th';
+}
+
+export function getDateWithOrdinal(date: string | undefined, includeYear: boolean = false) {
+  const dateTime = DateTime.fromISO(date ?? new Date().toISOString());
+  const day = `${dateTime.day}${getOrdinalSuffix(dateTime.day)}`;
+
+  if (includeYear) {
+    return dateTime.toFormat(`'${day}' MMMM, yyyy`);
   } else {
-    selector = number % 10;
+    return dateTime.toFormat(`'${day}' MMM`);
   }
-
-  return number + ['th', 'st', 'nd', 'rd'][selector];
 }

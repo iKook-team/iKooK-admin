@@ -1,5 +1,6 @@
 import InputField, { DropdownField } from '../InputField.tsx';
 import { FaSearch } from 'react-icons/fa';
+import { LoadingSpinner } from '../LoadingSpinner.tsx';
 
 export default function PageSearchRow(props: {
   search?: string;
@@ -9,6 +10,7 @@ export default function PageSearchRow(props: {
   onDropdown?: (value: string) => void;
   button?: string;
   onButton?: () => void;
+  isLoading?: boolean;
   className?: string;
 }) {
   return (
@@ -32,8 +34,8 @@ export default function PageSearchRow(props: {
         />
       </div>
       {props.button && (
-        <button onClick={props.onButton} className="btn btn-primary">
-          {props.button}
+        <button onClick={props.onButton} className="btn btn-primary" disabled={props.isLoading}>
+          <LoadingSpinner isLoading={props.isLoading ?? false}>{props.button}</LoadingSpinner>
         </button>
       )}
     </div>
