@@ -127,3 +127,17 @@ export function useReplyTicket(ticketId: string) {
     }
   });
 }
+
+export function useCloseTicket(ticketId: string) {
+  return useMutation({
+    mutationFn: () => {
+      return fetch({
+        url: `/support/close-tickets/${ticketId}`,
+        method: 'POST'
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['support'] });
+    }
+  });
+}

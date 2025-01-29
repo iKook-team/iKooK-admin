@@ -1,18 +1,41 @@
-import { useGetSupportTicket } from './domain/usecase.ts';
+import { useCloseTicket, useGetSupportTicket } from './domain/usecase.ts';
 import { DropdownField } from '../../app/components/InputField.tsx';
+import { useMemo, useState } from 'react';
+import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 
 export function SupportInfo({ ticketId }: { ticketId: string }) {
   const ticket = useGetSupportTicket(ticketId);
+  const closeTicket = useCloseTicket(ticketId);
+  const ticketActions = useMemo(
+    () => [ticket?.status ?? '', ...(ticket?.status !== 'closed' ? ['close'] : [])],
+    [ticket?.status]
+  );
+
+  const [newStatus, setNewStatus] = useState(ticket?.status);
+
   return (
     <div>
       {ticket ? (
         <div>
-          <DropdownField
-            label="Ticket action"
-            label-class-name="text-sm font-medium text-charcoal"
-            value={ticket.status}
-            options={[ticket.status]}
-          />
+          <div className="flex gap-3 items-end">
+            <DropdownField
+              className="flex-1"
+              label="Ticket action"
+              label-class-name="text-sm font-medium text-charcoal"
+              value={newStatus}
+              options={ticketActions}
+              onChange={(e) => setNewStatus(e.target.value)}
+            />
+            {ticket?.status !== 'closed' && newStatus !== ticket?.status && (
+              <button
+                className="btn btn-primary"
+                onClick={() => (newStatus === 'close' ? closeTicket.mutate() : undefined)}
+                disabled={closeTicket.isPending}
+              >
+                <LoadingSpinner isLoading={closeTicket.isPending}>Update</LoadingSpinner>
+              </button>
+            )}
+          </div>
           <h3 className="font-bold text-black-base text-sm mt-5 mb-4">User Information</h3>
           <div className="flex flex-col gap-3">
             <InfoRow title="Name" content={`${ticket.user.first_name} ${ticket.user.last_name}`} />
