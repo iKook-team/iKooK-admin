@@ -1,17 +1,21 @@
 import { useCloseTicket, useGetSupportTicket } from './domain/usecase.ts';
 import { DropdownField } from '../../app/components/InputField.tsx';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 
 export function SupportInfo({ ticketId }: { ticketId: string }) {
   const ticket = useGetSupportTicket(ticketId);
-  const closeTicket = useCloseTicket(ticketId);
+  const closeTicket = useCloseTicket(ticket?.id ?? '');
   const ticketActions = useMemo(
     () => [ticket?.status ?? '', ...(ticket?.status !== 'closed' ? ['close'] : [])],
     [ticket?.status]
   );
 
   const [newStatus, setNewStatus] = useState(ticket?.status);
+
+  useEffect(() => {
+    setNewStatus(ticket?.status);
+  }, [ticket?.status]);
 
   return (
     <div>

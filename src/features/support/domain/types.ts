@@ -5,6 +5,7 @@ export interface SupportTicketReply {
 }
 
 export interface SupportTicket {
+  id: string;
   user: {
     username: string;
     first_name: string;
