@@ -5,6 +5,10 @@ export function capitalize(string?: string) {
   return string[0].toUpperCase() + string.slice(1);
 }
 
+export function capitalizeWords(string?: string) {
+  return string?.split(' ').map(capitalize).join(' ');
+}
+
 export function toCamelCase(string?: string) {
   return string?.replace(string[0], string[0].toLowerCase()).replace(/\s/g, '');
 }

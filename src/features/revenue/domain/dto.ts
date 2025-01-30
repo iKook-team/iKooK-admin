@@ -18,3 +18,11 @@ export type GetRevenueOverviewResponse = GenericResponse<{
     percentage_difference: number;
   };
 }>;
+
+export type GetRevenueInsightsResponse = GenericResponse<{
+  [key: string]: Array<{
+    day_name?: string;
+    week?: number;
+    total_revenue: number;
+  }>;
+}>;

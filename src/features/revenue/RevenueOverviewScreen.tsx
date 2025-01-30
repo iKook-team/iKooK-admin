@@ -3,19 +3,28 @@ import { useQueryState } from 'nuqs';
 import { useFetchRevenueOverviewQuery } from './domain/usecase.ts';
 import { RevenueOverviewCard } from './components/RevenueOverviewCard.tsx';
 import { removeFields } from '../../utils/fieldManipulation.ts';
+import RevenueChartCard from './components/RevenueChartCard.tsx';
+import TopPerformingMenusCard from '../menus/components/TopPerformingMenusCard.tsx';
 
 export default function RevenueOverviewScreen() {
   const [currency, setCurrency] = useQueryState('currency', {
     defaultValue: 'NGN'
   });
+  const [filter, setFilter] = useQueryState('filter', {
+    defaultValue: 'weekly'
+  });
 
   const {
     data: revenueOverview,
     isPending: revenueOverviewPending,
-    error: revenueError
+    error: revenueOverviewError
   } = useFetchRevenueOverviewQuery(currency);
 
-  const overviewExtras = { isLoading: revenueOverviewPending, hasError: !!revenueError, currency };
+  const overviewExtras = {
+    isLoading: revenueOverviewPending,
+    hasError: !!revenueOverviewError,
+    currency
+  };
 
   return (
     <>
@@ -23,31 +32,35 @@ export default function RevenueOverviewScreen() {
         <h1 className="font-medium texl-xl">Overview</h1>
         <CountrySwitcher currency={currency} setCurrency={setCurrency} />
       </div>
-      <div className="mt-3 grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
+      <div className="mt-3 grid 2xl:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
         <RevenueOverviewCard
           title="Orders"
-          amount={revenueOverview?.order_insight.order_counts}
-          percentage={revenueOverview?.order_insight.percentage_difference}
+          amount={revenueOverview?.data?.order_insight.order_counts}
+          percentage={revenueOverview?.data?.order_insight.percentage_difference}
           {...overviewExtras}
         />
         <RevenueOverviewCard
           title="Total Revenue"
-          amount={revenueOverview?.total_revenue.revenue}
-          percentage={revenueOverview?.total_revenue.percentage_difference}
+          amount={revenueOverview?.data?.total_revenue.revenue}
+          percentage={revenueOverview?.data?.total_revenue.percentage_difference}
           {...overviewExtras}
         />
         <RevenueOverviewCard
           title="Chefs Payout"
-          amount={revenueOverview?.chef_payouts.total_amount}
-          percentageDescription={`${revenueOverview?.chef_payouts.today_counts} payouts today`}
+          amount={revenueOverview?.data?.chef_payouts.total_amount}
+          percentageDescription={`${revenueOverview?.data?.chef_payouts.today_counts} payouts today`}
           {...removeFields(overviewExtras, 'currency')}
         />
         <RevenueOverviewCard
           title="Monthly Revenue"
-          amount={revenueOverview?.monthly_revenue.revenue}
-          percentage={revenueOverview?.monthly_revenue.percentage_difference}
+          amount={revenueOverview?.data?.monthly_revenue.revenue}
+          percentage={revenueOverview?.data?.monthly_revenue.percentage_difference}
           {...overviewExtras}
         />
+      </div>
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[6fr_4fr] gap-5">
+        <RevenueChartCard filter={filter} setFilter={setFilter} currency={currency} />
+        <TopPerformingMenusCard currency={currency} />
       </div>
     </>
   );

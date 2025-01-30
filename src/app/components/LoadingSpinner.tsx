@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 
 interface LoadingSpinnerProps {
-  isLoading: boolean;
+  isLoading?: boolean;
   children?: ReactNode;
 }
 
-export function LoadingSpinner({ isLoading, children }: LoadingSpinnerProps) {
+export function LoadingSpinner({ isLoading = true, children }: LoadingSpinnerProps) {
   return (
     <>
       {children}
