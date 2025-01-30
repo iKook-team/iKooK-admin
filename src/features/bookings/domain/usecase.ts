@@ -6,14 +6,21 @@ import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { BookingType } from './types.ts';
+import { parseAsInteger, useQueryState } from 'nuqs';
 
 export function useFetchBookingsQuery() {
   const filters = useMemo(() => ['all', 'processing', 'pending', 'enquiry', 'completed'], []);
 
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState<string>();
-  const [filter, setFilter] = useState<string>(filters[0]);
-  const [bookingType, setBookingType] = useState<BookingType>(BookingType.menus);
+  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1));
+  const [query, setQuery] = useQueryState('search', {
+    defaultValue: ''
+  });
+  const [filter, setFilter] = useQueryState('filter', {
+    defaultValue: filters[0]
+  });
+  const [bookingType, setBookingType] = useQueryState('type', {
+    defaultValue: BookingType.menus
+  });
 
   const { isPending, data, error } = useQuery({
     queryKey: ['bookings', bookingType, page],
@@ -35,17 +42,15 @@ export function useFetchBookingsQuery() {
     }
 
     return items.filter((booking) => {
-      let cleanedQuery = '';
-      if (query) {
-        cleanedQuery = query.toLowerCase();
-
+      const cleanedQuery = query.toLowerCase();
+      if (cleanedQuery) {
         return (
           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
           booking.chef?.firstName.toLowerCase().includes(cleanedQuery)
         );
-      } else if (query && filter != 'all') {
+      } else if (filter != 'all') {
         const cleanedFilter = filter!.toLowerCase();
 
         return (
@@ -62,7 +67,7 @@ export function useFetchBookingsQuery() {
   }, [query, filter, data]);
 
   return {
-    bookingType,
+    bookingType: bookingType as BookingType,
     setBookingType,
     isPending,
     error,
@@ -104,8 +109,8 @@ export function useEditBookingStatus() {
   return useMutation({
     mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
       return fetch({
-        url :     `admin/update-booking-status/${bookingId}?booking_status=${status}`,
-        method: 'GET',
+        url: `admin/update-booking-status/${bookingId}?booking_status=${status}`,
+        method: 'GET'
       });
     },
     onSuccess: () => {
@@ -113,7 +118,6 @@ export function useEditBookingStatus() {
     }
   });
 }
-
 
 export function useDeleteBooking() {
   return useMutation({
@@ -124,7 +128,7 @@ export function useDeleteBooking() {
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
     }
   });
 }
@@ -138,11 +142,11 @@ export function useReassignBooking() {
         data: {
           chefId: chefId,
           bookingId: bookingId
-         }
+        }
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
     }
   });
 }

@@ -1,5 +1,5 @@
 import { Booking, Quote } from '../data/model';
-import {  QuoteMenuList } from './BookingBudgetCard';
+import { QuoteMenuList } from './BookingBudgetCard';
 import QuotesColumn from './QuotesColumn';
 import { MenuProfileListTile } from './RoundedRowList';
 
@@ -20,7 +20,6 @@ type EnquiryProfileProps = {
   review: string | null;
 };
 
-
 type ViewQuotesProps = {
   booking: Booking;
   quote?: Quote;
@@ -36,7 +35,7 @@ export function ViewQuoteModal({
   enquiryProfileList,
   iconTextList,
   menuList
-}: ViewQuotesProps): JSX.Element {
+}: ViewQuotesProps) {
   return (
     <div className="flex ">
       <div className="w-full ">
