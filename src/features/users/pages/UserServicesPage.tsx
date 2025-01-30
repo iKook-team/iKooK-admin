@@ -53,7 +53,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
 
       <div className="flex flex-row gap-4 w-[70%]">
         <div className="flex-1">
-          <ProfileField field={startingPrice} value={startPrice} />
+          <ProfileField field={startingPrice} value={startPrice} onChange={(e) => {setStartingPrice(e)}} />
         </div>
         <div className="flex-1">
           <ProfileField
