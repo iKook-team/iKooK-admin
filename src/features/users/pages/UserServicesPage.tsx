@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ToggleCard } from '../components/ToogleSwitch';
 import UserSettingsTitle from '../components/UserSettingsTitle';
-import { ProfileField } from './UserProfilePage';
+import { MultiSelectDropdown, ProfileField } from './UserProfilePage';
 import { UserPageProps } from '../domain/types';
 import { chefServiceFields } from '../domain/fields';
 
@@ -27,7 +27,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
   const [minNoGuest, setMinNoGuest] = useState('');
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2">
       <UserSettingsTitle title={'Profile'} onSave={() => {}} />
       <h1 className="text-lg text-gray-400">
         Activate the services you are avaliable for and activate your preference
@@ -66,15 +66,10 @@ export default function UserServicesPage({ user }: UserPageProps) {
         </div>
       </div>
 
-      <div className="flex-1 w-[70%]">
-        <ProfileField
-          field={startingPrice}
-          value={startPrice}
-          onChange={(e) => {
-            setStartingPrice(e);
-          }}
-        />
+      <div className="flex-1 w-[70%] my-5 ">
+        <MultiSelectDropdown />
       </div>
+
       <ToggleCard
         title={'Meal Prep'}
         isOn={isMp}
@@ -82,6 +77,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
           setIsMp(!isMp);
         }}
         underline={true}
+        topline={true}
       />
 
       <ToggleCard
@@ -90,7 +86,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
         onToggle={() => {
           setIsCc(!isCc);
         }}
-        underline={false}
+        underline={true}
       />
 
       <ToggleCard

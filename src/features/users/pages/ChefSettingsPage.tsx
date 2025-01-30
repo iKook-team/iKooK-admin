@@ -65,13 +65,13 @@ export default function ChefSettingsPage({ user }: UserPageProps){
       </div>
       <div className="flex flex-col  mt-2 ">
         <ToggleCard
-          title={'EMAIL Notifications'}
+          title={'Email notifications'}
           isOn={false}
           onToggle={() => {}}
           underline={false}
         />
         <ToggleCard
-          title={'SMS Notifications'}
+          title={'SMS notifications'}
           isOn={false}
           onToggle={() => {}}
           underline={false}
