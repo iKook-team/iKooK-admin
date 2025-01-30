@@ -115,3 +115,18 @@ export const chefAccountFields: Field[] = [
     type: 'text'
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+export const chefServiceFields: Field[] = [
+  {
+    id: 'starting_price',
+    label : 'starting price',
+    placeholder: '£50',
+    type: 'text'
+  },
+  {
+    id: 'minimum_number_of_guests',
+    placeholder: '5',
+    type: 'text',
+  }
+ 
+].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
