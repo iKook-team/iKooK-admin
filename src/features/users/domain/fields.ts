@@ -130,3 +130,28 @@ export const chefServiceFields: Field[] = [
   }
  
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+export const chefSettingsFields: Field[] = [
+  {
+    id: 'current_password',
+    label : 'current password',
+    placeholder: 'Enter Password',
+    type: 'text'
+  },
+  {
+    id: 'new_password',
+    label : 'new password',
+    placeholder: 'Enter Password',
+    type: 'text',
+  }
+ 
+].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+export const customizedEmailField : Field[] = [
+  {
+    id: 'email',
+    label: 'All the emails will be sent to the below email address',
+    placeholder: 'sandrabullock@ikook.co.uk',
+    type: 'email',
+  }
+].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));

@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ToggleCard } from '../components/ToogleSwitch';
 import UserSettingsTitle from '../components/UserSettingsTitle';
 import { UserPageProps } from '../domain/types';
 import { ProfileField } from './UserProfilePage';
+import { customizedEmailField } from '../domain/fields';
 
 export default function ChefNotificationPage({ user }: UserPageProps) {
-
-  const email = {
-    id: 'email',
-    label: 'All the emails will be sent to the below email address',
-    placeholder: 'sandrabullock@ikook.co.uk',
-    type: 'email',
-  };
+  const fields = customizedEmailField;
+ 
+  const emailField = useMemo(
+    () => fields.find((field) => field.id === 'email')!,
+    [fields]
+  );
   const [emailNotf, setEmailNotif] = useState(false);
   const [smsNotf, setSmsNotif] = useState(false);
 
@@ -32,7 +32,7 @@ export default function ChefNotificationPage({ user }: UserPageProps) {
         underline={false}
       />
       <div className="mt-10">
-        <ProfileField field={email} value={user.email} onChange={() => {}} />
+        <ProfileField field={emailField} value={user.email} onChange={() => {}} />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { ProfileField } from './UserProfilePage';
 import { UserPageProps } from '../domain/types';
 import { chefServiceFields } from '../domain/fields';
 
-export default function UserServicesPage({ type, user }: UserPageProps) {
+export default function UserServicesPage({ user }: UserPageProps) {
   console.log(user);
   const [isCah, setIsCat] = useState(false);
   const [isLe, SetIsLe] = useState(false);
@@ -51,17 +51,29 @@ export default function UserServicesPage({ type, user }: UserPageProps) {
         underline={false}
       />
 
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row gap-4 w-[70%]">
         <div className="flex-1">
           <ProfileField field={startingPrice} value={startPrice} />
         </div>
         <div className="flex-1">
-          <ProfileField field={minGuest} value={minNoGuest} />
+          <ProfileField
+            field={minGuest}
+            value={minNoGuest}
+            onChange={(e) => {
+              setMinNoGuest(e);
+            }}
+          />
         </div>
       </div>
 
-      <div className="flex-1">
-        <ProfileField field={startingPrice} value={startPrice} />
+      <div className="flex-1 w-[70%]">
+        <ProfileField
+          field={startingPrice}
+          value={startPrice}
+          onChange={(e) => {
+            setStartingPrice(e);
+          }}
+        />
       </div>
       <ToggleCard
         title={'Meal Prep'}
