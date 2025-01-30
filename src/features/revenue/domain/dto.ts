@@ -1,4 +1,5 @@
-import { GenericResponse } from '../../../app/data/dto.ts';
+import { GenericResponse, PagedResponse } from '../../../app/data/dto.ts';
+import { Payment } from './model.ts';
 
 export type GetRevenueOverviewResponse = GenericResponse<{
   total_revenue: {
@@ -26,3 +27,5 @@ export type GetRevenueInsightsResponse = GenericResponse<{
     total_revenue: number;
   }>;
 }>;
+
+export type GetAllPaymentsResponse = GenericResponse<PagedResponse<Payment>>;

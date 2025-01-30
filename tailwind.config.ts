@@ -39,6 +39,7 @@ export default {
         },
         blue: {
           400: '#4040E9',
+          vista: '#8A8CD9',
           dark: {
             electric: '#546881'
           }

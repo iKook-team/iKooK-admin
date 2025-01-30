@@ -20,6 +20,7 @@ import SupportScreen from '../features/support/SupportScreen.tsx';
 import SendGiftScreen from '../features/promotions/SendGiftScreen.tsx';
 import WithdrawalScreen from '../features/withdrawal/WithdrawalScreen.tsx';
 import RevenueOverviewScreen from '../features/revenue/RevenueOverviewScreen.tsx';
+import PaymentsScreen from '../features/revenue/PaymentsScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -81,6 +82,10 @@ export default function Routes() {
               {
                 path: 'revenue',
                 element: <RevenueOverviewScreen />
+              },
+              {
+                path: 'revenue/payments',
+                element: <PaymentsScreen />
               },
               { path: '*', element: <NotFound /> }
             ]
