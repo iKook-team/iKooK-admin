@@ -1,8 +1,17 @@
-export function capitalize(string?: string) {
+export function capitalize(string?: string, lowercaseRemaining: boolean = false) {
   if (!string) {
     return '';
   }
-  return string[0].toUpperCase() + string.slice(1);
+  return (
+    string[0].toUpperCase() + (lowercaseRemaining ? string.slice(1).toLowerCase() : string.slice(1))
+  );
+}
+
+export function capitalizeWords(string?: string) {
+  return string
+    ?.split(' ')
+    .map((s) => capitalize(s))
+    .join(' ');
 }
 
 export function toCamelCase(string?: string) {

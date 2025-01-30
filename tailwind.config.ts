@@ -30,6 +30,7 @@ export default {
         },
         black: {
           base: '#000000',
+          eerie: '#1C1C1C',
           neutral: {
             3: '#EDEDF2',
             4: '#D6D6D6'
@@ -38,6 +39,7 @@ export default {
         },
         blue: {
           400: '#4040E9',
+          vista: '#8A8CD9',
           dark: {
             electric: '#546881'
           }

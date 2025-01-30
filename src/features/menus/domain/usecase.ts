@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { useMemo, useState } from 'react';
-import { GetAllMenusResponse, GetMenuResponse } from '../data/dto.ts';
+import { GetAllMenusResponse, GetMenuResponse, GetTopMenus } from '../data/dto.ts';
 import { UpdateMenuStatusRequest } from './types.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
@@ -40,6 +40,20 @@ export function useFetchMenusQuery() {
     totalCount: data?.data?.total_count || 0,
     numberOfPages: data?.data?.number_of_pages || 0
   };
+}
+
+export function useFetchTopMenusQuery(currency: string) {
+  return useQuery({
+    queryKey: ['top-menus', currency],
+    queryFn: async ({ queryKey }) => {
+      const [_, currency] = queryKey;
+      const response = await fetch({
+        url: `admin/top-menus?currency=${currency}`,
+        method: 'GET'
+      });
+      return response.data as GetTopMenus;
+    }
+  });
 }
 
 export function useFetchMenuQuery(id: string) {

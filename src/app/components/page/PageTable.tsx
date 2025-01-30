@@ -7,7 +7,7 @@ interface PaginationControlsProps {
   numberOfPages: number;
   pageItemCount?: number;
   totalItemCount?: number;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
 }
 
 interface GenericTableProps extends PaginationControlsProps {
@@ -20,6 +20,8 @@ interface GenericTableProps extends PaginationControlsProps {
    * If undefined/true, the default table wrapper will be used. If false, the body will be rendered directly.
    */
   useDefaultWrapper?: boolean;
+
+  includePagination?: boolean;
 }
 
 export default function PageTable(props: GenericTableProps) {
@@ -41,7 +43,7 @@ export default function PageTable(props: GenericTableProps) {
       ) : (
         props.body
       )}
-      <PaginationControls {...props} />
+      {props.includePagination !== false && <PaginationControls {...props} />}
     </>
   );
 }
@@ -60,7 +62,7 @@ export function PaginationControls(props: PaginationControlsProps) {
       <div className="join flex justify-center shadow-sm">
         <button
           className="join-item btn btn-ghost"
-          onClick={() => props.onPageChange(1)}
+          onClick={() => props.onPageChange?.(1)}
           disabled={props.page === 1}
         >
           <MdKeyboardDoubleArrowLeft />
@@ -69,14 +71,14 @@ export function PaginationControls(props: PaginationControlsProps) {
           <button
             key={page}
             className={`join-item btn ${page === props.page ? 'btn-primary' : 'btn-ghost'}`}
-            onClick={() => props.onPageChange(page)}
+            onClick={() => props.onPageChange?.(page)}
           >
             {page}
           </button>
         ))}
         <button
           className="join-item btn btn-ghost"
-          onClick={() => props.onPageChange(props.numberOfPages)}
+          onClick={() => props.onPageChange?.(props.numberOfPages)}
           disabled={props.page === props.numberOfPages}
         >
           <MdKeyboardDoubleArrowRight />
