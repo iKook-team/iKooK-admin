@@ -32,12 +32,14 @@ interface ToggleCardProps {
 
 export function ToggleCard({ title, isOn, onToggle, underline }: ToggleCardProps) {
   return (
-    <div className={`flex justify-between items-center w-[70%] ${underline && 'border-b'}`}>
-      <div className="">
-        <h1 className=" font-medium">{title}</h1>
-      </div>
-      <div className="">
-        <ToggleSwitch onToggle={onToggle} isOn={isOn} />
+    <div className={`${underline && 'border-b'}`}>
+      <div className={`flex justify-between items-center w-[70%]`}>
+        <div className="">
+          <h1 className=" font-medium">{title}</h1>
+        </div>
+        <div className="">
+          <ToggleSwitch onToggle={onToggle} isOn={isOn} />
+        </div>
       </div>
     </div>
   );

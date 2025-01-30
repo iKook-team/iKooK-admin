@@ -1,11 +1,8 @@
-import { useMemo, useRef, useState } from 'react';
-import IdCell from '../../app/components/IdCell';
+import { useRef, useState } from 'react';
 import PageSearchRow from '../../app/components/page/PageSearchRow';
 import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
-import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import { useFetchBookingsQuery } from './domain/usecase';
-import BookingProposalImageStack from './components/BookingProposalImageStack';
 import { useNavigate } from 'react-router-dom';
 import { Bookings } from './data/model';
 import { BookingType } from './domain/types.ts';
@@ -16,9 +13,8 @@ import EditBookingStatusModal from './components/EditBookingStatusModal.tsx';
 import DeleteBookingModal from './components/DeleteBookingModal.tsx';
 import CancelBookingModal from './components/CancelBookingModal.tsx';
 import Pills from '../../app/components/Pills.tsx';
-import { formatCurrency } from '../../utils/formatter.ts';
-import ItemStatus from '../../app/components/ItemStatus.tsx';
-import { capitalize } from '../../utils/strings.ts';
+import BookingsHeader from './components/BookingsHeader.tsx';
+import BookingRow from './components/BookingRow.tsx';
 
 export default function BookingsScreen() {
   const {
@@ -46,14 +42,6 @@ export default function BookingsScreen() {
   const navigate = useNavigate();
 
   const [selectedBooking, setSelectedBooking] = useState<Bookings>();
-
-  const header = useMemo(
-    () =>
-      bookingType === BookingType.enquiries
-        ? ['Booking ID', 'User', 'Location', 'Proposals', 'Number Of Guests']
-        : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
-    [bookingType]
-  );
 
   const onAction = (action: PageActionItem, booking: Bookings) => {
     setSelectedBooking(booking);
@@ -101,83 +89,15 @@ export default function BookingsScreen() {
       <PageTable
         isFetching={isPending}
         emptyMessage={error?.message || (bookings.length == 0 ? 'No bookings found' : undefined)}
-        header={
-          <tr>
-            {header.map((title) => (
-              <th key={title} className="text-left">
-                {title}
-              </th>
-            ))}
-          </tr>
-        }
+        header={<BookingsHeader type={bookingType} />}
         body={bookings.map((booking) => {
-          const proposalList = booking?.proposals;
           return (
-            <tr
+            <BookingRow
               key={booking.id}
+              {...booking}
+              type={bookingType}
               onClick={() => navigate(`/bookings/${bookingType}s/${booking.id}`, {})}
-              className="cursor-pointer hover:bg-gray-100"
             >
-              <td>
-                <IdCell id={booking.id} />
-              </td>
-              <td>
-                <UsernameAndImage
-                  name={`${booking.user.firstName} ${booking.user.lastName}`}
-                  image={booking.user?.photo ? booking?.user?.photo : ''}
-                />
-              </td>
-              <td className="capitalize">
-                {bookingType === BookingType.enquiries
-                  ? booking.country
-                  : booking.chef?.photo
-                    ? `chef ${booking.chef?.firstName}`
-                    : ''}
-              </td>
-
-              <td>
-                {bookingType === BookingType.enquiries ? (
-                  <BookingProposalImageStack proposalList={proposalList} />
-                ) : (
-                  booking.menu
-                )}
-              </td>
-
-              <td>
-                {bookingType === BookingType.enquiries
-                  ? booking.number_of_guest
-                  : formatCurrency(booking.amount, booking.currency)}
-              </td>
-
-              {bookingType === BookingType.menus && (
-                <td>
-                  <ItemStatus
-                    title={capitalize(booking.status)}
-                    circleColor={
-                      booking.status === 'completed'
-                        ? 'bg-green'
-                        : booking.status === 'pending'
-                          ? 'bg-primary'
-                          : booking.status === 'cancelled'
-                            ? 'bg-red-base'
-                            : booking.status === 'enquiry'
-                              ? 'bg-secondary'
-                              : 'bg-jordy-blue'
-                    }
-                    textColor={
-                      booking.status === 'completed'
-                        ? 'text-green'
-                        : booking.status === 'pending'
-                          ? 'text-primary'
-                          : booking.status === 'cancelled'
-                            ? 'text-red'
-                            : booking.status === 'enquiry'
-                              ? 'text-secondary'
-                              : 'text-jordy-blue'
-                    }
-                  />
-                </td>
-              )}
               <td>
                 <PageAction
                   items={[
@@ -190,7 +110,7 @@ export default function BookingsScreen() {
                   onItemClick={(action) => onAction(action, booking)}
                 />
               </td>
-            </tr>
+            </BookingRow>
           );
         })}
         page={page}

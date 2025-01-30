@@ -3,19 +3,15 @@ import { useQueryState } from 'nuqs';
 import { useFetchPaymentsQuery, useFetchRevenueOverviewQuery } from './domain/usecase.ts';
 import { RevenueOverviewCard } from './components/RevenueOverviewCard.tsx';
 import { removeFields } from '../../utils/fieldManipulation.ts';
-import RevenueChartCard from './components/RevenueChartCard.tsx';
-import TopPerformingMenusCard from '../menus/components/TopPerformingMenusCard.tsx';
 import { Link } from 'react-router-dom';
 import PageTable from '../../app/components/page/PageTable.tsx';
 import PaymentsHeader from './components/PaymentsHeader.tsx';
 import PaymentRow from './components/PaymentRow.tsx';
+import RevenueChartRow from './components/RevenueChartRow.tsx';
 
 export default function RevenueOverviewScreen() {
   const [currency, setCurrency] = useQueryState('currency', {
     defaultValue: 'NGN'
-  });
-  const [filter, setFilter] = useQueryState('filter', {
-    defaultValue: 'weekly'
   });
 
   const {
@@ -54,7 +50,9 @@ export default function RevenueOverviewScreen() {
         <RevenueOverviewCard
           title="Chefs Payout"
           amount={revenueOverview?.data?.chef_payouts.total_amount}
-          percentageDescription={`${revenueOverview?.data?.chef_payouts.today_counts} payouts today`}
+          percentage={revenueOverview?.data?.chef_payouts.today_counts}
+          percentageStyled={false}
+          percentageDescription="payouts today"
           {...removeFields(overviewExtras, 'currency')}
         />
         <RevenueOverviewCard
@@ -64,10 +62,7 @@ export default function RevenueOverviewScreen() {
           {...overviewExtras}
         />
       </div>
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[6fr_4fr] gap-5">
-        <RevenueChartCard filter={filter} setFilter={setFilter} currency={currency} />
-        <TopPerformingMenusCard currency={currency} />
-      </div>
+      <RevenueChartRow currency={currency} />
       <div>
         <div className="pt-6 pb-4 flex items-center justify-between text-black-eerie text-base">
           <h3 className="font-semibold">Payments</h3>

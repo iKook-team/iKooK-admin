@@ -18,6 +18,14 @@ export type GetRevenueOverviewResponse = GenericResponse<{
     order_counts: number;
     percentage_difference: number;
   };
+  chef_insight: {
+    count: number;
+    percentage_difference: number;
+  };
+  user_insight: {
+    count: number;
+    percentage_difference: number;
+  };
 }>;
 
 export type GetRevenueInsightsResponse = GenericResponse<{

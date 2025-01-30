@@ -21,6 +21,7 @@ import SendGiftScreen from '../features/promotions/SendGiftScreen.tsx';
 import WithdrawalScreen from '../features/withdrawal/WithdrawalScreen.tsx';
 import RevenueOverviewScreen from '../features/revenue/RevenueOverviewScreen.tsx';
 import PaymentsScreen from '../features/revenue/PaymentsScreen.tsx';
+import DashboardScreen from '../features/dashboard/DashboardScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -32,6 +33,10 @@ export default function Routes() {
             path: '/',
             element: <NavigationShell />,
             children: [
+              {
+                path: '',
+                element: <DashboardScreen />
+              },
               ...Object.values(UserType).flatMap((type) => [
                 {
                   path: `${type}s`,
