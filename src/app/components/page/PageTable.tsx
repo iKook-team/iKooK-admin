@@ -35,7 +35,7 @@ export default function PageTable(props: GenericTableProps) {
         <div className="overflow-x-auto flex-1 relative">
           <table className="table table-xs table-pin-rows table-pin-cols">
             <thead className="text-black-base/40">{props.header}</thead>
-            <tbody className="[&_tr]:transition [&_tr]:ease-in-out [&_td]:py-2 [&_td]:truncate [&.active]:bg-ghost-white">
+            <tbody className="[&_tr]:transition [&_tr]:ease-in-out [&_tr]:cursor-pointer hover:[&_tr]:bg-ghost-white [&_td]:py-2 [&_td]:truncate [&.active]:bg-ghost-white">
               {props.body}
             </tbody>
           </table>

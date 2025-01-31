@@ -105,7 +105,7 @@ export function useSendGiftCard() {
   return useMutation({
     mutationFn: (data: SendGiftCardRequest) => {
       return fetch({
-        url: `/promotions/send-gift-card`,
+        url: `/promotions/Send-gift-card`,
         method: 'POST',
         data
       });
