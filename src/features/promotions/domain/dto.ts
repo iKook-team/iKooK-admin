@@ -9,8 +9,9 @@ export type CreateGiftCardRequest = {
 };
 
 export type SendGiftCardRequest = {
-  gift: string;
+  id: string;
   email: string;
+  override: boolean;
 };
 
 export type CreatePromoCodeRequest = {

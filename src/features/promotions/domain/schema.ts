@@ -29,8 +29,9 @@ export const CreateGiftCardSchema = z.object({
 });
 
 export const SendGiftCardSchema = z.object({
-  gift: z.string().min(3, 'Gift is required'),
-  email: z.string().email('Invalid email').min(3, 'Email is required')
+  id: z.string().min(3, 'Gift is required'),
+  email: z.string().email('Invalid email').min(3, 'Email is required'),
+  override: z.boolean().default(false)
 });
 
 export const CreatePromoCodeSchema = z

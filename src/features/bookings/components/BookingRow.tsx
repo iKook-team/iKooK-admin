@@ -17,7 +17,7 @@ interface BookingRowProps extends Bookings {
 export default function BookingRow(props: BookingRowProps) {
   const proposalList = props?.proposals;
   return (
-    <tr key={props.id} onClick={props.onClick} className="cursor-pointer hover:bg-gray-100">
+    <tr onClick={props.onClick}>
       <td>
         <IdCell id={props.id} />
       </td>
