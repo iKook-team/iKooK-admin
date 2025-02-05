@@ -58,11 +58,11 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
     case UserHeaderTab.services:
       return <UserServicesPage user={user} type={type} />;
     case UserHeaderTab.notification:
-      return <ChefNotificationPage user={user} type={type} />
+      return <ChefNotificationPage user={user} type={type} />;
     case UserHeaderTab.password:
-      return <UserPasswordPage user={user} type={type}/>
+      return <UserPasswordPage user={user} type={type} />;
     case UserHeaderTab.settings:
-      return <ChefSettingsPage user={user} type={type}/>
+      return <ChefSettingsPage user={user} type={type} />;
     default:
       return null;
   }

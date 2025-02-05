@@ -5,16 +5,16 @@ import { ProfileField } from './UserProfilePage';
 export default function UserPasswordPage({  }: UserPageProps) {
 
   const password = {
-    id: 'email',
-    label: 'All the emails will be sent to the below email address',
-    placeholder: 'sandrabullock@ikook.co.uk',
-    type: 'email',
+    id: 'password',
+    label: 'New Password',
+    placeholder: '*******',
+    type: 'password',
   };
 
 
   return (
     <div>
-      <UserSettingsTitle title={'Rest Password'} onSave={() => {}} />
+      <UserSettingsTitle title={'Reset Password'} onSave={() => {}} />
     
       <div className="mt-10">
         <ProfileField field={password} value={""} onChange={() => {}} />

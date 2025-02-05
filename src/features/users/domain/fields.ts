@@ -40,6 +40,7 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
     },
     {
       id: 'country',
+      label : 'Country of residence',
       placeholder: 'United Kingdom',
       type: 'text',
       readonly: true
@@ -52,24 +53,26 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
     },
     {
       id: 'city',
+      label : 'city/state',
       placeholder: 'London',
       type: 'text',
       readonly: true
     },
     {
       id: 'address',
-      placeholder: '123, Baker Street',
+      label : 'Your address',
+      placeholder: 'Enter address',
       type: 'text'
     },
     {
       id: 'postcode',
       label: 'Postal Code',
-      placeholder: 'W1U 6TY',
+      placeholder: 'Enter post code',
       type: 'text'
     },
     {
-      id: 'bio',
-      placeholder: 'Tell us about yourself',
+      id: 'brief profile',
+      placeholder: 'Let us know few things about your experience',
       type: 'text'
     }
   ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }))
@@ -77,7 +80,7 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
 
 export const chefAccountFields: Field[] = [
   {
-    id: 'billing address',
+    id: 'billing_address',
     placeholder: 'Enter address',
     type: 'text'
   },
@@ -90,7 +93,7 @@ export const chefAccountFields: Field[] = [
   {
     id: 'postcode',
     placeholder: 'Enter postcode',
-    type: 'text',
+    type: 'text'
   },
   {
     id: 'bank',
@@ -104,8 +107,8 @@ export const chefAccountFields: Field[] = [
     type: 'text'
   },
   {
-    id: 'account number',
-    label: 'Postal Code',
+    id: 'iban code',
+    label: 'IBAN Code',
     placeholder: 'Enter Account Number or IBAN',
     type: 'text'
   },
@@ -119,39 +122,57 @@ export const chefAccountFields: Field[] = [
 export const chefServiceFields: Field[] = [
   {
     id: 'starting_price',
-    label : 'starting price',
+    label: 'starting price',
     placeholder: '£50',
     type: 'text'
   },
   {
     id: 'minimum_number_of_guests',
     placeholder: '5',
-    type: 'text',
+    type: 'text'
   }
- 
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
 export const chefSettingsFields: Field[] = [
   {
     id: 'current_password',
-    label : 'current password',
+    label: 'current password',
     placeholder: 'Enter Password',
     type: 'text'
   },
   {
     id: 'new_password',
-    label : 'new password',
+    label: 'new password',
     placeholder: 'Enter Password',
-    type: 'text',
+    type: 'text'
   }
- 
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
-export const customizedEmailField : Field[] = [
+export const customizedEmailField: Field[] = [
   {
     id: 'email',
     label: 'All the emails will be sent to the below email address',
     placeholder: 'sandrabullock@ikook.co.uk',
-    type: 'email',
+    type: 'email'
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+export const chefAccountInitials = {
+  billingAddress: '',
+  city: '',
+  postcode: '',
+  bank: '',
+  accountNumber: '',
+  ibanCode : '',
+  sortCode: ''
+};
+
+export const chefServicesInitials = {
+  starting_price : '',
+  minNoGuest : ''
+}
+
+export const chefSettingsInitials = {
+  starting_price : '',
+  minNoGuest : ''
+}

@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
 import { ToggleCard } from '../components/ToogleSwitch';
 import UserSettingsTitle from '../components/UserSettingsTitle';
-import { MultiSelectDropdown, ProfileField } from './UserProfilePage';
 import { UserPageProps } from '../domain/types';
-import { chefServiceFields } from '../domain/fields';
+import { chefServiceFields, chefServicesInitials } from '../domain/fields';
+import InputField from '../../../app/components/InputField';
+import { useFormik } from 'formik';
+import { chefServicesSchema } from '../domain/validators';
+import { MultiSelectDropdown } from '../components/MultiSelectDropDown';
 
 export default function UserServicesPage({ user }: UserPageProps) {
   console.log(user);
@@ -23,8 +26,13 @@ export default function UserServicesPage({ user }: UserPageProps) {
     () => fields.find((field) => field.id === 'minimum_number_of_guests')!,
     [fields]
   );
-  const [startPrice, setStartingPrice] = useState('');
-  const [minNoGuest, setMinNoGuest] = useState('');
+  const formik = useFormik({
+    initialValues: chefServicesInitials,
+    validationSchema: chefServicesSchema,
+    onSubmit: (values) => {
+      console.log('Form submitted:', values); // where I will call save changes api
+    }
+  });
 
   return (
     <div className="flex flex-col gap-2">
@@ -53,21 +61,47 @@ export default function UserServicesPage({ user }: UserPageProps) {
 
       <div className="flex flex-row gap-4 w-[70%]">
         <div className="flex-1">
-          <ProfileField field={startingPrice} value={startPrice} onChange={(e) => {setStartingPrice(e)}} />
+          <InputField
+            key={startingPrice.id}
+            label={startingPrice.label}
+            name={startingPrice.id}
+            type={startingPrice.type}
+            placeholder={startingPrice.placeholder}
+            onChange={formik.handleChange}
+            className={`mb-4 ${startingPrice.hidden ? 'hidden' : ''}`}
+            value={formik.values.starting_price} // ✅ Corrected value binding
+            onBlur={formik.handleBlur} // ✅ Handles input blur events
+            error={
+              formik.touched[startingPrice.id as keyof typeof formik.touched] &&
+              formik.errors[startingPrice.id as keyof typeof formik.errors]
+                ? formik.errors[startingPrice.id as keyof typeof formik.errors]
+                : undefined
+            }
+          />
         </div>
         <div className="flex-1">
-          <ProfileField
-            field={minGuest}
-            value={minNoGuest}
-            onChange={(e) => {
-              setMinNoGuest(e);
-            }}
+        <InputField
+            key={minGuest.id}
+            label={minGuest.label}
+            name={minGuest.id}
+            type={minGuest.type}
+            placeholder={minGuest.placeholder}
+            onChange={formik.handleChange}
+            className={`mb-4 ${minGuest.hidden ? 'hidden' : ''}`}
+            value={formik.values.minNoGuest} // ✅ Corrected value binding
+            onBlur={formik.handleBlur} // ✅ Handles input blur events
+            error={
+              formik.touched[minGuest.id as keyof typeof formik.touched] &&
+              formik.errors[minGuest.id as keyof typeof formik.errors]
+                ? formik.errors[minGuest.id as keyof typeof formik.errors]
+                : undefined
+            }
           />
         </div>
       </div>
 
       <div className="flex-1 w-[70%] my-5 ">
-        <MultiSelectDropdown />
+        <MultiSelectDropdown title={'Cuisine type'} options={["African", "Modern English", "Italian", "Chinese", "Mexican", "Indian"]} />
       </div>
 
       <ToggleCard

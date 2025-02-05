@@ -13,7 +13,7 @@ interface DeleteAccountModalProps {
 }
 
 export default function DeleteUserModal({ user, ref , usertype}: DeleteAccountModalProps) {
-  const title = 'Delete Account for';
+  const title = 'Delete Account for ';
 
   const [loading, setLoading] = useState(false);
 
