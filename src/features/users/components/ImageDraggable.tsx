@@ -29,7 +29,8 @@ const DragAndDropImage: React.FC = () => {
     }
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput?.click(); // Programmatically open the file input
   
@@ -70,7 +71,7 @@ const DragAndDropImage: React.FC = () => {
         onDrop={handleDrop}
       >
         <p className="text-gray-500">Drag & drop an image here</p>
-        <button onClick={handleClick}>
+        <button onClick={(e) => handleClick(e)}>
           <p className="text-yellow-400">Click here to select image</p>
         </button>
         {/* Hidden File Input */}

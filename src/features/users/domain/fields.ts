@@ -71,7 +71,7 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
       type: 'text'
     },
     {
-      id: 'brief profile',
+      id: 'brief_profile',
       placeholder: 'Let us know few things about your experience',
       type: 'text'
     }
@@ -81,17 +81,20 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
 export const chefAccountFields: Field[] = [
   {
     id: 'billing_address',
+    label : 'Billing Address',
     placeholder: 'Enter address',
     type: 'text'
   },
   {
     id: 'city',
+    label : 'City',
     placeholder: 'Enter city',
     type: 'text',
     readonly: true
   },
   {
     id: 'postcode',
+    label : 'Post Code',
     placeholder: 'Enter postcode',
     type: 'text'
   },
@@ -102,18 +105,20 @@ export const chefAccountFields: Field[] = [
     readonly: true
   },
   {
-    id: 'account number',
+    id: 'account_number',
+    label : 'Account Number',
     placeholder: 'Enter Account number',
     type: 'text'
   },
   {
-    id: 'iban code',
+    id: 'iban_code',
     label: 'IBAN Code',
     placeholder: 'Enter Account Number or IBAN',
     type: 'text'
   },
   {
-    id: 'Sort code or SWIFT/BIC code',
+    id: 'sort_code',
+    label: 'Sort code or SWIFT/BIC code',
     placeholder: 'Enter Sort code or SWIFT/BIC code',
     type: 'text'
   }
@@ -157,22 +162,32 @@ export const customizedEmailField: Field[] = [
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
+
+export const chefPasswordField : Field[] = [
+  {
+    id: 'new_password',
+    label : 'New Password',
+    placeholder: '****',
+    type: 'password'
+  }
+].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+
 export const chefAccountInitials = {
-  billingAddress: '',
+  billing_address: '',
   city: '',
   postcode: '',
   bank: '',
-  accountNumber: '',
-  ibanCode : '',
-  sortCode: ''
+  account_number: '',
+  iban_code : '',
+  sort_code: ''
 };
 
 export const chefServicesInitials = {
   starting_price : '',
-  minNoGuest : ''
+  minimum_number_of_guests : '',
 }
 
-export const chefSettingsInitials = {
-  starting_price : '',
-  minNoGuest : ''
+export const userPasswordInitiails = {
+  new_password : ''
 }

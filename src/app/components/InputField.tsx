@@ -85,7 +85,7 @@ export function InputLabel(props: { title: string; className?: string }) {
   );
 }
 
-function InputContainer(props: InputContainerProps) {
+export function InputContainer(props: InputContainerProps) {
   return (
     <label className={`relative form-control ${props.className ? props.className : ''}`}>
       {props.label && (

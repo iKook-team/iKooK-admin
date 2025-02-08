@@ -9,8 +9,6 @@ interface MultiSelectDropdownProps {
 export function MultiSelectDropdown({ title, options }: MultiSelectDropdownProps) {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
-    // const options = ["African", "Modern English", "Italian", "Chinese", "Mexican", "Indian"];
-  
   
     const toggleSelection = (item: string) => {
       setSelectedItems((prev) =>

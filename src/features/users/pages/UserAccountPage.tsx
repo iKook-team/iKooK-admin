@@ -17,7 +17,7 @@ export default function UserAccountPage({ type, user }: UserPageProps) {
     initialValues: chefAccountInitials,
     validationSchema: chefAccountSchema,
     onSubmit: (values) => {
-      console.log('Form submitted:', values);
+      console.log('Form submitted:', values); // where I will call save changes api 
     }
   });
 
@@ -84,7 +84,6 @@ export default function UserAccountPage({ type, user }: UserPageProps) {
       <form onSubmit={onSave} className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-5">
         {type === UserType.chef &&
           chefAccountFields.map((field) => {
-            // const fieldKey = field.id as keyof typeof formik.values;
 
             return (
               <div key={field.id}>
@@ -96,7 +95,7 @@ export default function UserAccountPage({ type, user }: UserPageProps) {
                   placeholder={field.placeholder}
                   onChange={formik.handleChange}
                   className={`mb-4 ${field.hidden ? 'hidden' : ''}`}
-                  value={formik.values[field.id as keyof typeof formik.values]} // ✅ Corrected value binding
+                  value={formik.values[field.id as keyof typeof formik.values]} 
                   onBlur={formik.handleBlur} // ✅ Handles input blur events
                   error={
                     formik.touched[field.id as keyof typeof formik.touched] && formik.errors[field.id as keyof typeof formik.errors]
@@ -108,9 +107,6 @@ export default function UserAccountPage({ type, user }: UserPageProps) {
             );
           })}
 
-        <button type="submit" className="btn btn-primary">
-          Save Change
-        </button>
       </form>
     </div>
   );

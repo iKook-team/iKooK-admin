@@ -88,7 +88,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
             placeholder={minGuest.placeholder}
             onChange={formik.handleChange}
             className={`mb-4 ${minGuest.hidden ? 'hidden' : ''}`}
-            value={formik.values.minNoGuest} // ✅ Corrected value binding
+            value={formik.values.minimum_number_of_guests} // ✅ Corrected value binding
             onBlur={formik.handleBlur} // ✅ Handles input blur events
             error={
               formik.touched[minGuest.id as keyof typeof formik.touched] &&
