@@ -265,3 +265,51 @@ export function useResetPassword(type: UserType) {
     }
   };
 }
+
+export function useEditProfile(type: UserType) {
+  const mutation = useMutation({
+    mutationFn: async (request: {
+      first_name: string;
+      last_name: string;
+      date_of_birth: string;
+      state: string;
+      city: string;
+      address: string;
+      post_code: string;
+      experience: string;
+      cuisines: [string];
+      events: [string];
+      weekly_charges: 0;
+      monthly_charges: 0;
+    }) => {
+      const response = await fetch({
+        url: `/chef/edit-profile`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    editProfile: async (request: {
+      first_name: string;
+      last_name: string;
+      date_of_birth: string;
+      state: string;
+      city: string;
+      address: string;
+      post_code: string;
+      experience: string;
+      cuisines: [string];
+      events: [string];
+      weekly_charges: 0;
+      monthly_charges: 0;
+    }) => {
+      await mutation.mutateAsync(request);
+    }
+  };
+}

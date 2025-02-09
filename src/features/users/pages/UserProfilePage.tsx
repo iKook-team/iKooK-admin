@@ -1,18 +1,53 @@
 import { UserPageProps, UserType } from '../domain/types.ts';
 import UserSettingsTitle from '../components/UserSettingsTitle.tsx';
 import InputField, { InputContainer } from '../../../app/components/InputField.tsx';
-import { useMemo } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { chefProfileFields, hostProfileFields } from '../domain/fields.ts';
 import Field from '../../../app/domain/field.ts';
 import { MultiSelectDropdown } from '../components/MultiSelectDropDown.tsx';
 import DragAndDropImage from '../components/ImageDraggable.tsx';
 import { useFormik } from 'formik';
 import { userProfileSchema } from '../domain/validators.ts';
+import { useEditProfile } from '../domain/usecase.ts';
+import { toast } from 'react-toastify';
 
 export default function UserProfilePage({ user, type }: UserPageProps) {
   const fields = type === UserType.host ? hostProfileFields : chefProfileFields;
   const firstName = useMemo(() => fields.find((field) => field.id === 'first_name'), [fields]);
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name'), [fields]);
+  const { editProfile } = useEditProfile(type);
+  const [editing, setEditing] = useState(false);
+
+  async function saveProfileChange(values: any) {
+    console.log('save clicked');
+    if (editing === true) {
+      return;
+    }
+    try {
+      setEditing(true);
+      await editProfile({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        date_of_birth: values.date_of_birth,
+        state: values.state,
+        city: values.city,
+        address: values.address,
+        post_code: values.postcode,
+        experience: '',
+        cuisines: [''],
+        events: [''],
+        weekly_charges: 0,
+        monthly_charges: 0
+        // email: user.email || '',
+        // mobile: user.mobile || '',
+        // brief_info: '',
+        // country: '',
+      });
+      toast(`${type} profile edited successfully`, { type: 'success' });
+    } finally {
+      setEditing(false);
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -30,13 +65,37 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
       brief_profile: ''
     },
     validationSchema: userProfileSchema,
-    onSubmit: () => {}
+    onSubmit: (values) => saveProfileChange(values)
   });
+
+   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+      await formik.validateForm();
+      if (formik.isValid) {
+        formik.handleSubmit(e);
+      } else {
+        e.preventDefault();
+        Object.keys(formik.errors).forEach((key) => {
+          toast(formik.errors[key as keyof typeof formik.errors], { type: 'error' });
+        });
+      }
+    };
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <UserSettingsTitle title="Profile" onSave={() => {}} />
-      <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start">
+      <UserSettingsTitle title="Profile" onSave={() => {formik.handleSubmit}} />
+      <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start" onSubmit={onSubmit}>
+        <button
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault()
+            console.log('before form');
+
+            formik.handleSubmit(); // ✅ Correct way to call the function
+            console.log('after form');
+          }}
+        >
+          Save
+        </button>
         <div className="flex flex-row gap-4">
           <div className="flex-1">
             {firstName && (
@@ -110,28 +169,28 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
           </div>
         )}
         {type === UserType.host && (
-          <div >
-              <InputContainer
-                label={'Brief description'}
-                error={
-                  formik.touched.brief_info && formik.errors.brief_info
-                    ? formik.errors.brief_info
-                    : undefined
-                }
-              >
-                <div className="border-b  "></div>
-                <div className="h-[200px] items-stretch  ">
-                  <textarea
-                    key={'brief_info'}
-                    name={'brief_info'}
-                    className={`h-full w-full input input-bordered p-3 ${formik.errors.brief_info ? 'input-error' : ''}`}
-                    placeholder="John Smith was born in a small town in the Midwest. He grew up with a love of learning and a passion for science and technology. After graduating from high school, he attended a prestigious university where he earned a degree in electrical engineering. He then landed a job at a top technology company, where he quickly rose through the ranks to become a lead engineer.John has always been an innovator, and he is known for his ability to think outside the box and come up with new, creative solutions to complex problems. He has been credited with several patents for his inventions and is respected throughout the industry for his technical expertise and leadership skills."
-                    onChange={formik.handleChange}
-                    value={formik.values.brief_info}
-                    onBlur={formik.handleBlur}
-                  />
-                </div>
-              </InputContainer>
+          <div>
+            <InputContainer
+              label={'Brief description'}
+              error={
+                formik.touched.brief_info && formik.errors.brief_info
+                  ? formik.errors.brief_info
+                  : undefined
+              }
+            >
+              <div className="border-b  "></div>
+              <div className="h-[200px] items-stretch  ">
+                <textarea
+                  key={'brief_info'}
+                  name={'brief_info'}
+                  className={`h-full w-full input input-bordered p-3 ${formik.errors.brief_info ? 'input-error' : ''}`}
+                  placeholder="John Smith was born in a small town in the Midwest. He grew up with a love of learning and a passion for science and technology. After graduating from high school, he attended a prestigious university where he earned a degree in electrical engineering. He then landed a job at a top technology company, where he quickly rose through the ranks to become a lead engineer.John has always been an innovator, and he is known for his ability to think outside the box and come up with new, creative solutions to complex problems. He has been credited with several patents for his inventions and is respected throughout the industry for his technical expertise and leadership skills."
+                  onChange={formik.handleChange}
+                  value={formik.values.brief_info}
+                  onBlur={formik.handleBlur}
+                />
+              </div>
+            </InputContainer>
           </div>
         )}
         {type === UserType.host && (
