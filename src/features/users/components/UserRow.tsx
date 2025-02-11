@@ -9,6 +9,7 @@ interface UserRowProps extends User {
   children?: ReactNode;
   onClick?: () => void;
   isSelected?: boolean;
+  isServices?: boolean;
   type: UserType;
 }
 
@@ -20,7 +21,7 @@ export default function UserRow(props: UserRowProps) {
         <UsernameAndImage
           name={`${props.first_name} ${props.last_name}`}
           image={props.photo}
-          status={props.is_active}
+          status={props.isServices ? undefined : props.is_active}
           statusText={props.status}
         />
       </td>
@@ -30,7 +31,7 @@ export default function UserRow(props: UserRowProps) {
         <td>{props.mobile}</td>
       ) : (
         <>
-          <td>Wallet</td>
+          {!props.isServices && <td>{props.wallet}</td>}
           <td>{props.rating}</td>
         </>
       )}

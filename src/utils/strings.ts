@@ -26,6 +26,10 @@ export function fromSnakeCase(string?: string) {
   return string?.replace(/_/g, ' ');
 }
 
+export function fromKebabCase(string?: string) {
+  return string?.replace(/-/g, ' ');
+}
+
 export function fromSnakeOrCamelCase(string: string) {
   return fromCamelCase(fromSnakeCase(string));
 }

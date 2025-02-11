@@ -11,12 +11,15 @@ import ToggleUserActiveModal from './components/ToggleUserActiveModal.tsx';
 import { User } from './data/model.ts';
 import UsersHeader from './components/UsersHeader.tsx';
 import UserRow from './components/UserRow.tsx';
+import Pills from '../../app/components/Pills.tsx';
+import { fromKebabCase } from '../../utils/strings.ts';
 
 type UsersScreenProps = {
   type: UserType;
+  isServices?: boolean;
 };
 
-export default function UsersScreen({ type }: UsersScreenProps) {
+export default function UsersScreen({ type, isServices }: UsersScreenProps) {
   const navigate = useNavigate();
 
   const suspendUserRef = useRef<HTMLDialogElement>(null);
@@ -31,6 +34,9 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     filter,
     setFilter,
     filters,
+    service,
+    setService,
+    services,
     query,
     setQuery,
     totalCount,
@@ -38,7 +44,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
     setPage,
     numberOfPages
   } = useFetchUsersQuery({
-    type
+    type,
+    includeServices: isServices
   });
 
   const toggleSelection = (id: string) => {
@@ -64,7 +71,15 @@ export default function UsersScreen({ type }: UsersScreenProps) {
 
   return (
     <>
-      <PageTitle title={type === UserType.host ? 'Users' : 'Chefs'} />
+      <PageTitle title={isServices ? 'Services' : type === UserType.host ? 'Users' : 'Chefs'} />
+      {isServices && (
+        <Pills
+          items={services}
+          active={service}
+          setActive={setService}
+          getLabel={(value) => fromKebabCase(value) ?? value ?? ''}
+        />
+      )}
       <PageSearchRow
         className="mt-4 mb-6 w-full"
         search={query}
@@ -72,8 +87,8 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         dropdown={filter}
         dropdownOptions={filters}
         onDropdown={setFilter}
-        button={type === UserType.host ? 'New User' : 'New Chef'}
-        onButton={() => navigate(`/${type}s/new`)}
+        button={isServices ? undefined : type === UserType.host ? 'New User' : 'New Chef'}
+        onButton={isServices ? undefined : () => navigate(`/${type}s/new`)}
       />
       <PageTable
         isFetching={isPending}
@@ -88,6 +103,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
         header={
           <UsersHeader
             type={type}
+            isServices={isServices}
             leading={
               <th>
                 <label>
@@ -109,6 +125,7 @@ export default function UsersScreen({ type }: UsersScreenProps) {
               {...user}
               type={type}
               isSelected={isSelected}
+              isServices={isServices}
               onClick={() => navigate(`/${type}s/${user.id}`)}
               leading={
                 <td>
