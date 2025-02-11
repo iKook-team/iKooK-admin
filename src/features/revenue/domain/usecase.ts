@@ -38,7 +38,7 @@ export function useFetchRevenueInsightsQuery(currency: string, filter: string) {
 }
 
 export function useFetchPaymentsQuery() {
-  const filters = useMemo(() => ['all', 'failed', 'pending', 'success', 'successful'], []);
+  const filters = useMemo(() => ['all', 'failed', 'pending', 'success'], []);
   const [filter, setFilter] = useQueryState('status', {
     defaultValue: filters[0]
   });
