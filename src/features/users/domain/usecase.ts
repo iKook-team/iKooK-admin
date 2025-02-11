@@ -4,7 +4,8 @@ import {
   GetAllUsersRequest,
   GetAllUsersResponse,
   GetRoleRequest,
-  GetRoleResponse
+  GetRoleResponse,
+  ProfileRequest
 } from '../data/dto.ts';
 import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
@@ -268,20 +269,7 @@ export function useResetPassword(type: UserType) {
 
 export function useEditProfile(type: UserType) {
   const mutation = useMutation({
-    mutationFn: async (request: {
-      first_name: string;
-      last_name: string;
-      date_of_birth: string;
-      state: string;
-      city: string;
-      address: string;
-      post_code: string;
-      experience: string;
-      cuisines: [string];
-      events: [string];
-      weekly_charges: 0;
-      monthly_charges: 0;
-    }) => {
+    mutationFn: async (request: ProfileRequest) => {
       const response = await fetch({
         url: `/chef/edit-profile`,
         method: 'POST',
@@ -295,20 +283,29 @@ export function useEditProfile(type: UserType) {
   });
 
   return {
-    editProfile: async (request: {
-      first_name: string;
-      last_name: string;
-      date_of_birth: string;
-      state: string;
-      city: string;
-      address: string;
-      post_code: string;
-      experience: string;
-      cuisines: [string];
-      events: [string];
-      weekly_charges: 0;
-      monthly_charges: 0;
-    }) => {
+    editProfile: async (request: ProfileRequest) => {
+      await mutation.mutateAsync(request);
+    }
+  };
+}
+
+export function useEditServiceDetails(type: UserType, service_type: string) {
+  const mutation = useMutation({
+    mutationFn: async (request: ProfileRequest) => {
+      const response = await fetch({
+        url: `/chef/update-service-detail/${service_type}`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    editProfile: async (request: ProfileRequest) => {
       await mutation.mutateAsync(request);
     }
   };

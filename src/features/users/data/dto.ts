@@ -14,3 +14,18 @@ export interface GetRoleRequest {
 
 export type GetAllUsersResponse = GenericResponse<PagedResponse<User>>;
 export type GetRoleResponse = GenericResponse<PagedResponse<Role>>;
+
+export interface ProfileRequest {
+  first_name: string;
+  last_name: string;
+  date_of_birth: string;
+  state: string;
+  city: string;
+  address: string;
+  post_code: string;
+  experience: string;
+  cuisines: string;
+  events: string;
+  weekly_charges: number;
+  monthly_charges: number;
+}

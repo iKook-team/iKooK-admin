@@ -3,58 +3,57 @@ import { useState } from "react";
 
 interface MultiSelectDropdownProps {
   title: string;
-  options : string[];
+  options: string[];
+  value: string[]; 
+  onChange: (value: string[]) => void;
 }
 
-export function MultiSelectDropdown({ title, options }: MultiSelectDropdownProps) {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const [isOpen, setIsOpen] = useState(false);
-  
-    const toggleSelection = (item: string) => {
-      setSelectedItems((prev) =>
-        prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-      );
-    };
-  
-    return (
-      <div className="w-full ">
-        <label className="block text-gray-700 font-medium mb-1">{title}</label>
-        <div
-          className="relative border border-gray-300 rounded-lg p-2 flex items-center cursor-pointer"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <div className="flex flex-wrap gap-2 flex-grow">
-            {selectedItems.length > 0 ? (
-              selectedItems.map((item) => (
-                <span
-                  key={item}
-                  className="px-2 py-1 text-sm border border-yellow-400 bg-yellow-50 rounded-full"
-                >
-                  {item}
-                </span>
-              ))
-            ) : (
-              <span className="text-gray-400">Select cuisine</span>
-            )}
-          </div>
-          <ChevronDown className="ml-auto text-gray-600" size={16} />
-        </div>
-  
-        {isOpen && (
-          <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-md">
-            {options.map((option) => (
-              <div
-                key={option}
-                className={`p-2 cursor-pointer ${
-                  selectedItems.includes(option) ? "bg-yellow-100 font-medium" : "hover:bg-gray-100"
-                }`}
-                onClick={() => toggleSelection(option)}
+export function MultiSelectDropdown({ title, options, value, onChange }: MultiSelectDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSelection = (item: string) => {
+    onChange(value.includes(item) ? value.filter((i) => i !== item) : [...value, item]);
+  };
+
+  return (
+    <div className="w-full">
+      <label className="block text-gray-700 font-medium mb-1">{title}</label>
+      <div
+        className="relative border border-gray-300 rounded-lg p-2 flex items-center cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex flex-wrap gap-2 flex-grow">
+          {value.length > 0 ? (
+            value.map((item) => (
+              <span
+                key={item}
+                className="px-2 py-1 text-sm border border-yellow-400 bg-yellow-50 rounded-full"
               >
-                {option}
-              </div>
-            ))}
-          </div>
-        )}
+                {item}
+              </span>
+            ))
+          ) : (
+            <span className="text-gray-400">Select cuisine</span>
+          )}
+        </div>
+        <ChevronDown className="ml-auto text-gray-600" size={16} />
       </div>
-    );
-  }
+
+      {isOpen && (
+        <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-md">
+          {options.map((option) => (
+            <div
+              key={option}
+              className={`p-2 cursor-pointer ${
+                value.includes(option) ? "bg-yellow-100 font-medium" : "hover:bg-gray-100"
+              }`}
+              onClick={() => toggleSelection(option)}
+            >
+              {option}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

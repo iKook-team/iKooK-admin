@@ -17,14 +17,17 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name'), [fields]);
   const { editProfile } = useEditProfile(type);
   const [editing, setEditing] = useState(false);
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+
 
   async function saveProfileChange(values: any) {
-    console.log('save clicked');
     if (editing === true) {
       return;
     }
     try {
       setEditing(true);
+      console.log(values);
+
       await editProfile({
         first_name: values.first_name,
         last_name: values.last_name,
@@ -33,69 +36,62 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
         city: values.city,
         address: values.address,
         post_code: values.postcode,
-        experience: '',
-        cuisines: [''],
-        events: [''],
+        experience: values.experience,
+        cuisines: values.cuisines,
+        events: values.events,
         weekly_charges: 0,
         monthly_charges: 0
-        // email: user.email || '',
-        // mobile: user.mobile || '',
-        // brief_info: '',
-        // country: '',
       });
       toast(`${type} profile edited successfully`, { type: 'success' });
     } finally {
       setEditing(false);
     }
+    console.log(values);
   }
+
+  const onSave = async () => {
+    await formik.validateForm();
+    if (formik.isValid) {
+      formik.handleSubmit();
+    } else {
+      // e.preventDefault();
+      Object.keys(formik.errors).forEach((key) => {
+        toast(formik.errors[key as keyof typeof formik.errors], { type: 'error' });
+      });
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
-      first_name: user.first_name || '',
-      last_name: user.last_name || '',
       email: user.email || '',
       mobile: user.mobile || '',
       brief_info: '',
       country: '',
+      brief_profile: '',
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
       date_of_birth: '',
       state: '',
       city: '',
-      address: '',
+      address: user.address,
       postcode: '',
-      brief_profile: ''
+      experience: '',
+      cuisines: selectedCuisines,
+      events: [],
+      weekly_charges: 0,
+      monthly_charges: 0
     },
     validationSchema: userProfileSchema,
     onSubmit: (values) => saveProfileChange(values)
   });
 
-   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-      await formik.validateForm();
-      if (formik.isValid) {
-        formik.handleSubmit(e);
-      } else {
-        e.preventDefault();
-        Object.keys(formik.errors).forEach((key) => {
-          toast(formik.errors[key as keyof typeof formik.errors], { type: 'error' });
-        });
-      }
-    };
-
   return (
     <div className="flex flex-col items-center justify-center">
-      <UserSettingsTitle title="Profile" onSave={() => {formik.handleSubmit}} />
-      <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start" onSubmit={onSubmit}>
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault()
-            console.log('before form');
-
-            formik.handleSubmit(); // ✅ Correct way to call the function
-            console.log('after form');
-          }}
-        >
-          Save
-        </button>
+      <UserSettingsTitle title="Profile" onSave={onSave} />
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex flex-col gap-4 w-full lg:w-[90%] self-start"
+      >
         <div className="flex flex-row gap-4">
           <div className="flex-1">
             {firstName && (
@@ -150,7 +146,9 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
               error={
                 formik.touched[field.id as keyof typeof formik.touched] &&
                 formik.errors[field.id as keyof typeof formik.errors]
-                  ? formik.errors[field.id as keyof typeof formik.errors]
+                  ? Array.isArray(formik.errors[field.id as keyof typeof formik.errors])
+                    ? (formik.errors[field.id as keyof typeof formik.errors] as string[]).join(', ')
+                    : (formik.errors[field.id as keyof typeof formik.errors] as string)
                   : undefined
               }
             />
@@ -158,14 +156,43 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
         })}
         {type === UserType.chef && (
           <div className="flex flex-col gap-5">
-            <MultiSelectDropdown
-              title="Cuisines I can cook"
-              options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
-            />
-            <MultiSelectDropdown
-              title="Events avaliable for"
-              options={['Wedding', 'birthday', 'Party']}
-            />
+            <div>
+              <InputContainer
+                error={
+                  formik.touched.cuisines && formik.errors.cuisines
+                    ? Array.isArray(formik.errors.cuisines)
+                      ? formik.errors.cuisines.join(', ')
+                      : formik.errors.cuisines
+                    : undefined
+                }
+              >
+                <MultiSelectDropdown
+                  title="Cuisines I can cook"
+                  options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
+                  value={formik.values.cuisines}
+                  onChange={
+                     setSelectedCuisines}
+                />
+              </InputContainer>
+            </div>
+            <div>
+              <InputContainer
+                error={
+                  formik.touched.cuisines && formik.errors.cuisines
+                    ? Array.isArray(formik.errors.cuisines)
+                      ? formik.errors.cuisines.join(', ')
+                      : formik.errors.cuisines
+                    : undefined
+                }
+              >
+                <MultiSelectDropdown
+                  onChange={formik.handleChange}
+                  title="Events avaliable for"
+                  options={['Wedding', 'birthday', 'Party']}
+                  value={formik.values.events}
+                />
+              </InputContainer>
+            </div>
           </div>
         )}
         {type === UserType.host && (
