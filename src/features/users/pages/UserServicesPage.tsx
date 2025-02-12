@@ -16,6 +16,8 @@ export default function UserServicesPage({ user }: UserPageProps) {
   const [isCc, setIsCc] = useState(false);
   const [isGd, setIsGd] = useState(false);
   const [isBg, setIsBG] = useState(false);
+  const [cuisines, setCuisines] = useState(user.cuisines);
+
 
   const fields = chefServiceFields;
   const startingPrice = useMemo(
@@ -101,7 +103,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
       </div>
 
       <div className="flex-1 w-[70%] my-5 ">
-        <MultiSelectDropdown title={'Cuisine type'} options={["African", "Modern English", "Italian", "Chinese", "Mexican", "Indian"]} />
+        <MultiSelectDropdown title={'Cuisine type'} options={["African", "Modern English", "Italian", "Chinese", "Mexican", "Indian"]} onChange={setCuisines} value={cuisines}/>
       </div>
 
       <ToggleCard

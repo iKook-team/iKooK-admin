@@ -17,7 +17,8 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
   const lastName = useMemo(() => fields.find((field) => field.id === 'last_name'), [fields]);
   const { editProfile } = useEditProfile(type);
   const [editing, setEditing] = useState(false);
-  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>(user.cuisines);
+  const [selectedEvents, setSelectedEvents] = useState<string[]>(user.events);
 
 
   async function saveProfileChange(values: any) {
@@ -168,7 +169,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
                 <MultiSelectDropdown
                   title="Cuisines I can cook"
                   options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
-                  value={formik.values.cuisines}
+                  value={selectedCuisines}
                   onChange={
                      setSelectedCuisines}
                 />
@@ -185,10 +186,10 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
                 }
               >
                 <MultiSelectDropdown
-                  onChange={formik.handleChange}
+                  onChange={setSelectedEvents}
                   title="Events avaliable for"
                   options={['Wedding', 'birthday', 'Party']}
-                  value={formik.values.events}
+                  value={selectedEvents}
                 />
               </InputContainer>
             </div>

@@ -1,26 +1,39 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MultiSelectDropdownProps {
   title: string;
   options: string[];
-  value: string[]; 
+  value: string[];
   onChange: (value: string[]) => void;
 }
 
 export function MultiSelectDropdown({ title, options, value, onChange }: MultiSelectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const toggleSelection = (item: string) => {
+  const toggleSelection = (item: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent closing dropdown on click
     onChange(value.includes(item) ? value.filter((i) => i !== item) : [...value, item]);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="w-full">
+    <div className="w-full relative" ref={dropdownRef}>
       <label className="block text-gray-700 font-medium mb-1">{title}</label>
       <div
-        className="relative border border-gray-300 rounded-lg p-2 flex items-center cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
+        className="border border-gray-300 rounded-lg p-2 flex items-center cursor-pointer"
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         <div className="flex flex-wrap gap-2 flex-grow">
           {value.length > 0 ? (
@@ -47,7 +60,7 @@ export function MultiSelectDropdown({ title, options, value, onChange }: MultiSe
               className={`p-2 cursor-pointer ${
                 value.includes(option) ? "bg-yellow-100 font-medium" : "hover:bg-gray-100"
               }`}
-              onClick={() => toggleSelection(option)}
+              onClick={(event) => toggleSelection(option, event)}
             >
               {option}
             </div>
