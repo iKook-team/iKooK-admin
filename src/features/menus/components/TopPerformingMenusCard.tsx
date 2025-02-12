@@ -1,6 +1,6 @@
 import { useFetchTopMenusQuery } from '../domain/usecase.ts';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import TrendingDown from '../../../app/assets/icons/trending-down.svg';
 import TrendingUp from '../../../app/assets/icons/trending-up.svg';
 import { ReactSVG } from 'react-svg';

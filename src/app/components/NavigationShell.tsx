@@ -148,7 +148,7 @@ const sidebarItems = [
   {
     title: 'Calendar',
     icon: 'calendar',
-    route: '/calendars'
+    route: '/calendar'
   },
   {
     title: 'Support Tickets',

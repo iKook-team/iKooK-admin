@@ -1,6 +1,6 @@
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
-import { formatCurrency, getDateWithOrdinal } from '../../../utils/formatter.ts';
+import { formatCurrency, getDateWithOrdinal } from '../../../utils/helper.ts';
 import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { ReactNode } from 'react';
 import { GiftCard } from '../domain/types.ts';

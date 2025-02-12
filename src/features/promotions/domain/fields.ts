@@ -1,5 +1,5 @@
 import Field from '../../../app/domain/field.ts';
-import { CURRENCIES } from '../../../utils/formatter.ts';
+import { CURRENCIES } from '../../../utils/helper.ts';
 
 export const createPromoFields: Field[] = [
   {

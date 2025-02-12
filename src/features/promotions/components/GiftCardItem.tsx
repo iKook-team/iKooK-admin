@@ -1,5 +1,5 @@
 import { GiftCard } from '../domain/types.ts';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import logo from '../../../app/assets/icons/logo.svg';
 import { ReactSVG } from 'react-svg';
 

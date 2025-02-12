@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 import { useMemo } from 'react';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import { capitalizeWords, fromSnakeCase } from '../../../utils/strings.ts';
 import { useFetchRevenueInsightsQuery } from '../domain/usecase.ts';
 

@@ -34,12 +34,13 @@ export function DropdownField(
   props: InputHTMLAttributes<HTMLSelectElement> &
     Omit<InputContainerProps, 'children'> & {
       options: string[];
+      'get-label'?: (value: string) => string;
     }
 ) {
   return (
     <InputContainer {...props}>
       <select
-        {...removeFields(props, 'label', 'label-class-name', 'error', 'className')}
+        {...removeFields(props, 'label', 'label-class-name', 'error', 'className', 'get-label')}
         className={`w-full capitalize select select-bordered ${props.error ? 'select-error' : ''}`}
       >
         {props.placeholder && (
@@ -48,8 +49,8 @@ export function DropdownField(
           </option>
         )}
         {props.options.map((option) => (
-          <option key={option} className="capitalize">
-            {option}
+          <option key={option} className="capitalize" value={option}>
+            {props['get-label'] ? props['get-label'](option) : option}
           </option>
         ))}
       </select>

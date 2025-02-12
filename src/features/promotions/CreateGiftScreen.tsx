@@ -1,6 +1,6 @@
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import InputField, { DropdownField } from '../../app/components/InputField.tsx';
-import { CURRENCIES } from '../../utils/formatter.ts';
+import { CURRENCIES } from '../../utils/helper.ts';
 import { useCreateGiftCard } from './domain/usecase.ts';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import { Formik } from 'formik';

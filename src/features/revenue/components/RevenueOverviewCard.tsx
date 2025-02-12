@@ -1,4 +1,4 @@
-import { formatCurrency, formatNumber } from '../../../utils/formatter.ts';
+import { formatCurrency, formatNumber } from '../../../utils/helper.ts';
 import TrendingUp from '../../../app/assets/icons/trending-up.svg';
 import TrendingDown from '../../../app/assets/icons/trending-down.svg';
 import { ReactSVG } from 'react-svg';

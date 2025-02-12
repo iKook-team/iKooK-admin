@@ -8,7 +8,7 @@ import {
   GetAllGiftCardsResponse,
   SendGiftCardRequest
 } from './dto.ts';
-import { CURRENCIES } from '../../../utils/formatter.ts';
+import { CURRENCIES } from '../../../utils/helper.ts';
 
 export function useFetchPromotionsQuery() {
   const [tab, setTab] = useState<PromotionType>(PromotionType.gifts);

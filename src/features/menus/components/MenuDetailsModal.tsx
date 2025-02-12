@@ -6,7 +6,7 @@ import { MenuCategory } from '../data/model.ts';
 import { ReactSVG } from 'react-svg';
 import checkbox from '../../../app/assets/icons/checkbox.svg';
 import Constants from '../../../utils/constants.ts';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import ImageViewerModal from '../../../app/components/ImageViewerModal.tsx';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 import ChangeMenuStatusModal from './ChangeMenuStatusModal.tsx';

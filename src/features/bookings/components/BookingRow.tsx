@@ -1,12 +1,13 @@
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
 import { BookingType } from '../domain/types.ts';
-import BookingProposalImageStack from './BookingProposalImageStack.tsx';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../../utils/strings.ts';
 import { Bookings } from '../data/model.ts';
 import { ReactNode } from 'react';
+import ImageStack from '../../../app/components/ImageStack.tsx';
+import Constants from '../../../utils/constants.ts';
 
 interface BookingRowProps extends Bookings {
   type: BookingType;
@@ -37,7 +38,17 @@ export default function BookingRow(props: BookingRowProps) {
 
       <td>
         {props.type === BookingType.enquiries ? (
-          <BookingProposalImageStack proposalList={proposalList} />
+          <ImageStack
+            images={
+              proposalList
+                .map((item) => Constants.getAssetUrl(item.photo, 'users'))
+                .filter(Boolean) as string[]
+            }
+            includeRing={proposalList.length > 1}
+            maxImages={2}
+            size={24}
+            moreClassName="bg-gray-200"
+          />
         ) : (
           props.menu
         )}
