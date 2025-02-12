@@ -38,28 +38,30 @@ export const chefSettingSchema = Yup.object().shape({
     .matches(/^\d+$/, 'minimum number of guest must be a number')
 });
 
-export const userProfileSchema = Yup.object({
+ const ProfileSchema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Email is required'),
   first_name: Yup.string().required('First Name is required'),
   last_name: Yup.string().required('Last Name is required'),
   mobile: Yup.string()
     .matches(/^\+?[0-9\s]+$/, 'Invalid phone number')
     .required('Phone number is required'),
+});
+
+export const userProfileSchema = ProfileSchema.shape({
+  brief_desc: Yup.string().required('Brief Description is required'),
+
+})
+
+export const chefProfileSchema = ProfileSchema.shape({
   city: Yup.string().required('City is required'),
   address: Yup.string().required('Address is required'),
   postcode: Yup.string().required('Post Code is required'),
-  brief_profile: Yup.string().required('Brief Profile is required'),
-  state: Yup.string().required('State is required'),
-  country: Yup.string().required('Country is required'),
+  cuisines: Yup.array().of(Yup.string()),
   date_of_birth: Yup.string().required('Date of birth is required'),
-  cuisines: Yup.array()
-    .of(Yup.string())
-    // .min(1, 'At least one cuisine is required')
-    // .required('Cuisines is required')
-});
+  country: Yup.string().required('Country is required'),
+  state: Yup.string().required('State is required'),
+  brief_profile: Yup.string().required('Brief Profile is required'),
 
-export const chefProfileSchema = userProfileSchema.shape({
-  brief_info: Yup.string().required('Brief information is required') // ✅ New field specific to chefs
 });
 
 export const chefPasswordSchema = Yup.object({

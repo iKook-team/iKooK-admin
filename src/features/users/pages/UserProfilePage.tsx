@@ -7,7 +7,7 @@ import Field from '../../../app/domain/field.ts';
 import { MultiSelectDropdown } from '../components/MultiSelectDropDown.tsx';
 import DragAndDropImage from '../components/ImageDraggable.tsx';
 import { useFormik } from 'formik';
-import { userProfileSchema } from '../domain/validators.ts';
+import { chefProfileSchema, userProfileSchema } from '../domain/validators.ts';
 import { useEditProfile } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 
@@ -34,7 +34,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
         date_of_birth: values.date_of_birth,
         state: values.state,
         city: values.city,
-        address: values.address,
+        address:  values.address,
         post_code: values.postcode,
         experience: values.experience,
         cuisines: values.cuisines,
@@ -64,7 +64,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
     initialValues: {
       email: user.email || '',
       mobile: user.mobile || '',
-      brief_info: '',
+      brief_desc: '',
       country: '',
       brief_profile: '',
       first_name: user.first_name || '',
@@ -80,7 +80,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
       weekly_charges: 0,
       monthly_charges: 0
     },
-    validationSchema: userProfileSchema,
+    validationSchema: type === UserType.host ? userProfileSchema : chefProfileSchema,
     onSubmit: (values) => saveProfileChange(values)
   });
 
@@ -199,20 +199,20 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
             <InputContainer
               label={'Brief description'}
               error={
-                formik.touched.brief_info && formik.errors.brief_info
-                  ? formik.errors.brief_info
+                formik.touched.brief_desc && formik.errors.brief_desc
+                  ? formik.errors.brief_desc
                   : undefined
               }
             >
               <div className="border-b  "></div>
               <div className="h-[200px] items-stretch  ">
                 <textarea
-                  key={'brief_info'}
-                  name={'brief_info'}
-                  className={`h-full w-full input input-bordered p-3 ${formik.errors.brief_info ? 'input-error' : ''}`}
+                  key={'brief_desc'}
+                  name={'brief_desc'}
+                  className={`h-full w-full input input-bordered p-3 ${formik.errors.brief_desc ? 'input-error' : ''}`}
                   placeholder="John Smith was born in a small town in the Midwest. He grew up with a love of learning and a passion for science and technology. After graduating from high school, he attended a prestigious university where he earned a degree in electrical engineering. He then landed a job at a top technology company, where he quickly rose through the ranks to become a lead engineer.John has always been an innovator, and he is known for his ability to think outside the box and come up with new, creative solutions to complex problems. He has been credited with several patents for his inventions and is respected throughout the industry for his technical expertise and leadership skills."
                   onChange={formik.handleChange}
-                  value={formik.values.brief_info}
+                  value={formik.values.brief_desc}
                   onBlur={formik.handleBlur}
                 />
               </div>

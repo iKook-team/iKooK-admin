@@ -74,6 +74,8 @@ export default function BookingEditScreen() {
   const capitalizeFirst = (str: string | undefined) =>
     str!.charAt(0).toUpperCase() + str!.slice(1).toLowerCase();
 
+  console.log(booking);
+
   return (
     <>
       <PageBackButton />
@@ -158,7 +160,11 @@ export default function BookingEditScreen() {
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         children={
-          <EditMenuModalContent starter={['ab', 'cde']} main={['ijk']} dessert={['lmn', 'opq']} />
+          <EditMenuModalContent
+            starterList={booking?.menu.starter.map((e) => e.menuName) || []}
+            mainList={booking?.menu.main.map((e) => e.menuName) || []}
+            dessertList={booking?.menu.dessert.map((e) => e.menuName) || []}
+          />
         }
         title={'Edit menu'}
         isQuote={true}
