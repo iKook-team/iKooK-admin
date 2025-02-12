@@ -15,9 +15,8 @@ export function useFetchBookingsQuery() {
   const [query, setQuery] = useQueryState('search', {
     defaultValue: ''
   });
-  const [filter, setFilter] = useQueryState('filter', {
-    defaultValue: filters[0]
-  });
+  const [filter, setFilter] = useState<string>(filters[0]);
+
   const [bookingType, setBookingType] = useQueryState('type', {
     defaultValue: BookingType.menus
   });
@@ -39,29 +38,37 @@ export function useFetchBookingsQuery() {
     const items = data?.data?.items || [];
     if (!query && (!filter || filter === 'all')) {
       return items;
-    }
+    } 
 
     return items.filter((booking) => {
+      const cleanedFilter = filter!.toLowerCase();
       const cleanedQuery = query.toLowerCase();
-      if (cleanedQuery) {
+
+      if (cleanedFilter != 'all' && cleanedQuery) {
+        return (
+          (booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
+            booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
+            booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
+            booking.chef?.firstName.toLowerCase().includes(cleanedQuery)) &&
+          booking.status.includes(cleanedFilter)
+        );
+      } else  if (cleanedFilter != 'all' && !cleanedQuery ) {
+        return (
+          booking.status.includes(cleanedFilter)
+        );
+      } 
+      else if (cleanedFilter === 'all' && cleanedQuery) {
         return (
           booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
           booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
           booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
           booking.chef?.firstName.toLowerCase().includes(cleanedQuery)
         );
-      } else if (filter != 'all') {
-        const cleanedFilter = filter!.toLowerCase();
-
+      } else if ( cleanedFilter) {
         return (
-          booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
-          booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
-          booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
-          (booking.chef?.firstName.toLowerCase().includes(cleanedQuery) &&
-            booking.status.toLowerCase() === cleanedFilter)
+          booking.status.toLowerCase() === cleanedFilter
         );
       }
-      const cleanedFilter = filter!.toLowerCase();
       return booking.status.toLowerCase() === cleanedFilter;
     });
   }, [query, filter, data]);
