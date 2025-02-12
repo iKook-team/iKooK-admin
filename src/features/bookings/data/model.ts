@@ -1,18 +1,13 @@
+import { User } from '../../users/data/model.ts';
+
 export interface BookingsUser {
   firstName: string;
   lastName: string;
   photo: string;
 }
 
-export interface EditBookingChef {
-  first_name: string;
-  last_name: string;
-  photo: string;
-  country: string;
-  rating: number;
+export interface EditBookingChef extends User {
   reviews: number;
-  username: string;
-  verified: boolean;
 }
 
 export interface Proposal {
@@ -107,7 +102,5 @@ export interface Booking {
   quotes: Quote[];
   booking_type: string;
   custom_booking_type_selected: string;
-  currency:string;
+  currency: string;
 }
-
-export interface Chef {}

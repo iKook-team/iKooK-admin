@@ -1,5 +1,5 @@
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
-import { formatCurrency, getDateWithOrdinal } from '../../../utils/formatter.ts';
+import { formatCurrency, getDateWithOrdinal } from '../../../utils/helper.ts';
 import { capitalize } from '../../../utils/strings.ts';
 import { ReactNode } from 'react';
 import { Payment } from '../domain/model.ts';

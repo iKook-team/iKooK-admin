@@ -4,7 +4,7 @@ import { useFetchWithdrawalsQuery } from './domain/usecase.ts';
 import PageTable from '../../app/components/page/PageTable.tsx';
 import { useMemo, useRef } from 'react';
 import CalendarIcon from '../../app/components/CalendarIcon.tsx';
-import { formatCurrency, getDateWithOrdinal } from '../../utils/formatter.ts';
+import { formatCurrency, getDateWithOrdinal } from '../../utils/helper.ts';
 import UsernameAndImage from '../users/components/UsernameAndImage.tsx';
 import ItemStatus from '../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../utils/strings.ts';

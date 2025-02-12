@@ -41,7 +41,8 @@ export default {
           400: '#4040E9',
           vista: '#8A8CD9',
           dark: {
-            electric: '#546881'
+            electric: '#546881',
+            imperial: '#0A1481'
           }
         },
         orange: {

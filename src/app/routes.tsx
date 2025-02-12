@@ -22,6 +22,7 @@ import WithdrawalScreen from '../features/withdrawal/WithdrawalScreen.tsx';
 import RevenueOverviewScreen from '../features/revenue/RevenueOverviewScreen.tsx';
 import PaymentsScreen from '../features/revenue/PaymentsScreen.tsx';
 import DashboardScreen from '../features/dashboard/DashboardScreen.tsx';
+import CalendarScreen from '../features/calendar/CalendarScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -95,6 +96,10 @@ export default function Routes() {
               {
                 path: 'services',
                 element: <UsersScreen type={UserType.chef} isServices={true} />
+              },
+              {
+                path: 'calendar',
+                element: <CalendarScreen />
               },
               { path: '*', element: <NotFound /> }
             ]

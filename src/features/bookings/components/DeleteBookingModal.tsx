@@ -39,7 +39,7 @@ export default function DeleteBookingModal({ booking, ref }: DeleteBookingModalP
   return (
     <PageModal
       ref={ref}
-      id="suspend-user-modal"
+      id="delete-booking-modal"
       title={
         <>
           {title}

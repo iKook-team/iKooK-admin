@@ -64,7 +64,7 @@ export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingMo
   return (
     <PageModal
       ref={ref}
-      id="suspend-user-modal"
+      id="reassign-booking-modal"
       title={
         <>
           {title}{' '}

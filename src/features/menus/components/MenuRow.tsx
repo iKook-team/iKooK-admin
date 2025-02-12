@@ -1,7 +1,7 @@
 import { Menu } from '../data/model.ts';
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
-import { formatCurrency } from '../../../utils/formatter.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../../utils/strings.ts';
 import { ReactNode } from 'react';

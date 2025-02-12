@@ -52,7 +52,7 @@ export default function EditBookingStatusModal({ booking, ref }: EditBookingStat
   return (
     <PageModal
       ref={ref}
-      id="suspend-user-modal"
+      id="edit-booking-status-modal"
       title={
         <>
           {title}
