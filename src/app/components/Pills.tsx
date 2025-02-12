@@ -7,7 +7,7 @@ interface PillsProps<T> {
 
 export default function Pills<T>({ active, setActive, items, getLabel }: PillsProps<T>) {
   return (
-    <div className="flex flex-row gap-3 mt-3">
+    <div className="flex flex-row gap-3 mt-3 overflow-x-auto">
       {items.map((current, index) => (
         <button
           key={index}

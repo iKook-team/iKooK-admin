@@ -71,6 +71,7 @@ export default function NavigationShell() {
                   to={item.route}
                   key={item.route}
                   className={`w-full flex flex-row font-normal text-sm btn ${selected ? 'bg-primary' : 'btn-ghost'} rounded-none`}
+                  target={item.route.startsWith('http') ? '_blank' : undefined}
                 >
                   <img
                     src={getImageUrl(`icons/${item.icon}.svg`)}
@@ -154,11 +155,11 @@ const sidebarItems = [
     icon: 'support',
     route: '/support'
   },
-  {
-    title: 'Addons Services',
-    icon: 'addon',
-    route: '/addons'
-  },
+  // {
+  //   title: 'Addons Services',
+  //   icon: 'addon',
+  //   route: '/addons'
+  // },
   {
     title: 'Withdrawal',
     icon: 'withdrawal',
@@ -169,15 +170,15 @@ const sidebarItems = [
     icon: 'gift',
     route: '/promotions'
   },
-  {
-    title: 'Discounts',
-    icon: 'discount',
-    route: '/discounts'
-  },
+  // {
+  //   title: 'Discounts',
+  //   icon: 'discount',
+  //   route: '/discounts'
+  // },
   {
     title: 'Blog',
     icon: 'blog',
-    route: '/blog'
+    route: 'https://ikook.info'
   },
   {
     title: 'Insights',

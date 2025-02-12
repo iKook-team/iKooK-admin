@@ -16,8 +16,23 @@ import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
+  const services = useMemo(
+    () => [
+      'chef-at-home',
+      'cooking-class',
+      'gourmet-delivery',
+      'large-event',
+      'meal-prep',
+      'fine-dining',
+      'corporate-dining'
+    ],
+    []
+  );
 
   const [filter, setFilter] = useState<string>(filters[0]);
+  const [service, setService] = useState<string | undefined>(
+    request.includeServices ? services[0] : undefined
+  );
   const [query, setQuery] = useState<string>();
   const [page, setPage] = useState(1);
 
@@ -25,11 +40,11 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const debouncedQuery = useDebouncedValue(query, 500);
 
   const { isPending, data, error } = useQuery({
-    queryKey: [request.type, verified, page, debouncedQuery],
+    queryKey: [request.type, service, verified, page, debouncedQuery],
     queryFn: async ({ queryKey }) => {
-      const [type, verified, page, query] = queryKey;
+      const [type, service, verified, page, query] = queryKey;
       const response = await fetch({
-        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}${query ? `&search_name=${query}` : ''}`,
+        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}${query ? `&search_name=${query}` : ''}${service ? `&service=${service}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;
@@ -47,6 +62,9 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
     filter,
     setFilter,
     filters,
+    service,
+    setService,
+    services,
     totalCount: data?.data?.total_count || 0,
     numberOfPages: data?.data?.number_of_pages || 0
   };

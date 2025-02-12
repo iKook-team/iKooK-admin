@@ -6,6 +6,7 @@ export interface GetAllUsersRequest {
   type: UserType;
   verified?: boolean;
   query?: string;
+  includeServices?: boolean;
 }
 
 export interface GetRoleRequest {

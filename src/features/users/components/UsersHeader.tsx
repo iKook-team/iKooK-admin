@@ -5,18 +5,19 @@ interface UsersHeaderProps {
   leading?: ReactNode;
   children?: ReactNode;
   type: UserType;
+  isServices?: boolean;
 }
 
-export default function UsersHeader({ leading, children, type }: UsersHeaderProps) {
+export default function UsersHeader({ leading, children, type, isServices }: UsersHeaderProps) {
   const header = useMemo(
     () => [
       'Name',
       'Email',
       'Address',
-      ...(type == UserType.host ? ['Phone No'] : ['Wallet', 'Rating']),
+      ...(type == UserType.host ? ['Phone No'] : isServices ? ['Rating'] : ['Wallet', 'Rating']),
       'Status'
     ],
-    [type]
+    [type, isServices]
   );
 
   return (

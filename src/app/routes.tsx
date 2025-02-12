@@ -92,6 +92,10 @@ export default function Routes() {
                 path: 'revenue/payments',
                 element: <PaymentsScreen />
               },
+              {
+                path: 'services',
+                element: <UsersScreen type={UserType.chef} isServices={true} />
+              },
               { path: '*', element: <NotFound /> }
             ]
           }

@@ -6,6 +6,7 @@ export interface User extends CurrentUser {
   email: string;
   address: string;
   country: string;
+  wallet?: number;
   rating?: number;
   mobile?: string;
   menus: string[];
@@ -47,7 +48,7 @@ export interface User extends CurrentUser {
   };
 }
 
-export interface Role{
-  id : string;
-  name : string;
+export interface Role {
+  id: string;
+  name: string;
 }
