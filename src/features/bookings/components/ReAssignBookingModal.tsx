@@ -81,7 +81,7 @@ export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingMo
           className="w-full"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name of Chef"
+          placeholder="Search chef by name"
           trailing={<FaSearch />}
         />
         {loadingChefs && <span className="loading loading-dots loading-lg"></span>}

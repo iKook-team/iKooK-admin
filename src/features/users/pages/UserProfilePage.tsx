@@ -1,7 +1,7 @@
 import { UserPageProps, UserType } from '../domain/types.ts';
 import UserSettingsTitle from '../components/UserSettingsTitle.tsx';
 import InputField, { InputContainer } from '../../../app/components/InputField.tsx';
-import { FormEvent, useMemo, useState } from 'react';
+import {useMemo, useState } from 'react';
 import { chefProfileFields, hostProfileFields } from '../domain/fields.ts';
 import Field from '../../../app/domain/field.ts';
 import { MultiSelectDropdown } from '../components/MultiSelectDropDown.tsx';
@@ -54,7 +54,6 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
     if (formik.isValid) {
       formik.handleSubmit();
     } else {
-      // e.preventDefault();
       Object.keys(formik.errors).forEach((key) => {
         toast(formik.errors[key as keyof typeof formik.errors], { type: 'error' });
       });
