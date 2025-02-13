@@ -14,7 +14,7 @@ const QuoteCardGrid: React.FC<QuoteCardGridProps> = ({
   setCurrentQuote
 }) => {
   function viewQuoteSetId(quote: Quote) {
-    viewQuote();
+    // viewQuote();
     setCurrentQuote(quote);
   }
 

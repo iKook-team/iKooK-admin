@@ -73,7 +73,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
       date_of_birth: '',
       state: '',
       city: '',
-      address: user.address,
+      address: user.address || '',
       postcode: '',
       experience: '',
       cuisines: selectedCuisines,

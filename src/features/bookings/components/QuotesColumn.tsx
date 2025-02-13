@@ -6,8 +6,9 @@ import { DropdownField } from '../../../app/components/InputField';
 import Modal from './BookingsModal';
 import QuoteCardGrid from './QuotesGrid';
 import { ViewQuoteModal } from './QuotesModal';
-import { useAcceptQuote } from '../domain/usecase';
+import { useAcceptQuote, useDeleteBooking } from '../domain/usecase';
 import { BookingType } from '../domain/types.ts';
+import { toast } from 'react-toastify';
 
 interface IconTextItem {
   icon: string;
@@ -47,6 +48,50 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
   const closeQuoteModal = () => setIsQuoteModalVisible(false);
   const openQuoteModal = () => setIsQuoteModalVisible(true);
 
+  const [cancelling, setCancelling] = useState(false);
+
+  const mutation = useDeleteBooking();
+
+  const [deleting, setDeleting] = useState(false);
+
+  const deleteMutation = useDeleteBooking();
+
+  const onDelete = async () => {
+    if (deleting || booking === undefined) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+
+      const response = await deleteMutation.mutateAsync({
+        bookingId: 'booking.id'
+      });
+
+      toast(response.data.data, { type: 'success' });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const onCancel = async () => {
+    if (cancelling || booking === undefined) {
+      return;
+    }
+
+    try {
+      setCancelling(true);
+
+      const response = await mutation.mutateAsync({
+        bookingId: 'booking.id'
+      });
+
+      toast(response.data.data, { type: 'success' });
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const enquiryProfileList = [
     { icon: 'ci_location', text: `${booking?.chef?.country}`, review: null },
     {
@@ -56,14 +101,26 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
     }
   ];
 
-  const [currentQuote, setCurrentQuote] = useState<Quote | undefined>(undefined);
+  // const [currentQuote, setCurrentQuote] = useState<Quote | undefined>(undefined);
+  const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
+
   const { performAcceptQuote, loading: acceptingQuote } = useAcceptQuote();
+  console.log(currentQuote);
+
+  const handleAcceptQuote = () => {
+    if (currentQuote) {
+      performAcceptQuote(currentQuote.id);
+    } else {
+      console.error("No quote selected!");
+    }
+  };
 
   return (
     <div className="flex flex-col aspect-[370/600] rounded-xl shadow-xl border border-gray-300 bg-white px-10 justify-evenly items-center h-min gap-3 py-5 max-w-[500px] ">
       {type != BookingType.menus && (
         <button
-          onClick={type ? openModal : () => performAcceptQuote(currentQuote!.id)}
+          // onClick={type ? openModal : () => performAcceptQuote(currentQuote!.id)}
+          onClick={type ? openModal : handleAcceptQuote}
           className="btn btn-primary w-full h-min capitalize"
           disabled={acceptingQuote}
         >
@@ -105,18 +162,26 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
 
       <div className="flex flex-col gap-1 w-full">
         <div className="flex justify-between">
-          <h1>{booking.no_of_guest || 0} Guests * {booking.currency} 20</h1>
-          <h1>{booking.currency} {booking.no_of_guest * 20}</h1>
+          <h1>
+            {booking.no_of_guest || 0} Guests * {booking.currency} 20
+          </h1>
+          <h1>
+            {booking.currency} {booking.no_of_guest * 20}
+          </h1>
         </div>
 
         <div className="flex justify-between pb-5 border-b">
           <h1>Platform Fees 2.5%</h1>
-          <h1>{booking.currency} {booking.no_of_guest * 20 * 0.025}</h1>
+          <h1>
+            {booking.currency} {booking.no_of_guest * 20 * 0.025}
+          </h1>
         </div>
 
         <div className="flex justify-between">
           <h1 className="font-bold uppercase">Total</h1>
-          <h1>{booking.currency } {(booking.no_of_guest * 20 * 1.025).toFixed(2)}</h1>
+          <h1>
+            {booking.currency} {(booking.no_of_guest * 20 * 1.025).toFixed(2)}
+          </h1>
         </div>
       </div>
 
@@ -131,12 +196,12 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
 
         {type && (
           <>
-            <button onClick={() => {}} className="btn btn-outline w-full h-min capitalize">
+            <button onClick={onCancel} className="btn btn-outline w-full h-min capitalize">
               Cancel
             </button>
 
             <button
-              onClick={() => {}}
+              onClick={onDelete}
               className="btn bg-black-base text-white w-full h-min capitalize"
             >
               Delete
@@ -186,7 +251,7 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
         children={
           <ViewQuoteModal
             booking={booking}
-            quote={currentQuote}
+            quote={currentQuote!}
             enquiryProfileList={enquiryProfileList}
             enquiryProfileList1={[]}
             iconTextList={iconTextList}
