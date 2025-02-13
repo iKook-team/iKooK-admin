@@ -1,5 +1,6 @@
-import { ChevronDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
+import { ReactSVG } from 'react-svg';
+import ArrowDown from '../../../app/assets/icons/arrow-down.svg';
 
 interface MultiSelectDropdownProps {
   title: string;
@@ -8,7 +9,12 @@ interface MultiSelectDropdownProps {
   onChange: (value: string[]) => void;
 }
 
-export function MultiSelectDropdown({ title, options, value, onChange }: MultiSelectDropdownProps) {
+export default function MultiSelectDropdown({
+  title,
+  options,
+  value,
+  onChange
+}: MultiSelectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -24,8 +30,8 @@ export function MultiSelectDropdown({ title, options, value, onChange }: MultiSe
         setIsOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -49,7 +55,7 @@ export function MultiSelectDropdown({ title, options, value, onChange }: MultiSe
             <span className="text-gray-400">Select cuisine</span>
           )}
         </div>
-        <ChevronDown className="ml-auto text-gray-600" size={16} />
+        <ReactSVG src={ArrowDown} className="ml-auto text-gray-600 w-4" wrapper="span" />
       </div>
 
       {isOpen && (
@@ -58,7 +64,7 @@ export function MultiSelectDropdown({ title, options, value, onChange }: MultiSe
             <div
               key={option}
               className={`p-2 cursor-pointer ${
-                value.includes(option) ? "bg-yellow-100 font-medium" : "hover:bg-gray-100"
+                value.includes(option) ? 'bg-yellow-100 font-medium' : 'hover:bg-gray-100'
               }`}
               onClick={(event) => toggleSelection(option, event)}
             >

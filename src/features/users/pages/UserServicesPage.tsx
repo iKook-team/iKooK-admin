@@ -6,7 +6,7 @@ import { chefServiceFields, chefServicesInitials } from '../domain/fields';
 import InputField from '../../../app/components/InputField';
 import { useFormik } from 'formik';
 import { chefServicesSchema } from '../domain/validators';
-import { MultiSelectDropdown } from '../components/MultiSelectDropDown';
+import MultiSelectDropdown from '../components/MultiSelectDropDown';
 
 export default function UserServicesPage({ user }: UserPageProps) {
   console.log(user);
@@ -17,7 +17,6 @@ export default function UserServicesPage({ user }: UserPageProps) {
   const [isGd, setIsGd] = useState(false);
   const [isBg, setIsBG] = useState(false);
   const [cuisines, setCuisines] = useState(user.cuisines);
-
 
   const fields = chefServiceFields;
   const startingPrice = useMemo(
@@ -82,7 +81,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
           />
         </div>
         <div className="flex-1">
-        <InputField
+          <InputField
             key={minGuest.id}
             label={minGuest.label}
             name={minGuest.id}
@@ -103,7 +102,12 @@ export default function UserServicesPage({ user }: UserPageProps) {
       </div>
 
       <div className="flex-1 w-[70%] my-5 ">
-        <MultiSelectDropdown title={'Cuisine type'} options={["African", "Modern English", "Italian", "Chinese", "Mexican", "Indian"]} onChange={setCuisines} value={cuisines}/>
+        <MultiSelectDropdown
+          title={'Cuisine type'}
+          options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
+          onChange={setCuisines}
+          value={cuisines}
+        />
       </div>
 
       <ToggleCard
