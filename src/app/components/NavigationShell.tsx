@@ -184,15 +184,15 @@ const sidebarItems = [
     title: 'Insights',
     icon: 'insight',
     route: '/insights'
-  },
-  {
-    title: 'Report',
-    icon: 'report',
-    route: '/reports'
-  },
-  {
-    title: 'Settings',
-    icon: 'settings',
-    route: '/settings'
   }
+  // {
+  //   title: 'Report',
+  //   icon: 'report',
+  //   route: '/reports'
+  // },
+  // {
+  //   title: 'Settings',
+  //   icon: 'settings',
+  //   route: '/settings'
+  // }
 ];

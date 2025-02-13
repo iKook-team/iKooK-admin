@@ -12,6 +12,7 @@ import UserServicesPage from './pages/UserServicesPage.tsx';
 import ChefNotificationPage from './pages/ChefNotificationpage.tsx';
 import UserPasswordPage from './pages/UsersPasswordPage.tsx';
 import ChefSettingsPage from './pages/ChefSettingsPage.tsx';
+import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
@@ -28,7 +29,7 @@ export default function UserScreen() {
     <>
       <PageBackButton />
       {isPending || user === undefined ? (
-        <span className="loading loading-dots loading-lg"></span>
+        <LoadingSpinner />
       ) : error?.message ? (
         <div className="text-center text-red-500">{error.message}</div>
       ) : (

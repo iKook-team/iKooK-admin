@@ -9,7 +9,6 @@ import { chefServicesSchema } from '../domain/validators';
 import MultiSelectDropdown from '../components/MultiSelectDropDown';
 
 export default function UserServicesPage({ user }: UserPageProps) {
-  console.log(user);
   const [isCah, setIsCat] = useState(false);
   const [isLe, SetIsLe] = useState(false);
   const [isMp, setIsMp] = useState(false);
@@ -37,9 +36,10 @@ export default function UserServicesPage({ user }: UserPageProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <UserSettingsTitle title={'Profile'} onSave={() => {}} />
-      <h1 className="text-lg text-gray-400">
-        Activate the services you are avaliable for and activate your preference
+      <UserSettingsTitle title="Profile" onSave={() => {}} />
+
+      <h1 className="text-xs text-dark-charcoal/50">
+        Activate the services you are available for and activate your preference
       </h1>
 
       <ToggleCard
