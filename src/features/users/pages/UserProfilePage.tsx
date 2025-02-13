@@ -1,10 +1,10 @@
 import { UserPageProps, UserType } from '../domain/types.ts';
 import UserSettingsTitle from '../components/UserSettingsTitle.tsx';
 import InputField, { InputContainer } from '../../../app/components/InputField.tsx';
-import {useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { chefProfileFields, hostProfileFields } from '../domain/fields.ts';
 import Field from '../../../app/domain/field.ts';
-import { MultiSelectDropdown } from '../components/MultiSelectDropDown.tsx';
+import MultiSelectDropdown from '../components/MultiSelectDropDown.tsx';
 import DragAndDropImage from '../components/ImageDraggable.tsx';
 import { useFormik } from 'formik';
 import { chefProfileSchema, userProfileSchema } from '../domain/validators.ts';
@@ -20,7 +20,6 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>(user.cuisines);
   const [selectedEvents, setSelectedEvents] = useState<string[]>(user.events);
 
-
   async function saveProfileChange(values: any) {
     if (editing === true) {
       return;
@@ -35,7 +34,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
         date_of_birth: values.date_of_birth,
         state: values.state,
         city: values.city,
-        address:  values.address,
+        address: values.address,
         post_code: values.postcode,
         experience: values.experience,
         cuisines: values.cuisines,
@@ -170,8 +169,7 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
                   title="Cuisines I can cook"
                   options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
                   value={selectedCuisines}
-                  onChange={
-                     setSelectedCuisines}
+                  onChange={setSelectedCuisines}
                 />
               </InputContainer>
             </div>
