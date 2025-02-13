@@ -1,14 +1,17 @@
-import { Ref, useState } from 'react';
+import { Ref, useRef } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import { Bookings } from '../data/model.ts';
 import { useReassignBooking } from '../domain/usecase.ts';
 import InputField from '../../../app/components/InputField.tsx';
-import { useFetchUsersQuery } from '../../users/domain/usecase.ts';
 import { UserType } from '../../users/domain/types.ts';
-import { FaSearch } from 'react-icons/fa';
-import { PaginationControls } from '../../../app/components/page/PageTable.tsx';
+import { User } from '../../users/data/model.ts';
+import SearchUsersModal from '../../users/components/SearchUsersModal.tsx';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
+import { capitalize } from '../../../utils/strings.ts';
 
 interface ReAssignBookingModalProps {
   booking: Bookings;
@@ -16,50 +19,12 @@ interface ReAssignBookingModalProps {
 }
 
 export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingModalProps) {
-  const [chefId, setChefId] = useState('');
-
-  const {
-    isPending: loadingChefs,
-    users,
-    error,
-    query,
-    setQuery,
-    page,
-    setPage,
-    numberOfPages,
-    totalCount
-  } = useFetchUsersQuery({
-    type: UserType.chef
-  });
-
-  const title = 'Re-Assign';
-
-  const [loading, setLoading] = useState(false);
-  const [loadingId, setLoadingId] = useState(true);
-
   const mutation = useReassignBooking();
 
-  const onSubmit = async () => {
-    if (loading || booking === undefined) {
-      return;
-    }
+  const selectUserModal = useRef<HTMLDialogElement>(null);
+  const selectedUser = useRef<User>(null);
 
-    try {
-      setLoading(true);
-
-      const response = await mutation.mutateAsync({
-        chefId: chefId,
-        bookingId: booking.id
-      });
-
-      toast(response.data.data, { type: 'success' });
-      getCurrentFromRef(ref)?.close();
-    } finally {
-      setLoading(false);
-      setQuery('');
-      setChefId('');
-    }
-  };
+  const title = 'Re-Assign';
 
   return (
     <PageModal
@@ -67,60 +32,73 @@ export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingMo
       id="reassign-booking-modal"
       title={
         <>
-          {title}{' '}
+          {title}
           <span className="text-jordy-blue capitalize">
-            {booking?.user.firstName} {booking?.user.lastName}
+            {' ' + booking?.user.firstName} {booking?.user.lastName}
           </span>
           ?
         </>
       }
     >
-      <div>
-        <div className="mb-2">Select Chef</div>
-        <InputField
-          className="w-full"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name of Chef"
-          trailing={<FaSearch />}
-        />
-        {loadingChefs && <span className="loading loading-dots loading-lg"></span>}
-        {error && <p>{error.message}</p>}
+      <Formik
+        initialValues={{ chef: '' }}
+        validationSchema={Yup.object({
+          chef: Yup.string().required('Chef is required')
+        })}
+        onSubmit={(values) => {
+          console.log(values);
+          mutation
+            .mutateAsync({
+              chefId: selectedUser.current!.id,
+              bookingId: booking.id
+            })
+            .then(() => {
+              console.log('done');
+              toast('Re-Assign Successful', { type: 'success' });
+              getCurrentFromRef(ref)?.close();
+            });
+        }}
+      >
+        {({ values, touched, errors, setFieldValue, handleChange, handleSubmit }) => {
+          return (
+            <>
+              <form onSubmit={handleSubmit}>
+                <InputField
+                  label="Chef"
+                  name="chef"
+                  placeholder="Select Chef"
+                  type="text"
+                  value={values['chef']}
+                  error={touched['chef'] ? errors['chef'] : undefined}
+                  onChange={handleChange}
+                  readOnly={true}
+                  onClick={() => selectUserModal.current?.showModal()}
+                />
 
-        <ul className="mt-2">
-          {users.map((chef, index) => (
-            <li key={index}>
-              <div
-                className="text-center border border-black-base bg-primary mb-1 font-bold cursor-pointer hover:bg-gray-100"
-                onClick={() => {
-                  setQuery(chef.last_name + ' ' + chef.first_name);
-                  setChefId(chef.id);
-                  setLoadingId(false);
-                  console.log(`set chef id ${chefId} and booking id ${booking.id}`);
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    className="btn btn-primary mt-10"
+                    disabled={mutation.isPending}
+                  >
+                    <LoadingSpinner isLoading={mutation.isPending}>Re-Assign</LoadingSpinner>
+                  </button>
+                </div>
+              </form>
+              <SearchUsersModal
+                ref={selectUserModal}
+                onUserSelected={(user) => {
+                  selectedUser.current = user;
+                  setFieldValue('chef', capitalize(`${user.first_name} ${user.last_name}`)).then(
+                    () => getCurrentFromRef(selectUserModal)?.close()
+                  );
                 }}
-              >
-                {chef.last_name} {chef.first_name}
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <PaginationControls
-          page={page}
-          numberOfPages={numberOfPages}
-          onPageChange={setPage}
-          totalItemCount={totalCount}
-          pageItemCount={users.length}
-        />
-
-        <button
-          disabled={loading || loadingId}
-          onClick={onSubmit}
-          className="btn btn-primary flex mx-auto mt-3 w-32"
-        >
-          {loading ? 'Assigning' : 'Assign'}
-        </button>
-      </div>
+                type={UserType.chef}
+              />
+            </>
+          );
+        }}
+      </Formik>
     </PageModal>
   );
 }

@@ -13,6 +13,8 @@ export interface User extends CurrentUser {
   photo: string;
   verified: boolean;
   status: string;
+  cuisines: string[];
+  events: string[];
   verification?: {
     document?: {
       document_type: string;

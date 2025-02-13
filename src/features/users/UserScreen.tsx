@@ -7,6 +7,11 @@ import UserHeader from './components/UserHeader.tsx';
 import { User } from './data/model.ts';
 import UserProfilePage from './pages/UserProfilePage.tsx';
 import UserVerificationPage from './pages/UserVerificationPage.tsx';
+import UserAccountPage from './pages/UserAccountPage.tsx';
+import UserServicesPage from './pages/UserServicesPage.tsx';
+import ChefNotificationPage from './pages/ChefNotificationpage.tsx';
+import UserPasswordPage from './pages/UsersPasswordPage.tsx';
+import ChefSettingsPage from './pages/ChefSettingsPage.tsx';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
@@ -48,6 +53,16 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
       return <UserProfilePage user={user} type={type} />;
     case UserHeaderTab.verification:
       return <UserVerificationPage user={user} type={type} />;
+    case UserHeaderTab.account:
+      return <UserAccountPage user={user} type={type} />;
+    case UserHeaderTab.services:
+      return <UserServicesPage user={user} type={type} />;
+    case UserHeaderTab.notification:
+      return <ChefNotificationPage user={user} type={type} />;
+    case UserHeaderTab.password:
+      return <UserPasswordPage user={user} type={type} />;
+    case UserHeaderTab.settings:
+      return <ChefSettingsPage user={user} type={type} />;
     default:
       return null;
   }

@@ -4,7 +4,8 @@ import {
   GetAllUsersRequest,
   GetAllUsersResponse,
   GetRoleRequest,
-  GetRoleResponse
+  GetRoleResponse,
+  ProfileRequest
 } from '../data/dto.ts';
 import { useMemo, useState } from 'react';
 import { UserType } from './types.ts';
@@ -245,5 +246,85 @@ export function useGetRole(request: GetRoleRequest) {
     isPending,
     error,
     roles
+  };
+}
+
+export function useDeleteAccount(type: UserType) {
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return await fetch({
+        url: `UserManagement/delete-account/${id}`,
+        method: 'DELETE'
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+}
+
+export function useResetPassword(type: UserType) {
+  const mutation = useMutation({
+    mutationFn: async (request: { email: string }) => {
+      const response = await fetch({
+        url: `user-management/password-reset`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    resetPassword: async (request: { email: string }) => {
+      await mutation.mutateAsync(request);
+    }
+  };
+}
+
+export function useEditProfile(type: UserType) {
+  const mutation = useMutation({
+    mutationFn: async (request: ProfileRequest) => {
+      const response = await fetch({
+        url: `/chef/edit-profile`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    editProfile: async (request: ProfileRequest) => {
+      await mutation.mutateAsync(request);
+    }
+  };
+}
+
+export function useEditServiceDetails(type: UserType, service_type: string) {
+  const mutation = useMutation({
+    mutationFn: async (request: ProfileRequest) => {
+      const response = await fetch({
+        url: `/chef/update-service-detail/${service_type}`,
+        method: 'POST',
+        data: request
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+
+  return {
+    editProfile: async (request: ProfileRequest) => {
+      await mutation.mutateAsync(request);
+    }
   };
 }

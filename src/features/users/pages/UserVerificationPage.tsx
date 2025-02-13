@@ -86,6 +86,15 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
           onImage={() => onImage(user.verification?.document?.certificate)}
           loading={loading?.type == 'document' ? loading : undefined}
         />
+           <DocumentEntry
+          title="CV"
+          subtitle="Upload your Curriculum vitae here"
+          status={"user.verification?.document?.status"}
+          image={user.verification?.document?.certificate}
+          onAction={(active) => onAction('document', active)}
+          onImage={() => onImage(user.verification?.document?.certificate)}
+          loading={loading?.type == 'document' ? loading : undefined}
+        />
       </div>
       <UserVerificationReasonModal
         ref={messageRef}
