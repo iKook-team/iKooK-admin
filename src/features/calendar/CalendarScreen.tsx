@@ -4,7 +4,7 @@ import { DropdownField } from '../../app/components/InputField.tsx';
 import ControlArrow from './components/ControlArrow.tsx';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import CalendarDayHeader from './components/CalendarDayHeader.tsx';
-import { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { chunkList, convertTo12Hour, hoursInDate } from '../../utils/helper.ts';
 import CalendarEntry from './components/CalendarEntry.tsx';
 import { CalendarDay } from './domain/types.ts';
@@ -31,33 +31,30 @@ export default function CalendarScreen() {
     []
   );
 
-  const onDirection = useCallback(
-    () => (direction: 'left' | 'right') => {
-      const newYear =
-        direction === 'left' && week === 1
-          ? year - 1
-          : direction === 'right' && week === 52
-            ? year + 1
-            : year;
+  const onDirection = (direction: 'left' | 'right') => {
+    const newYear =
+      direction === 'left' && week === 1
+        ? year - 1
+        : direction === 'right' && week === 52
+          ? year + 1
+          : year;
 
-      let newWeek: number;
-      if (newYear === year - 1) {
-        newWeek = 52;
-      } else if (newYear === year + 1) {
-        newWeek = 1;
-      } else {
-        newWeek = direction === 'left' ? week - 1 : week + 1;
-      }
+    let newWeek: number;
+    if (newYear === year - 1) {
+      newWeek = 52;
+    } else if (newYear === year + 1) {
+      newWeek = 1;
+    } else {
+      newWeek = direction === 'left' ? week - 1 : week + 1;
+    }
 
-      if (weeks.includes(newWeek.toString())) {
-        void setWeek(newWeek);
-      }
-      if (years.includes(newYear.toString())) {
-        void setYear(newYear);
-      }
-    },
-    [week, year, setWeek, setYear, weeks, years]
-  );
+    if (weeks.includes(newWeek.toString())) {
+      void setWeek(newWeek);
+    }
+    if (years.includes(newYear.toString())) {
+      void setYear(newYear);
+    }
+  };
 
   return (
     <>
