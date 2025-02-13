@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import PageBackButton from '../../app/components/page/PageBackButton';
 import PageTitle from '../../app/components/page/PageTitle';
 import BudgetCard, { MenuList } from './components/BookingBudgetCard';
@@ -13,15 +13,11 @@ import { BookingType } from './domain/types.ts';
 export default function BookingEditScreen() {
   const filters = useMemo(() => ['in-progress', 'rejected', 'successful'], []);
 
-  const location = useLocation();
-  const [type, bookingId] = useMemo(() => {
-    const [type, bookingId] = location.pathname.split('/').slice(2);
-    return [type.slice(0, 4) as BookingType, bookingId];
-  }, [location.pathname]);
+  const { id: bookingId } = useParams();
+  const [params] = useSearchParams();
+  const type = params.get('type') as BookingType;
 
-  const { isPending, booking, error } = useFetchBookingQuery(bookingId);
-
-  booking?.no_of_guest === null ? (booking.no_of_guest = 0) : null;
+  const { isPending, booking, error } = useFetchBookingQuery(bookingId!);
 
   const date = booking?.created_at
     ? new Date(booking!.created_at).toLocaleDateString('en-US', {

@@ -4,6 +4,8 @@ import { ReactSVG } from 'react-svg';
 import close from '../../../app/assets/icons/close.svg';
 import { convertTo12Hour, getDateFrom, hoursInDate } from '../../../utils/helper.ts';
 import { fromKebabCase } from '../../../utils/strings.ts';
+import { Link } from 'react-router-dom';
+import { BookingType } from '../../bookings/domain/types.ts';
 
 interface CalendarPopupProps {
   ref: Ref<HTMLDialogElement>;
@@ -57,9 +59,10 @@ export default function CalendarDetailsModal({ ref, data, hours, week, year }: C
                     ? 'bg-red-base/5'
                     : 'bg-blue-dark-imperial/5';
               return (
-                <p
+                <Link
                   key={booking.id}
                   className={`flex flex-row items-center gap-2.5 px-2 py-2.5 border ${border} rounded-sm ${background} text-xs font-medium`}
+                  to={`/bookings/${booking.id}?type=${BookingType.menus}`}
                 >
                   <span className="capitalize">
                     {booking.user.first_name} {booking.user.last_name}
@@ -70,7 +73,7 @@ export default function CalendarDetailsModal({ ref, data, hours, week, year }: C
                   <span>
                     with <span className="capitalize">Chef {booking.chef.first_name}</span>
                   </span>
-                </p>
+                </Link>
               );
             })}
         </div>

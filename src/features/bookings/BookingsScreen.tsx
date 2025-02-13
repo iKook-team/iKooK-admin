@@ -96,7 +96,7 @@ export default function BookingsScreen() {
               key={booking.id}
               {...booking}
               type={bookingType}
-              onClick={() => navigate(`/bookings/${bookingType}s/${booking.id}`, {})}
+              onClick={() => navigate(`/bookings/${booking.id}?type=${bookingType}`)}
             >
               <td>
                 <PageAction

@@ -10,7 +10,6 @@ import MenusScreen from '../features/menus/MenusScreen.tsx';
 import UserScreen from '../features/users/UserScreen.tsx';
 import BookingsScreen from '../features/bookings/BookingsScreen.tsx';
 import useAuthStore from '../features/auth/domain/store.ts';
-import { BookingType } from '../features/bookings/domain/types.ts';
 import BookingEditScreen from '../features/bookings/BookingEditScreen.tsx';
 import PromotionsScreen from '../features/promotions/PromotionsScreen.tsx';
 import NewUser from '../features/users/pages/NewUserPage.tsx';
@@ -52,15 +51,12 @@ export default function Routes() {
                   element: <NewUser />
                 }
               ]),
-              ...Object.values(BookingType).flatMap((type) => [
-                {
-                  path: `bookings/${type}s/:id`,
-                  element: <BookingEditScreen key={type} />
-                }
-              ]),
-
               { path: 'menus', element: <MenusScreen /> },
               { path: 'bookings', element: <BookingsScreen /> },
+              {
+                path: `bookings/:id`,
+                element: <BookingEditScreen />
+              },
               {
                 path: 'promotions',
                 element: <PromotionsScreen />
