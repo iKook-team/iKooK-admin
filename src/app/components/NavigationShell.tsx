@@ -189,10 +189,10 @@ const sidebarItems = [
     title: 'Reports',
     icon: 'report',
     route: '/reports'
+  },
+  {
+    title: 'Settings',
+    icon: 'settings',
+    route: '/settings'
   }
-  // {
-  //   title: 'Settings',
-  //   icon: 'settings',
-  //   route: '/settings'
-  // }
 ];

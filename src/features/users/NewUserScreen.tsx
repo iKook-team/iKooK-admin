@@ -1,15 +1,15 @@
 import { useLocation } from 'react-router-dom';
-import PageBackButton from '../../../app/components/page/PageBackButton';
+import PageBackButton from '../../app/components/page/PageBackButton.tsx';
 import { useMemo, useState } from 'react';
-import { UserType } from '../domain/types';
-import PageTitle from '../../../app/components/page/PageTitle';
-import { hostProfileFields } from '../domain/fields';
-import { ProfileField } from './UserProfilePage';
-import DragAndDropImage from '../components/ImageDraggable';
-import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from '../domain/usecase';
+import { UserType } from './domain/types.ts';
+import PageTitle from '../../app/components/page/PageTitle.tsx';
+import { hostProfileFields } from './domain/fields.ts';
+import { ProfileField } from './pages/UserProfilePage.tsx';
+import DragAndDropImage from './components/ImageDraggable.tsx';
+import { useCheckUserNameValidity, useCreateNewUser, useGetRole } from './domain/usecase.ts';
 import { toast } from 'react-toastify';
 
-export default function NewUser() {
+export default function NewUserScreen() {
   const { pathname } = useLocation();
   const [type] = useMemo(() => {
     const [type] = pathname.split('/').slice(1);
@@ -38,7 +38,11 @@ export default function NewUser() {
     <>
       <PageBackButton />
       <div className="m-3"></div>
-      <PageTitle title={type === UserType.host ? 'New User' : 'New Chef'} />
+      <PageTitle
+        title={
+          type === UserType.host ? 'New User' : type === UserType.chef ? 'New Chef' : 'New Admin'
+        }
+      />
       <div className="flex flex-col items-center justify-center">
         <form className="flex flex-col gap-4 w-full lg:w-[90%] self-start mt-5">
           <div className="flex flex-row gap-4">
@@ -144,7 +148,6 @@ export default function NewUser() {
             setLastName('');
           } finally {
             setCreating(false);
-            
           }
         }}
         disabled={errorMsg != undefined || username.length <= 3 || isPending}

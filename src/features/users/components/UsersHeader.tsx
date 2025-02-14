@@ -13,8 +13,9 @@ export default function UsersHeader({ leading, children, type, isServices }: Use
     () => [
       'Name',
       'Email',
-      'Address',
-      ...(type == UserType.host ? ['Phone No'] : isServices ? ['Rating'] : ['Wallet', 'Rating']),
+      ...(type !== UserType.admin ? ['Address'] : []),
+      ...(type !== UserType.chef ? ['Phone No'] : isServices ? ['Rating'] : ['Wallet', 'Rating']),
+      ...(type === UserType.admin ? ['Role'] : []),
       'Status'
     ],
     [type, isServices]

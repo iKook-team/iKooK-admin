@@ -3,7 +3,6 @@ import PageTable from '../../app/components/page/PageTable.tsx';
 import { ChangeEventHandler, useRef, useState } from 'react';
 import { useFetchUsersQuery } from './domain/usecase.ts';
 import { useNavigate } from 'react-router-dom';
-import PageTitle from '../../app/components/page/PageTitle.tsx';
 import PageSearchRow from '../../app/components/page/PageSearchRow.tsx';
 import PageAction from '../../app/components/page/PageAction.tsx';
 import { PageActionItem } from '../../app/components/page/types.ts';
@@ -13,6 +12,7 @@ import DeleteUserModal from './components/DeleteUserModal.tsx';
 import ResetUserModal from './components/ResetUserPassword.tsx';
 import UsersHeader from './components/UsersHeader.tsx';
 import UserRow from './components/UserRow.tsx';
+import PageTitle from '../../app/components/page/PageTitle.tsx';
 import Pills from '../../app/components/Pills.tsx';
 import { fromKebabCase } from '../../utils/strings.ts';
 
@@ -80,30 +80,42 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
         resetPasswordRef.current?.showModal();
         break;
       case 'check':
-        console.log("for verification")
+        // console.log("for verification")
         break;
     }
   };
 
   return (
     <>
-      <PageTitle title={isServices ? 'Services' : type === UserType.host ? 'Users' : 'Chefs'} />
-      {isServices && (
-        <Pills
-          items={services}
-          active={service}
-          setActive={setService}
-          getLabel={(value) => fromKebabCase(value) ?? value ?? ''}
-        />
+      {type !== UserType.admin && (
+        <>
+          <PageTitle title={isServices ? 'Services' : type === UserType.host ? 'Users' : 'Chefs'} />
+          {isServices && (
+            <Pills
+              items={services}
+              active={service}
+              setActive={setService}
+              getLabel={(value) => fromKebabCase(value) ?? value ?? ''}
+            />
+          )}
+        </>
       )}
       <PageSearchRow
-        className="mt-4 mb-6 w-full"
+        className={`${type === UserType.admin ? 'mt-6' : 'mt-4'} mb-6 w-full`}
         search={query}
         onSearch={setQuery}
         dropdown={filter}
         dropdownOptions={filters}
         onDropdown={setFilter}
-        button={isServices ? undefined : type === UserType.host ? 'New User' : 'New Chef'}
+        button={
+          isServices
+            ? undefined
+            : type === UserType.host
+              ? 'New User'
+              : type === UserType.chef
+                ? 'New Chef'
+                : 'New Admin'
+        }
         onButton={isServices ? undefined : () => navigate(`/${type}s/new`)}
       />
       <PageTable
@@ -113,7 +125,9 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
           (users.length == 0
             ? type === UserType.host
               ? 'No users found'
-              : 'No chefs found'
+              : type === UserType.chef
+                ? 'No chefs found'
+                : 'No admins found'
             : undefined)
         }
         header={

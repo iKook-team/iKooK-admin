@@ -12,7 +12,6 @@ import BookingsScreen from '../features/bookings/BookingsScreen.tsx';
 import useAuthStore from '../features/auth/domain/store.ts';
 import BookingEditScreen from '../features/bookings/BookingEditScreen.tsx';
 import PromotionsScreen from '../features/promotions/PromotionsScreen.tsx';
-import NewUser from '../features/users/pages/NewUserPage.tsx';
 import CreateGiftScreen from '../features/promotions/CreateGiftScreen.tsx';
 import CreatePromoScreen from '../features/promotions/CreatePromoScreen.tsx';
 import SupportScreen from '../features/support/SupportScreen.tsx';
@@ -23,6 +22,8 @@ import PaymentsScreen from '../features/revenue/PaymentsScreen.tsx';
 import DashboardScreen from '../features/dashboard/DashboardScreen.tsx';
 import CalendarScreen from '../features/calendar/CalendarScreen.tsx';
 import ReportsScreen from '../features/reports/ReportsScreen.tsx';
+import NewUserScreen from '../features/users/NewUserScreen.tsx';
+import SettingsScreen from '../features/settings/SettingsScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -39,17 +40,21 @@ export default function Routes() {
                 element: <DashboardScreen />
               },
               ...Object.values(UserType).flatMap((type) => [
-                {
-                  path: `${type}s`,
-                  element: <UsersScreen key={type} type={type} />
-                },
-                {
-                  path: `${type}s/:id`,
-                  element: <UserScreen />
-                },
+                ...(type === UserType.admin
+                  ? []
+                  : [
+                      {
+                        path: `${type}s`,
+                        element: <UsersScreen key={type} type={type} />
+                      },
+                      {
+                        path: `${type}s/:id`,
+                        element: <UserScreen />
+                      }
+                    ]),
                 {
                   path: `${type}s/new`,
-                  element: <NewUser />
+                  element: <NewUserScreen />
                 }
               ]),
               { path: 'menus', element: <MenusScreen /> },
@@ -101,6 +106,10 @@ export default function Routes() {
               {
                 path: 'reports',
                 element: <ReportsScreen />
+              },
+              {
+                path: 'settings',
+                element: <SettingsScreen />
               },
               { path: '*', element: <NotFound /> }
             ]
