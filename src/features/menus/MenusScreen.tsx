@@ -10,8 +10,11 @@ import { Menu } from './data/model.ts';
 import MenuRow from './components/MenuRow.tsx';
 import MenusHeader from './components/MenusHeader.tsx';
 import MenuDetailsModal from './components/MenuDetailsModal.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function MenusScreen() {
+    const navigate = useNavigate();
+  
   const [selectedMenu, setSelectedMenu] = useState<Menu>();
 
   const actionItems = useMemo<PageActionItem[]>(
@@ -63,6 +66,7 @@ export default function MenusScreen() {
         dropdownOptions={filters}
         onDropdown={setFilter}
         button="New Menu"
+        onButton={ () => navigate(`/menus/new`)}
       />
       <PageTable
         isFetching={isPending}

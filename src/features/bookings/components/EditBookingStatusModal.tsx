@@ -39,9 +39,6 @@ export default function EditBookingStatusModal({ booking, ref }: EditBookingStat
         status: status
       });
 
-      console.log(response);
-      console.log(response.data.data);
-
       toast(response.data.data, { type: 'success' });
       getCurrentFromRef(ref)?.close();
     } finally {
