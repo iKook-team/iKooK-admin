@@ -231,11 +231,13 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
 export function ProfileField({
   field,
   value,
-  onChange
+  onChange,
+  className
 }: {
   field: Field;
   value?: string | number | readonly string[] | undefined;
   onChange?: (value: string) => void;
+  className?: string;
 }) {
   return (
     <InputField
@@ -245,6 +247,7 @@ export function ProfileField({
       placeholder={field.placeholder}
       onChange={(e) => onChange?.(e.target.value)}
       readOnly={field.readonly}
+      className={className}
     />
   );
 }

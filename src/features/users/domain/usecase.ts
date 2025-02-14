@@ -307,6 +307,21 @@ export function useEditProfile(type: UserType) {
   };
 }
 
+export function useToggleNotificationSettings(request: { id: string; type: UserType }) {
+  return useMutation({
+    mutationFn: async ({ type }: { type: 'sms' | 'email' }) => {
+      const response = await fetch({
+        url: `/UserManagement/toggle-notifications-settings?user_id=${request.id}&type=${type}`,
+        method: 'GET'
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [request.type, request.id] });
+    }
+  });
+}
+
 export function useEditServiceDetails(type: UserType, service_type: string) {
   const mutation = useMutation({
     mutationFn: async (request: ProfileRequest) => {

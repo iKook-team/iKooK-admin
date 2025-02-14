@@ -46,6 +46,11 @@ export interface User extends CurrentUser {
       };
     };
   };
+  settings?: {
+    disabled: boolean;
+    sms_notification?: boolean;
+    email_notification?: boolean;
+  };
 }
 
 export interface Role {

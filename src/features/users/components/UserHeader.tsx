@@ -57,14 +57,14 @@ export default function UserHeader({
             />
           </div>
           <div className="ml-6 flex-grow min-w-0 ">
-            {type == UserType.chef && (
-              <>
-                <div>{user.country && <Info Icon={MdLocationOn} title={user.country} />}</div>
-                <div>{user.rating && <Info Icon={MdStar} title={user.rating.toString()} />}</div>
-              </>
-            )}
             <p className="text-2xl font-medium truncate">{`${user.first_name} ${user.last_name}`}</p>
             <p className="text-xs truncate">{user.email}</p>
+            {type == UserType.chef && (
+              <div className="flex">
+                <div>{user.country && <Info Icon={MdLocationOn} title={user.country} />}</div>
+                <div>{user.rating && <Info Icon={MdStar} title={user.rating.toString()} />}</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

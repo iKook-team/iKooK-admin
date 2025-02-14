@@ -1,7 +1,7 @@
 import { UserHeaderTab, UserType } from './domain/types.ts';
 import { useFetchUserQuery } from './domain/usecase.ts';
-import { useLocation } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 import PageBackButton from '../../app/components/page/PageBackButton.tsx';
 import UserHeader from './components/UserHeader.tsx';
 import { User } from './data/model.ts';
@@ -13,17 +13,18 @@ import ChefNotificationPage from './pages/ChefNotificationpage.tsx';
 import UserPasswordPage from './pages/UsersPasswordPage.tsx';
 import ChefSettingsPage from './pages/ChefSettingsPage.tsx';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
+import { useQueryState } from 'nuqs';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
-  const [type, userId] = useMemo(() => {
-    const [type, userId] = pathname.split('/').slice(1);
-    return [type.slice(0, 4) as UserType, userId];
-  }, [pathname]);
+  const type = useMemo(() => pathname.split('/').slice(1)[0] as UserType, [pathname]);
+  const { id: userId } = useParams();
 
-  const [tab, setTab] = useState(UserHeaderTab.profile);
+  const [tab, setTab] = useQueryState('tab', {
+    defaultValue: UserHeaderTab.profile
+  });
 
-  const { isPending, user, error } = useFetchUserQuery(type, userId);
+  const { isPending, user, error } = useFetchUserQuery(type, userId!);
 
   return (
     <>
@@ -35,13 +36,17 @@ export default function UserScreen() {
       ) : (
         <>
           <UserHeader
-            selectedTab={tab}
+            selectedTab={tab as UserHeaderTab}
             setTab={setTab}
             user={user}
             type={type}
             className="mt-6 mb-9"
           />
-          <RenderTabContent tab={tab} user={user} type={type} />
+          <RenderTabContent
+            tab={tab as UserHeaderTab}
+            user={{ ...user, id: user.id ?? userId }}
+            type={type}
+          />
         </>
       )}
     </>

@@ -1,11 +1,12 @@
 import { useFormik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import InputField, { InputContainer } from '../../app/components/InputField';
 import MultiSelectDropdown from '../users/components/MultiSelectDropDown';
 import UserSettingsTitle from '../users/components/UserSettingsTitle';
 import { chefProfileSchema } from '../users/domain/validators';
 import { newMenuFields } from './domain/fields';
+
 export default function NewMenu() {
   const fields = newMenuFields;
   const [editing, setEditing] = useState(false);
@@ -13,6 +14,7 @@ export default function NewMenu() {
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
 
   async function saveProfileChange(values: any) {
+    console.log(values);
     if (editing === true) {
       return;
     }
@@ -60,7 +62,6 @@ export default function NewMenu() {
         onSubmit={formik.handleSubmit}
         className="flex flex-col gap-4 w-full lg:w-[90%] self-start"
       >
-
         {fields.map((field) => {
           return (
             <InputField

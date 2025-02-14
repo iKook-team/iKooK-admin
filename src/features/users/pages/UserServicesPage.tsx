@@ -117,7 +117,7 @@ export default function UserServicesPage({ user }: UserPageProps) {
           setIsMp(!isMp);
         }}
         underline={true}
-        topline={true}
+        topLine={true}
       />
 
       <ToggleCard
