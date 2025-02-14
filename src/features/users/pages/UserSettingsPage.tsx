@@ -6,6 +6,7 @@ import { UserPageProps } from '../domain/types';
 import InputField from '../../../app/components/InputField';
 import { useToggleNotificationSettings, useToggleUserActive } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
+import { capitalize } from '../../../utils/strings.ts';
 
 interface UserSettingsPageProps extends UserPageProps {
   select?: 'account' | 'notifications' | 'password';
@@ -67,7 +68,7 @@ export default function UserSettingsPage({ select, user, type }: UserSettingsPag
     startTransition(async () => {
       try {
         await Promise.all(actions);
-        toast(`${select ?? 'Settings'} saved successfully`, { type: 'success' });
+        toast(`${capitalize(select) ?? 'Settings'} saved successfully`, { type: 'success' });
       } catch (error) {
         /* empty */
       }

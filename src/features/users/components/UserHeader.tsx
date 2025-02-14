@@ -57,7 +57,7 @@ export default function UserHeader({
             />
           </div>
           <div className="ml-6 flex-grow min-w-0 ">
-            <p className="text-2xl font-medium truncate">{`${user.first_name} ${user.last_name}`}</p>
+            <p className="text-2xl font-medium truncate capitalize">{`${user.first_name} ${user.last_name}`}</p>
             <p className="text-xs truncate">{user.email}</p>
             {type == UserType.chef && (
               <div className="flex">

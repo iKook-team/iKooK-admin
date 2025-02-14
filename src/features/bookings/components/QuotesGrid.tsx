@@ -1,18 +1,15 @@
 import { getImageUrl } from '../../../utils/getImageUrl';
 import { Quote } from '../data/model';
 import Constants from '../../../utils/constants';
+import { FC } from 'react';
 
 interface QuoteCardGridProps {
   quotesList: Quote[];
   viewQuote: () => void;
-  setCurrentQuote: (quote: Quote) => void; 
+  setCurrentQuote: (quote: Quote) => void;
 }
 
-const QuoteCardGrid: React.FC<QuoteCardGridProps> = ({
-  quotesList,
-  viewQuote,
-  setCurrentQuote
-}) => {
+const QuoteCardGrid: FC<QuoteCardGridProps> = ({ quotesList, setCurrentQuote }) => {
   function viewQuoteSetId(quote: Quote) {
     // viewQuote();
     setCurrentQuote(quote);
