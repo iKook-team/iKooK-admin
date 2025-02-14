@@ -7,17 +7,18 @@ import UserHeader from './components/UserHeader.tsx';
 import { User } from './data/model.ts';
 import UserProfilePage from './pages/UserProfilePage.tsx';
 import UserVerificationPage from './pages/UserVerificationPage.tsx';
-import UserAccountPage from './pages/UserAccountPage.tsx';
+import ChefBankAccountPage from './pages/ChefBankAccountPage.tsx';
 import UserServicesPage from './pages/UserServicesPage.tsx';
-import ChefNotificationPage from './pages/ChefNotificationpage.tsx';
-import UserPasswordPage from './pages/UsersPasswordPage.tsx';
-import ChefSettingsPage from './pages/ChefSettingsPage.tsx';
+import UserSettingsPage from './pages/UserSettingsPage.tsx';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import { useQueryState } from 'nuqs';
 
 export default function UserScreen() {
   const { pathname } = useLocation();
-  const type = useMemo(() => pathname.split('/').slice(1)[0] as UserType, [pathname]);
+  const type = useMemo(
+    () => pathname?.split('/')?.slice(1)?.[0]?.slice(0, 4) as UserType,
+    [pathname]
+  );
   const { id: userId } = useParams();
 
   const [tab, setTab] = useQueryState('tab', {
@@ -60,15 +61,19 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
     case UserHeaderTab.verification:
       return <UserVerificationPage user={user} type={type} />;
     case UserHeaderTab.account:
-      return <UserAccountPage user={user} type={type} />;
+      return type === UserType.host ? (
+        <UserSettingsPage user={user} type={type} select="account" />
+      ) : (
+        <ChefBankAccountPage user={user} type={type} />
+      );
     case UserHeaderTab.services:
       return <UserServicesPage user={user} type={type} />;
     case UserHeaderTab.notification:
-      return <ChefNotificationPage user={user} type={type} />;
+      return <UserSettingsPage user={user} type={type} select="notifications" />;
     case UserHeaderTab.password:
-      return <UserPasswordPage user={user} type={type} />;
+      return <UserSettingsPage user={user} type={type} select="password" />;
     case UserHeaderTab.settings:
-      return <ChefSettingsPage user={user} type={type} />;
+      return <UserSettingsPage user={user} type={type} />;
     default:
       return null;
   }

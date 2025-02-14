@@ -11,7 +11,7 @@ export default function UserSettingsTitle({
 }) {
   return (
     <div className="w-full flex flex-row justify-between items-center border-b pb-4 mb-6">
-      <span className="text-xl">{title}</span>
+      <span className="text-xl capitalize">{title}</span>
       <button type="button" disabled={loading} onClick={onSave} className="btn btn-primary">
         <LoadingSpinner isLoading={loading ?? false}>Save Changes</LoadingSpinner>
       </button>

@@ -40,7 +40,7 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
     },
     {
       id: 'country',
-      label : 'Country of residence',
+      label: 'Country of residence',
       placeholder: 'United Kingdom',
       type: 'text',
       readonly: true
@@ -53,14 +53,14 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
     },
     {
       id: 'city',
-      label : 'city/state',
+      label: 'city/state',
       placeholder: 'London',
       type: 'text',
       readonly: true
     },
     {
       id: 'address',
-      label : 'Your address',
+      label: 'Your address',
       placeholder: 'Enter address',
       type: 'text'
     },
@@ -81,20 +81,20 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
 export const chefAccountFields: Field[] = [
   {
     id: 'billing_address',
-    label : 'Billing Address',
+    label: 'Billing Address',
     placeholder: 'Enter address',
     type: 'text'
   },
   {
     id: 'city',
-    label : 'City',
+    label: 'City',
     placeholder: 'Enter city',
     type: 'text',
     readonly: true
   },
   {
     id: 'postcode',
-    label : 'Post Code',
+    label: 'Post Code',
     placeholder: 'Enter postcode',
     type: 'text'
   },
@@ -106,7 +106,7 @@ export const chefAccountFields: Field[] = [
   },
   {
     id: 'account_number',
-    label : 'Account Number',
+    label: 'Account Number',
     placeholder: 'Enter Account number',
     type: 'text'
   },
@@ -138,7 +138,7 @@ export const chefServiceFields: Field[] = [
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
-export const chefSettingsFields: Field[] = [
+export const userSettingsFields: Field[] = [
   {
     id: 'current_password',
     label: 'current password',
@@ -162,16 +162,14 @@ export const customizedEmailField: Field[] = [
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
-
-export const chefPasswordField : Field[] = [
+export const chefPasswordField: Field[] = [
   {
     id: 'new_password',
-    label : 'New Password',
+    label: 'New Password',
     placeholder: '****',
     type: 'password'
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
-
 
 export const chefAccountInitials = {
   billing_address: '',
@@ -179,20 +177,20 @@ export const chefAccountInitials = {
   postcode: '',
   bank: '',
   account_number: '',
-  iban_code : '',
+  iban_code: '',
   sort_code: ''
 };
 
 export const chefServicesInitials = {
-  starting_price : '',
-  minimum_number_of_guests : '',
-}
+  starting_price: '',
+  minimum_number_of_guests: ''
+};
 
 export const chefSettingsInitials = {
-  starting_price : '',
-  minNoGuest : ''
-}
+  starting_price: '',
+  minNoGuest: ''
+};
 
 export const userPasswordInitiails = {
-  new_password : ''
-}
+  new_password: ''
+};
