@@ -22,11 +22,7 @@ import RevenueOverviewScreen from '../features/revenue/RevenueOverviewScreen.tsx
 import PaymentsScreen from '../features/revenue/PaymentsScreen.tsx';
 import DashboardScreen from '../features/dashboard/DashboardScreen.tsx';
 import CalendarScreen from '../features/calendar/CalendarScreen.tsx';
-<<<<<<< HEAD
 import NewMenu from '../features/menus/NewMenu.tsx';
-=======
-import ReportsScreen from '../features/reports/ReportsScreen.tsx';
->>>>>>> 43057866d7d0a0a9ed278f97e28f49b439a6a5d2
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -102,10 +98,6 @@ export default function Routes() {
               {
                 path: 'calendar',
                 element: <CalendarScreen />
-              },
-              {
-                path: 'reports',
-                element: <ReportsScreen />
               },
               { path: '*', element: <NotFound /> }
             ]
