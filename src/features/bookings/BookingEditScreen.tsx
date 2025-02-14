@@ -157,9 +157,9 @@ export default function BookingEditScreen() {
         onClose={() => setIsModalVisible(false)}
         children={
           <EditMenuModalContent
-            starterList={booking?.menu.starter.map((e) => e.menuName) || []}
-            mainList={booking?.menu.main.map((e) => e.menuName) || []}
-            dessertList={booking?.menu.dessert.map((e) => e.menuName) || []}
+            starterList={ booking?.menu.starter && booking!.menu.starter.map((e) => e.menuName) || []}
+            mainList={booking?.menu.main && booking!.menu.main.map((e) => e.menuName) || []}
+            dessertList={ booking?.menu.dessert && booking!.menu.dessert.map((e) => e.menuName) || []}
           />
         }
         title={'Edit menu'}
