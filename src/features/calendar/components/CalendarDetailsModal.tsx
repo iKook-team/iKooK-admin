@@ -7,7 +7,7 @@ import { fromKebabCase } from '../../../utils/strings.ts';
 import { Link } from 'react-router-dom';
 import { BookingType } from '../../bookings/domain/types.ts';
 
-interface CalendarPopupProps {
+interface CalendarDetailsModalProps {
   ref: Ref<HTMLDialogElement>;
   data?: CalendarDay;
   hours?: number[];
@@ -15,7 +15,13 @@ interface CalendarPopupProps {
   year: number;
 }
 
-export default function CalendarDetailsModal({ ref, data, hours, week, year }: CalendarPopupProps) {
+export default function CalendarDetailsModal({
+  ref,
+  data,
+  hours,
+  week,
+  year
+}: CalendarDetailsModalProps) {
   const date = useMemo(() => {
     const month = getDateFrom(data?.date ?? 1, week, year).toFormat('MMMM');
     return `${data?.date} ${month} ${year}`;

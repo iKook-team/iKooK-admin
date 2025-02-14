@@ -58,7 +58,8 @@ export default {
         },
         caramel: '#F9DD98',
         silver: {
-          american: '#CFCFCE'
+          american: '#CFCFCE',
+          dark: '#6F6E6D'
         }
       },
       width: {
