@@ -1,29 +1,21 @@
 import { useAuthAction } from './domain/usecase.ts';
 import { useFormik } from 'formik';
-import { authFieldsData, loginFields, twoFactorFields } from './domain/fields.ts';
-import { loginValidator, twofactorConfirmationValidator } from './domain/validators.ts';
-import { Link } from 'react-router-dom';
-import { AuthType } from './domain/types.ts';
+import { loginFields } from './domain/fields.ts';
+import { LoginSchema } from './domain/validators.ts';
 import logo from '../../app/assets/icons/logo.svg';
-import { FormEvent, useEffect } from 'react';
+import { FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import InputField from '../../app/components/InputField.tsx';
 import { ReactSVG } from 'react-svg';
+import { extractInitialValues, withZodSchema } from '../../utils/zodValidator.ts';
 
-type AuthScreenProps = {
-  type: AuthType;
-};
+export default function AuthScreen() {
+  const { performAuth, loading, buttonText } = useAuthAction();
 
-export default function AuthScreen({ type }: AuthScreenProps) {
-  const { performAuth, loading, userId, buttonText } = useAuthAction(type);
-
-  const isTwoFactorMode = type === AuthType.login && userId;
-
-  const fields = isTwoFactorMode ? twoFactorFields : loginFields;
-
-  const formik = useFormik({
-    initialValues: authFieldsData,
-    validationSchema: isTwoFactorMode ? twofactorConfirmationValidator : loginValidator,
+  const initialValues = extractInitialValues(LoginSchema);
+  const formik = useFormik<typeof initialValues & { [key: string]: string }>({
+    initialValues: initialValues,
+    validate: withZodSchema(LoginSchema),
     onSubmit: (values) => performAuth(values)
   });
 
@@ -39,12 +31,6 @@ export default function AuthScreen({ type }: AuthScreenProps) {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      formik.setFieldValue('userId', userId);
-    }
-  }, [userId]);
-
   return (
     <main className="w-full h-full bg-lotion flex flex-col items-center px-4">
       <div className="flex-1"></div>
@@ -57,7 +43,7 @@ export default function AuthScreen({ type }: AuthScreenProps) {
         className="mt-1 bg-white p-6 md:p-12 w-full lg:w-[50%] flex flex-col"
         onSubmit={onSubmit}
       >
-        {fields.map((field) => (
+        {loginFields.map((field) => (
           <InputField
             key={field.id}
             label={field.label}
@@ -74,11 +60,11 @@ export default function AuthScreen({ type }: AuthScreenProps) {
             className={`mb-4 md:mb-8 ${field.hidden ? 'hidden' : ''}`}
           />
         ))}
-        {type === AuthType.login && (
-          <Link className="text-black-base-olive font-poppins" to="/forgot-password">
-            Forgot your password?
-          </Link>
-        )}
+        {/*{type === AuthType.login && (*/}
+        {/*  <Link className="text-black-base-olive font-poppins" to="/forgot-password">*/}
+        {/*    Forgot your password?*/}
+        {/*  </Link>*/}
+        {/*)}*/}
         <button type="submit" className="btn btn-primary mt-10 lg:mt-20" disabled={loading}>
           {buttonText}
           {loading && <span className="loading loading-spinner"></span>}

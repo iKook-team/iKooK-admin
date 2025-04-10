@@ -1,11 +1,10 @@
 import Field from '../../../app/domain/field.ts';
-import { ConsolidatedAuthRequest } from '../data/dto.ts';
 
 export const loginFields: Field[] = [
   {
-    id: 'username',
-    label: 'Username',
-    placeholder: 'Enter your username',
+    id: 'email',
+    label: 'Email',
+    placeholder: 'Enter your email',
     type: 'text'
   },
   {
@@ -15,26 +14,3 @@ export const loginFields: Field[] = [
     type: 'password'
   }
 ];
-
-export const twoFactorFields: Field[] = loginFields.concat([
-  {
-    id: 'otp',
-    label: 'OTP',
-    placeholder: 'Enter the 6-digit code sent to your email',
-    type: 'text'
-  },
-  {
-    id: 'userId',
-    label: 'User ID',
-    placeholder: 'Enter your user ID',
-    type: 'text',
-    hidden: true
-  }
-]);
-
-export const authFieldsData: ConsolidatedAuthRequest = {
-  username: '',
-  password: '',
-  otp: '',
-  userId: ''
-};

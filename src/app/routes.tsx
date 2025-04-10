@@ -1,5 +1,4 @@
 import { useRoutes } from 'react-router-dom';
-import { AuthType } from '../features/auth/domain/types.ts';
 import NotFound from './components/not-found.tsx';
 import ScrollToTop from './components/scroll-to-top.tsx';
 import AuthScreen from '../features/auth/AuthScreen.tsx';
@@ -117,7 +116,7 @@ export default function Routes() {
             ]
           }
         ]
-      : [{ path: '*', element: <AuthScreen type={AuthType.login} /> }]
+      : [{ path: '*', element: <AuthScreen /> }]
   );
 
   return (

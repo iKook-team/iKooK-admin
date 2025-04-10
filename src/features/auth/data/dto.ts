@@ -1,22 +1,19 @@
-import { InferType } from 'yup';
-import { loginValidator, twofactorConfirmationValidator } from '../domain/validators.ts';
 import { CurrentUser } from './model.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
+import { LoginSchema } from '../domain/validators.ts';
+import { z } from 'zod';
 
-export type LoginRequest = InferType<typeof loginValidator>;
-
-export type TwoFactorConfirmationRequest = InferType<typeof twofactorConfirmationValidator>;
+export type LoginRequest = z.infer<typeof LoginSchema>;
 
 export type LoginResponse = GenericResponse<
   CurrentUser & {
-    access: string;
-    refresh: string;
+    access_token: string;
+    refresh_token: string;
   }
 >;
 
-export type ConsolidatedAuthRequest = LoginRequest &
-  TwoFactorConfirmationRequest & {
-    [key: string]: string;
-  };
+export type ConsolidatedAuthRequest = LoginRequest & {
+  [key: string]: string;
+};
 
 export type ConsolidatedAuthResponse = LoginResponse;

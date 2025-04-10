@@ -1,7 +1,8 @@
 export interface CurrentUser {
-  id: string;
+  id: number;
   first_name: string;
   last_name: string;
-  role: string;
-  roles: string[];
+  user_type: string;
+  email: string;
+  avatar: string;
 }
