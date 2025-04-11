@@ -13,8 +13,8 @@ import MenuDetailsModal from './components/MenuDetailsModal.tsx';
 import { useNavigate } from 'react-router-dom';
 
 export default function MenusScreen() {
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const [selectedMenu, setSelectedMenu] = useState<Menu>();
 
   const actionItems = useMemo<PageActionItem[]>(
@@ -66,7 +66,7 @@ export default function MenusScreen() {
         dropdownOptions={filters}
         onDropdown={setFilter}
         button="New Menu"
-        onButton={ () => navigate(`/menus/new`)}
+        onButton={() => navigate(`/menus/new`)}
       />
       <PageTable
         isFetching={isPending}
@@ -101,8 +101,8 @@ export default function MenusScreen() {
           selectedMenu
             ? {
                 id: selectedMenu.id,
-                chefUsername: selectedMenu.chefID.username,
-                name: selectedMenu.menuName
+                chefUsername: selectedMenu.chef?.username,
+                name: selectedMenu.name
               }
             : undefined
         }

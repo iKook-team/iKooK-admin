@@ -1,4 +1,4 @@
 export enum ReportType {
-  chef = 'chef',
-  menu = 'menu'
+  chef = 'Chef',
+  menu = 'Menu'
 }

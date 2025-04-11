@@ -2,12 +2,12 @@ import { Ref, useEffect, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
-import { Bookings } from '../data/model.ts';
+import { Booking } from '../data/model.ts';
 import { useEditBookingStatus } from '../domain/usecase.ts';
 import { DropdownField } from '../../../app/components/InputField.tsx';
 
 interface EditBookingStatusProps {
-  booking: Bookings;
+  booking: Booking;
   ref: Ref<HTMLDialogElement>;
 }
 
@@ -53,10 +53,7 @@ export default function EditBookingStatusModal({ booking, ref }: EditBookingStat
       title={
         <>
           {title}
-          <span className="text-jordy-blue capitalize">
-            {booking?.user.firstName} {booking?.user.lastName}
-          </span>
-          ?
+          <span className="text-jordy-blue capitalize">{booking?.host_name}</span>?
         </>
       }
     >

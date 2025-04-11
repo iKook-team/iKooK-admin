@@ -9,8 +9,8 @@ export default function BookingsHeader({ type }: BookingsHeaderProps) {
   const header = useMemo(
     () =>
       type === BookingType.enquiries
-        ? ['Booking ID', 'User', 'Location', 'Proposals', 'Number Of Guests']
-        : ['Booking ID', 'User', 'Chef', 'Menu', 'Amount', 'Booking Status'],
+        ? ['Booking ID', 'User', 'Location', 'Chef', 'Number Of Guests']
+        : ['Booking ID', 'User', 'Chef', 'Service', 'Amount', 'Booking Status'],
     [type]
   );
 

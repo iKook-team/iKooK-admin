@@ -84,7 +84,18 @@ export interface BookingUser {
 }
 
 export interface Booking {
-  chef: EditBookingChef;
+  id: number;
+  status: BookingStatus;
+  country: string;
+  chef_name: string;
+  chef_id: number;
+  chef_avatar: string;
+  host_name: string;
+  host_avatar: string;
+  num_of_guests: number;
+  num_of_persons: number;
+  total_cost: number;
+  chef_service: string;
   location: Location;
   no_of_guest: number;
   created_at: string;
@@ -93,14 +104,18 @@ export interface Booking {
   event_type: string;
   xallergies: string[];
   cuisines: string[];
-  menu: {
-    starter: Menu[];
-    main: Menu[];
-    dessert: Menu[];
-  };
+  menu: number;
   user: BookingUser;
   quotes: Quote[];
   booking_type: string;
   custom_booking_type_selected: string;
   currency: string;
+}
+
+export enum BookingStatus {
+  enquiries = 'Enquiries',
+  pending = 'Pending',
+  upcoming = 'Upcoming',
+  completed = 'Completed',
+  cancelled = 'Cancelled'
 }

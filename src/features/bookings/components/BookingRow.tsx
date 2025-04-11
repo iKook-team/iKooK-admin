@@ -4,60 +4,34 @@ import { BookingType } from '../domain/types.ts';
 import { formatCurrency } from '../../../utils/helper.ts';
 import ItemStatus from '../../../app/components/ItemStatus.tsx';
 import { capitalize } from '../../../utils/strings.ts';
-import { Bookings } from '../data/model.ts';
+import { Booking, BookingStatus } from '../data/model.ts';
 import { ReactNode } from 'react';
-import ImageStack from '../../../app/components/ImageStack.tsx';
-import Constants from '../../../utils/constants.ts';
 
-interface BookingRowProps extends Bookings {
+interface BookingRowProps extends Booking {
   type: BookingType;
   onClick?: () => void;
   children?: ReactNode;
 }
 
 export default function BookingRow(props: BookingRowProps) {
-  const proposalList = props?.proposals;
   return (
     <tr onClick={props.onClick}>
       <td>
         <IdCell id={props.id} />
       </td>
       <td>
-        <UsernameAndImage
-          name={`${props.user.firstName} ${props.user.lastName}`}
-          image={props.user?.photo ? props?.user?.photo : ''}
-        />
+        <UsernameAndImage name={props.host_name} image={props.host_avatar} />
       </td>
       <td className="capitalize">
-        {props.type === BookingType.enquiries
-          ? props.country
-          : props.chef?.photo
-            ? `chef ${props.chef?.firstName}`
-            : ''}
+        {props.type === BookingType.enquiries ? props.country : `Chef ${props.chef_name}`}
       </td>
 
-      <td>
-        {props.type === BookingType.enquiries ? (
-          <ImageStack
-            images={
-              proposalList
-                .map((item) => Constants.getAssetUrl(item.photo, 'users'))
-                .filter(Boolean) as string[]
-            }
-            includeRing={proposalList.length > 1}
-            maxImages={2}
-            size={24}
-            moreClassName="bg-gray-200"
-          />
-        ) : (
-          props.menu
-        )}
-      </td>
+      <td>{props.type === BookingType.enquiries ? props.chef_name : props.chef_service}</td>
 
       <td>
         {props.type === BookingType.enquiries
-          ? props.number_of_guest
-          : formatCurrency(props.amount, props.currency)}
+          ? (props.num_of_persons ?? props.num_of_guests)
+          : formatCurrency(props.total_cost, props.currency)}
       </td>
 
       {props.type === BookingType.menus && (
@@ -65,24 +39,24 @@ export default function BookingRow(props: BookingRowProps) {
           <ItemStatus
             title={capitalize(props.status)}
             circleColor={
-              props.status === 'completed'
+              props.status === BookingStatus.completed
                 ? 'bg-green'
-                : props.status === 'pending'
+                : props.status === BookingStatus.pending
                   ? 'bg-primary'
-                  : props.status === 'cancelled'
+                  : props.status === BookingStatus.cancelled
                     ? 'bg-red-base'
-                    : props.status === 'enquiry'
+                    : props.status === BookingStatus.enquiries
                       ? 'bg-secondary'
                       : 'bg-jordy-blue'
             }
             textColor={
-              props.status === 'completed'
+              props.status === BookingStatus.completed
                 ? 'text-green'
-                : props.status === 'pending'
+                : props.status === BookingStatus.pending
                   ? 'text-primary'
-                  : props.status === 'cancelled'
+                  : props.status === BookingStatus.cancelled
                     ? 'text-red'
-                    : props.status === 'enquiry'
+                    : props.status === BookingStatus.enquiries
                       ? 'text-secondary'
                       : 'text-jordy-blue'
             }

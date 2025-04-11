@@ -5,13 +5,14 @@ export interface User extends CurrentUser {
   is_active: boolean;
   email: string;
   address: string;
+  city: string;
   country: string;
-  wallet?: number;
-  rating?: number;
+  balance?: number;
+  average_rating?: number;
   mobile?: string;
   menus: string[];
   photo: string;
-  verified: boolean;
+  identity_verified: boolean;
   status: string;
   cuisines: string[];
   events: string[];

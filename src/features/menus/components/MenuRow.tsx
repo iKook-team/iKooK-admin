@@ -1,4 +1,4 @@
-import { Menu } from '../data/model.ts';
+import { Menu, MenuStatus } from '../data/model.ts';
 import IdCell from '../../../app/components/IdCell.tsx';
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
 import { formatCurrency } from '../../../utils/helper.ts';
@@ -17,29 +17,29 @@ export default function MenuRow(props: MenuRowProps) {
       <td>
         <IdCell id={props.id} />
       </td>
-      <td className="capitalize">{props.menuName}</td>
+      <td className="capitalize">{props.name}</td>
       <td>
         <UsernameAndImage
-          name={`${props.chefID.first_name} ${props.chefID.last_name}`}
-          image={props.chefID.photo}
+          name={`${props.chef?.first_name} ${props.chef?.last_name}`}
+          image={props.chef?.avatar}
         />
       </td>
       <td></td>
-      <td>{formatCurrency(Number(props.menuPrice), props.currency)}</td>
+      <td>{formatCurrency(Number(props.price_per_person), props.currency)}</td>
       <td>
         <ItemStatus
           title={capitalize(props.status)}
           circleColor={
-            props.status === 'approved'
+            props.status === MenuStatus.active
               ? 'bg-green'
-              : props.status === 'deleted' || props.status === 'unapproved'
+              : props.status === MenuStatus.deleted || props.status === MenuStatus.pending
                 ? 'bg-red-base'
                 : 'bg-jordy-blue'
           }
           textColor={
-            props.status === 'approved'
+            props.status === MenuStatus.active
               ? 'text-green'
-              : props.status === 'deleted' || props.status === 'unapproved'
+              : props.status === MenuStatus.deleted || props.status === MenuStatus.pending
                 ? 'text-red-base'
                 : 'text-jordy-blue'
           }

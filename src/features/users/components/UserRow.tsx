@@ -26,13 +26,13 @@ export default function UserRow(props: UserRowProps) {
         />
       </td>
       <td>{props.email}</td>
-      {props.type !== UserType.admin && <td>{props.address}</td>}
+      {props.type !== UserType.admin && <td>{props.address || props.city || props.country}</td>}
       {props.type !== UserType.chef ? (
         <td>{props.mobile}</td>
       ) : (
         <>
-          {!props.isServices && <td>{props.wallet}</td>}
-          <td>{props.rating}</td>
+          {!props.isServices && <td>{props.balance}</td>}
+          <td>{props.average_rating?.toFixed(2)}</td>
         </>
       )}
       {props.type === UserType.admin && <td className="capitalize">{props.role}</td>}
@@ -45,9 +45,9 @@ export default function UserRow(props: UserRowProps) {
           />
         ) : (
           <ItemStatus
-            title={props.verified ? 'Verified' : 'Not verified'}
-            circleColor={props.verified ? 'bg-green' : 'bg-red-base'}
-            textColor={props.verified ? 'text-green' : 'text-red-base'}
+            title={props.identity_verified ? 'Verified' : 'Not verified'}
+            circleColor={props.identity_verified ? 'bg-green' : 'bg-red-base'}
+            textColor={props.identity_verified ? 'text-green' : 'text-red-base'}
           />
         )}
       </td>

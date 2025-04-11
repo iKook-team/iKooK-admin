@@ -18,13 +18,15 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
   const services = useMemo(
     () => [
-      'chef-at-home',
-      'cooking-class',
-      'gourmet-delivery',
-      'large-event',
-      'meal-prep',
-      'fine-dining',
-      'corporate-dining'
+      'Chef at Home',
+      'Cooking Class',
+      'Meal Delivery',
+      'Large Event',
+      'Meal Prep',
+      'Fine Dining',
+      'Corporate Dining',
+      'Box Grocery',
+      'Eating Coach'
     ],
     []
   );
@@ -43,8 +45,10 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
     queryKey: [request.type, service, verified, page, debouncedQuery],
     queryFn: async ({ queryKey }) => {
       const [type, service, verified, page, query] = queryKey;
+      const baseUrl =
+        request.type === UserType.admin ? 'users/admins?' : `users/profiles?user_type=${type}&`;
       const response = await fetch({
-        url: `admin/get-all-users?user_type=${type}&page_number=${page}&page_size=20${verified !== undefined ? `&verified=${verified}` : ''}${query ? `&search_name=${query}` : ''}${service ? `&service=${service}` : ''}`,
+        url: `${baseUrl}page=${page}&page_size=20${verified !== undefined ? `&identity_verified=${verified}` : ''}${query ? `&search=${query}` : ''}${service ? `&chef_service=${service}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllUsersResponse;
@@ -56,7 +60,7 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
     error,
     page,
     setPage,
-    users: data?.data?.items ?? [],
+    users: data?.data?.results ?? [],
     query,
     setQuery,
     filter,
@@ -65,8 +69,8 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
     service,
     setService,
     services,
-    totalCount: data?.data?.total_count || 0,
-    numberOfPages: data?.data?.number_of_pages || 0
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }
 
@@ -233,7 +237,7 @@ export function useGetRole(request: GetRoleRequest) {
   });
 
   const roles = useMemo(() => {
-    const items = data?.data?.items || [];
+    const items = data?.data?.results || [];
 
     if (!data) {
       return items;

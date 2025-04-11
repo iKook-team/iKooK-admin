@@ -4,7 +4,7 @@ import PageTable from '../../app/components/page/PageTable';
 import PageTitle from '../../app/components/page/PageTitle';
 import { useFetchBookingsQuery } from './domain/usecase';
 import { useNavigate } from 'react-router-dom';
-import { Bookings } from './data/model';
+import { Booking } from './data/model';
 import { BookingType } from './domain/types.ts';
 import { PageActionItem } from '../../app/components/page/types.ts';
 import PageAction from '../../app/components/page/PageAction.tsx';
@@ -41,9 +41,9 @@ export default function BookingsScreen() {
 
   const navigate = useNavigate();
 
-  const [selectedBooking, setSelectedBooking] = useState<Bookings>();
+  const [selectedBooking, setSelectedBooking] = useState<Booking>();
 
-  const onAction = (action: PageActionItem, booking: Bookings) => {
+  const onAction = (action: PageActionItem, booking: Booking) => {
     setSelectedBooking(booking);
 
     switch (action.icon) {
@@ -71,12 +71,7 @@ export default function BookingsScreen() {
   return (
     <>
       <PageTitle title="Bookings Management" />
-      <Pills
-        active={bookingType}
-        setActive={setBookingType}
-        items={Object.values(BookingType)}
-        getLabel={(e) => (e === BookingType.menus ? 'bookings' : e)}
-      />
+      <Pills active={bookingType} setActive={setBookingType} items={Object.values(BookingType)} />
       <PageSearchRow
         className="mt-4 mb-6 w-full"
         search={query}

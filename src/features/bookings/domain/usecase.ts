@@ -3,75 +3,40 @@ import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllBookingsResponse } from '../data/dto.ts';
 import { useMemo, useState } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
-import { Booking } from '../data/model.ts';
+import { Booking, BookingStatus } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { BookingType } from './types.ts';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
 export function useFetchBookingsQuery() {
-  const filters = useMemo(() => ['all', 'processing', 'pending', 'enquiry', 'completed'], []);
+  const filters = useMemo(() => ['All', ...Object.values(BookingStatus)], []);
 
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1));
   const [query, setQuery] = useQueryState('search', {
     defaultValue: ''
   });
+
   const [filter, setFilter] = useState<string>(filters[0]);
+
+  const debouncedQuery = useDebouncedValue(query, 500);
 
   const [bookingType, setBookingType] = useQueryState('type', {
     defaultValue: BookingType.menus
   });
 
   const { isPending, data, error } = useQuery({
-    queryKey: ['bookings', bookingType, page],
+    queryKey: ['bookings', bookingType, filter, page, debouncedQuery],
     queryFn: async ({ queryKey }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, bookingType, page] = queryKey;
+      const [_, type, status, page, query] = queryKey;
       const response = await fetch({
-        url: `admin/get-bookings?type=${bookingType}&page_number=${page}&page_size=20`,
+        url: `bookings/?page=${page}&page_size=20&booking_type=${type}${query ? `&search=${query}` : ''}${status && status !== 'All' ? `&status=${status}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllBookingsResponse;
     }
   });
-
-  const bookings = useMemo(() => {
-    const items = data?.data?.items || [];
-    if (!query && (!filter || filter === 'all')) {
-      return items;
-    } 
-
-    return items.filter((booking) => {
-      const cleanedFilter = filter!.toLowerCase();
-      const cleanedQuery = query.toLowerCase();
-
-      if (cleanedFilter != 'all' && cleanedQuery) {
-        return (
-          (booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
-            booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
-            booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
-            booking.chef?.firstName.toLowerCase().includes(cleanedQuery)) &&
-          booking.status.includes(cleanedFilter)
-        );
-      } else  if (cleanedFilter != 'all' && !cleanedQuery ) {
-        return (
-          booking.status.includes(cleanedFilter)
-        );
-      } 
-      else if (cleanedFilter === 'all' && cleanedQuery) {
-        return (
-          booking.user?.firstName.toLowerCase().includes(cleanedQuery) ||
-          booking.user?.lastName.toLowerCase().includes(cleanedQuery) ||
-          booking.chef?.lastName.toLowerCase().includes(cleanedQuery) ||
-          booking.chef?.firstName.toLowerCase().includes(cleanedQuery)
-        );
-      } else if ( cleanedFilter) {
-        return (
-          booking.status.toLowerCase() === cleanedFilter
-        );
-      }
-      return booking.status.toLowerCase() === cleanedFilter;
-    });
-  }, [query, filter, data]);
 
   return {
     bookingType: bookingType as BookingType,
@@ -80,14 +45,14 @@ export function useFetchBookingsQuery() {
     error,
     page,
     setPage,
-    bookings,
+    bookings: data?.data?.results ?? [],
     query,
     setQuery,
     filter,
     setFilter,
     filters,
-    totalCount: data?.data?.total_count || 0,
-    numberOfPages: data?.data?.number_of_pages || 0
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }
 

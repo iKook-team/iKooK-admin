@@ -11,7 +11,7 @@ export function useFetchReportsQuery() {
     defaultValue: ReportType.chef
   });
 
-  const filters = useMemo(() => ['all', 'needs response', 'responded'], []);
+  const filters = useMemo(() => ['All', 'Need Response', 'Responded', 'Resolved'], []);
   const [filter, setFilter] = useQueryState('filter', {
     defaultValue: filters[0]
   });
@@ -26,12 +26,9 @@ export function useFetchReportsQuery() {
   const { isPending, data, error } = useQuery({
     queryKey: ['reports', tab, filter, search, page],
     queryFn: async ({ queryKey }) => {
-      const [_, tab, filter, search, page] = queryKey;
-      const baseUrl = tab === ReportType.chef ? 'chef/get-reported-chefs' : 'menus/reported-menus';
-      const responded =
-        filter === 'responded' ? true : filter === 'needs response' ? false : undefined;
+      const [_, tab, status, search, page] = queryKey;
       const response = await fetch({
-        url: `${baseUrl}?page_number=${page}&page_size=20${search ? `&search=${search}` : ''}${responded ? `&responded=${responded}` : ''}`,
+        url: `reports?type=${tab}&page=${page}&page_size=20${search ? `&search=${search}` : ''}${status && status !== 'All' ? `&status=${status}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllReportsResponse;
@@ -45,13 +42,13 @@ export function useFetchReportsQuery() {
     error,
     page,
     setPage,
-    reports: data?.data?.items ?? [],
+    reports: data?.data?.results ?? [],
     query,
     setQuery,
     filter,
     setFilter,
     filters,
-    totalCount: data?.data?.total_count ?? 0,
-    numberOfPages: data?.data?.number_of_pages ?? 0
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }

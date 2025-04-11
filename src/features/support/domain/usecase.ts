@@ -52,9 +52,9 @@ export function useFetchSupportTicketsQuery() {
     isPending,
     error,
     ...queryInfo,
-    tickets: data?.data?.items ?? [],
-    totalCount: data?.data?.total_count || 0,
-    numberOfPages: data?.data?.number_of_pages || 0
+    tickets: data?.data?.results ?? [],
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }
 
@@ -75,7 +75,7 @@ export function useGetSupportTicket(ticketId: string) {
         .findAll({ queryKey: ['support'] })
         .reduce((acc, query) => {
           // @ts-expect-error - ignoring for now
-          return acc.concat(query.state.data?.data?.items ?? []);
+          return acc.concat(query.state.data?.data?.results ?? []);
         }, [])
         // @ts-expect-error - ignoring for now
         ?.find((ticket) => ticket.ticket_id === ticketId) as SupportTicket | undefined

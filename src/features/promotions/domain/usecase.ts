@@ -18,13 +18,17 @@ export function useFetchPromotionsQuery() {
   const [page, setPage] = useState(1);
 
   const { isPending, data, error } = useQuery({
-    queryKey: ['promotions', tab === PromotionType.promo ? 'promo' : 'gifts', filter, page],
+    queryKey: ['promotions', tab, filter, page],
     queryFn: async ({ queryKey }) => {
       const [_, tab, currency, page] = queryKey;
-      const baseUrl =
-        tab === 'promo' ? 'promotions/get-all-coupons' : 'promotions/get-all-gift-cards';
+      const path =
+        tab === PromotionType.gifts
+          ? 'giftcards'
+          : tab === PromotionType.promo
+            ? 'promocodes'
+            : 'purchasedgiftcards';
       const response = await fetch({
-        url: `${baseUrl}?page_number=${page}&page_size=20&currency=${currency}`,
+        url: `gifts/${path}?page_number=${page}&page_size=20&currency=${currency}`,
         method: 'GET'
       });
       return response.data as GetAllGiftCardsResponse;
@@ -32,7 +36,7 @@ export function useFetchPromotionsQuery() {
   });
 
   const items = useMemo(() => {
-    let items = data?.data?.items || [];
+    let items = data?.data?.results || [];
     if (tab === PromotionType.purchased) {
       items = items.filter((card) => card.purchased_by !== null);
     }
@@ -66,8 +70,8 @@ export function useFetchPromotionsQuery() {
     filter,
     setFilter,
     filters,
-    totalCount: data?.data?.total_count ?? 0,
-    numberOfPages: data?.data?.number_of_pages ?? 0
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }
 

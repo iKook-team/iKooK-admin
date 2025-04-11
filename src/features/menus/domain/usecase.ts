@@ -4,9 +4,10 @@ import { useMemo, useState } from 'react';
 import { GetAllMenusResponse, GetMenuResponse, GetTopMenus } from '../data/dto.ts';
 import { UpdateMenuStatusRequest } from './types.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
+import { MenuStatus } from '../data/model.ts';
 
 export function useFetchMenusQuery() {
-  const filters = useMemo(() => ['all', 'approved', 'unapproved'], []);
+  const filters = useMemo(() => ['All', ...Object.values(MenuStatus)], []);
 
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState<string>();
@@ -15,11 +16,11 @@ export function useFetchMenusQuery() {
   const debouncedQuery = useDebouncedValue(query, 500);
 
   const { isPending, data, error } = useQuery({
-    queryKey: ['menu', page, filter, debouncedQuery],
+    queryKey: ['menus', page, filter, debouncedQuery],
     queryFn: async ({ queryKey }) => {
       const [_, page, filter, query] = queryKey;
       const response = await fetch({
-        url: `admin/get-menus?page_number=${page}${filter === 'all' ? '' : `&menu_status=${filter}`}&page_size=20${query ? `&search_name=${query}` : ''}`,
+        url: `menus?page=${page}${filter === 'All' ? '' : `&status=${filter}`}&page_size=20${query ? `&search=${query}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllMenusResponse;
@@ -31,14 +32,14 @@ export function useFetchMenusQuery() {
     error,
     page,
     setPage,
-    menus: data?.data?.items ?? [],
+    menus: data?.data?.results ?? [],
     query,
     setQuery,
     filter,
     setFilter,
     filters,
-    totalCount: data?.data?.total_count || 0,
-    numberOfPages: data?.data?.number_of_pages || 0
+    totalCount: data?.data?.count ?? 0,
+    numberOfPages: data?.data?.total ?? 0
   };
 }
 

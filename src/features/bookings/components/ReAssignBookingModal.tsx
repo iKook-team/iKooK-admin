@@ -2,7 +2,7 @@ import { Ref, useRef } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
-import { Bookings } from '../data/model.ts';
+import { Booking } from '../data/model.ts';
 import { useReassignBooking } from '../domain/usecase.ts';
 import InputField from '../../../app/components/InputField.tsx';
 import { UserType } from '../../users/domain/types.ts';
@@ -14,7 +14,7 @@ import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 import { capitalize } from '../../../utils/strings.ts';
 
 interface ReAssignBookingModalProps {
-  booking: Bookings;
+  booking: Booking;
   ref: Ref<HTMLDialogElement>;
 }
 
@@ -33,10 +33,7 @@ export default function ReAssignBookingModal({ booking, ref }: ReAssignBookingMo
       title={
         <>
           {title}
-          <span className="text-jordy-blue capitalize">
-            {' ' + booking?.user.firstName} {booking?.user.lastName}
-          </span>
-          ?
+          <span className="text-jordy-blue capitalize">{' ' + booking?.host_name}</span>?
         </>
       }
     >

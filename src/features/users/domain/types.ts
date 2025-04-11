@@ -1,9 +1,9 @@
 import { User } from '../data/model.ts';
 
 export enum UserType {
-  chef = 'chef',
-  host = 'host',
-  admin = 'admin'
+  chef = 'Chef',
+  host = 'Host',
+  admin = 'Admin'
 }
 
 export enum UserHeaderTab {

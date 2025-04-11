@@ -2,11 +2,11 @@ import { Ref, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
-import { Bookings } from '../data/model.ts';
+import { Booking } from '../data/model.ts';
 import { useEditBookingStatus } from '../domain/usecase.ts';
 
 interface CancelBookingModalProps {
-  booking: Bookings;
+  booking: Booking;
   ref: Ref<HTMLDialogElement>;
 }
 
@@ -44,10 +44,7 @@ export default function CancelBookingModal({ booking, ref }: CancelBookingModalP
       title={
         <>
           {title}
-          <span className="text-jordy-blue capitalize">
-            {booking?.user.firstName} {booking?.user.lastName}
-          </span>
-          ?
+          <span className="text-jordy-blue capitalize">{booking.host_name}</span>?
         </>
       }
     >

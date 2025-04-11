@@ -1,4 +1,4 @@
 export enum BookingType {
   menus = 'menu',
-  enquiries = 'enquiries'
+  enquiries = 'service'
 }

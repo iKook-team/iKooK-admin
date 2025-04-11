@@ -1,15 +1,15 @@
 import { User } from '../../users/data/model.ts';
 
 export interface Menu {
-  id: string;
-  chefID: User;
-  menuName: string;
-  menuPrice: string;
+  id: number;
+  chef: User;
+  name: string;
+  price_per_person: string;
   currency: string;
   images: string[];
   verifiedAt: string;
   active: boolean;
-  status: string;
+  status: MenuStatus;
 }
 
 export interface MenuDetails {
@@ -40,4 +40,11 @@ export interface MenuCategory {
     menuName: string;
     description: string;
   }[];
+}
+
+export enum MenuStatus {
+  active = 'Active',
+  draft = 'Draft',
+  deleted = 'Deleted',
+  pending = 'Pending'
 }

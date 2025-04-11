@@ -14,7 +14,6 @@ import UsersHeader from './components/UsersHeader.tsx';
 import UserRow from './components/UserRow.tsx';
 import PageTitle from '../../app/components/page/PageTitle.tsx';
 import Pills from '../../app/components/Pills.tsx';
-import { fromKebabCase } from '../../utils/strings.ts';
 
 type UsersScreenProps = {
   type: UserType;
@@ -28,7 +27,7 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
   const deleteUserRef = useRef<HTMLDialogElement>(null);
   const resetPasswordRef = useRef<HTMLDialogElement>(null);
 
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
 
   const {
@@ -52,7 +51,7 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
     includeServices: isServices
   });
 
-  const toggleSelection = (id: string) => {
+  const toggleSelection = (id: number) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((s) => s !== id));
     } else {
@@ -90,14 +89,7 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
       {type !== UserType.admin && (
         <>
           <PageTitle title={isServices ? 'Services' : type === UserType.host ? 'Users' : 'Chefs'} />
-          {isServices && (
-            <Pills
-              items={services}
-              active={service}
-              setActive={setService}
-              getLabel={(value) => fromKebabCase(value) ?? value ?? ''}
-            />
-          )}
+          {isServices && <Pills items={services} active={service} setActive={setService} />}
         </>
       )}
       <PageSearchRow

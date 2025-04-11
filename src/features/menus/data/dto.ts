@@ -5,16 +5,15 @@ export type GetAllMenusResponse = GenericResponse<PagedResponse<Menu>>;
 
 export type GetTopMenus = GenericResponse<
   Array<{
-    id: string;
-    menu_name: string;
+    id: number;
+    name: string;
     chef: {
-      id: string;
+      id: number;
       first_name: string;
       last_name: string;
     };
     currency: string;
-    total_amount: number;
-    booking_count: number;
+    price_per_person: number;
   }>
 >;
 
