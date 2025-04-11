@@ -95,13 +95,13 @@ export function useFetchUserQuery(type: UserType, id: string) {
   };
 }
 
-export function useToggleUserActive(type: UserType) {
+export function useUpdateUser(type: UserType) {
   return useMutation({
-    mutationFn: ({ id, disable }: { id: string; disable: boolean }) => {
-      const route = disable ? 'disable-user' : 'activate-user';
+    mutationFn: ({ id, data }: { id: number; data: Partial<User> }) => {
       return fetch({
-        url: `/admin/${route}/${id}`,
-        method: 'PUT'
+        url: `/users/profiles/${id}/`,
+        method: 'PATCH',
+        data
       });
     },
     onSuccess: () => {

@@ -4,7 +4,7 @@ import UserSettingsTitle from '../components/UserSettingsTitle';
 import { customizedEmailField, userSettingsFields } from '../domain/fields';
 import { UserPageProps } from '../domain/types';
 import InputField from '../../../app/components/InputField';
-import { useToggleNotificationSettings, useToggleUserActive } from '../domain/usecase.ts';
+import { useToggleNotificationSettings, useUpdateUser } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 import { capitalize } from '../../../utils/strings.ts';
 
@@ -42,7 +42,7 @@ export default function UserSettingsPage({ select, user, type }: UserSettingsPag
   );
 
   const [isPending, startTransition] = useTransition();
-  const toggleUserActive = useToggleUserActive(type);
+  const toggleUserActive = useUpdateUser(type);
   const toggleNotification = useToggleNotificationSettings({ type, id: user.id });
 
   const onSubmit = () => {
@@ -52,7 +52,14 @@ export default function UserSettingsPage({ select, user, type }: UserSettingsPag
 
     const actions: Promise<any>[] = [];
     if (state.disable !== user.settings?.disabled) {
-      actions.push(toggleUserActive.mutateAsync({ id: user.id, disable: state.disable ?? false }));
+      actions.push(
+        toggleUserActive.mutateAsync({
+          id: user.id,
+          data: {
+            is_active: state.disable ?? false
+          }
+        })
+      );
     }
     if (state.email !== user.settings?.email_notification) {
       actions.push(toggleNotification.mutateAsync({ type: 'email' }));

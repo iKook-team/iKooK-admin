@@ -1,9 +1,9 @@
-import { Ref, useTransition } from 'react';
+import { Ref, useCallback } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import { toast } from 'react-toastify';
 import { User } from '../data/model.ts';
 import { UserType } from '../domain/types.ts';
-import { useToggleUserActive } from '../domain/usecase.ts';
+import { useUpdateUser } from '../domain/usecase.ts';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 interface ToggleUserActiveModalProps {
@@ -14,24 +14,22 @@ interface ToggleUserActiveModalProps {
 
 export default function ToggleUserActiveModal({ user, type, ref }: ToggleUserActiveModalProps) {
   const title = user?.is_active ? 'Suspend' : 'Activate';
-  const [isPending, startTransition] = useTransition();
+  const mutation = useUpdateUser(type);
 
-  const mutation = useToggleUserActive(type);
-
-  const onSubmit = async () => {
-    if (isPending || user === undefined) {
+  const onSubmit = useCallback(async () => {
+    if (mutation.isPending || user === undefined) {
       return;
     }
 
-    startTransition(async () => {
-      const response = await mutation.mutateAsync({
-        id: user!.id,
-        disable: user?.is_active
-      });
-      toast(response.data.data, { type: 'success' });
-      getCurrentFromRef(ref)?.close();
+    const response = await mutation.mutateAsync({
+      id: user!.id,
+      data: {
+        is_active: !user!.is_active
+      }
     });
-  };
+    toast(response.data.data, { type: 'success' });
+    getCurrentFromRef(ref)?.close();
+  }, [mutation, user, ref]);
 
   return (
     <PageModal
@@ -54,11 +52,11 @@ export default function ToggleUserActiveModal({ user, type, ref }: ToggleUserAct
         </button>
         <button
           className={`btn btn-primary border-0 ${user?.is_active ? 'bg-red-base' : 'bg-green'}`}
-          disabled={isPending}
+          disabled={mutation.isPending}
           onClick={onSubmit}
         >
           {title}
-          {isPending && <span className="loading loading-spinner"></span>}
+          {mutation.isPending && <span className="loading loading-spinner"></span>}
         </button>
       </div>
     </PageModal>

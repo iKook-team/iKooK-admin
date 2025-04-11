@@ -78,9 +78,6 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
       case 'reset':
         resetPasswordRef.current?.showModal();
         break;
-      case 'check':
-        // console.log("for verification")
-        break;
     }
   };
 
@@ -170,13 +167,14 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
                 <PageAction
                   items={[
                     { title: 'Edit', icon: 'edit' },
-                    ...(type == UserType.host
-                      ? [{ title: 'Approve docs', icon: 'approve-document' }]
-                      : []),
+                    // {
+                    //   title: type == UserType.host ? 'Approve docs' : 'Verification',
+                    //   icon: 'approve-document'
+                    // },
                     { title: user.is_active ? 'Suspend' : 'Activate', icon: 'suspend' },
                     { title: 'Delete', icon: 'delete' },
-                    { title: 'Reset Password', icon: 'reset' },
-                    ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
+                    { title: 'Reset Password', icon: 'reset' }
+                    // ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
                   ]}
                   onItemClick={(action) => onAction(action, user)}
                 />
