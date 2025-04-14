@@ -1,10 +1,10 @@
-import { useMemo, useState, useTransition } from 'react';
+import { useMemo, useState } from 'react';
 import { ToggleCard } from '../components/ToogleSwitch';
 import UserSettingsTitle from '../components/UserSettingsTitle';
 import { customizedEmailField, userSettingsFields } from '../domain/fields';
 import { UserPageProps } from '../domain/types';
 import InputField from '../../../app/components/InputField';
-import { useToggleNotificationSettings, useUpdateUser } from '../domain/usecase.ts';
+import { useUpdateUser } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 import { capitalize } from '../../../utils/strings.ts';
 
@@ -24,9 +24,9 @@ interface UserSettingsPageState {
 
 export default function UserSettingsPage({ select, user, type }: UserSettingsPageProps) {
   const [state, setState] = useState<UserSettingsPageState>({
-    disable: user.settings?.disabled,
-    email: user.settings?.email_notification,
-    sms: user.settings?.sms_notification,
+    disable: !user.is_active,
+    email: user.email_notify,
+    sms: user.sms_notify,
     newPassword: '',
     currentPassword: ''
   });
@@ -41,45 +41,26 @@ export default function UserSettingsPage({ select, user, type }: UserSettingsPag
     []
   );
 
-  const [isPending, startTransition] = useTransition();
-  const toggleUserActive = useUpdateUser(type);
-  const toggleNotification = useToggleNotificationSettings({ type, id: user.id });
+  const mutation = useUpdateUser(type);
 
-  const onSubmit = () => {
-    if (isPending || !user) {
+  const onSubmit = async () => {
+    if (mutation.isPending || !user) {
       return;
     }
 
-    const actions: Promise<any>[] = [];
-    if (state.disable !== user.settings?.disabled) {
-      actions.push(
-        toggleUserActive.mutateAsync({
-          id: user.id,
-          data: {
-            is_active: state.disable ?? false
-          }
-        })
-      );
+    try {
+      await mutation.mutateAsync({
+        id: user.id,
+        data: {
+          email_notify: state.email,
+          sms_notify: state.sms,
+          is_active: !state.disable
+        }
+      });
+      toast(`${capitalize(select) ?? 'Settings'} saved successfully`, { type: 'success' });
+    } catch (error) {
+      /* empty */
     }
-    if (state.email !== user.settings?.email_notification) {
-      actions.push(toggleNotification.mutateAsync({ type: 'email' }));
-    }
-    if (state.sms !== user.settings?.sms_notification) {
-      actions.push(toggleNotification.mutateAsync({ type: 'sms' }));
-    }
-
-    if (actions.length === 0) {
-      return;
-    }
-
-    startTransition(async () => {
-      try {
-        await Promise.all(actions);
-        toast(`${capitalize(select) ?? 'Settings'} saved successfully`, { type: 'success' });
-      } catch (error) {
-        /* empty */
-      }
-    });
   };
 
   return (
@@ -92,7 +73,7 @@ export default function UserSettingsPage({ select, user, type }: UserSettingsPag
               ? 'Reset Password'
               : select) ?? 'Settings'
         }
-        loading={isPending}
+        loading={mutation.isPending}
         onSave={onSubmit}
       />
 

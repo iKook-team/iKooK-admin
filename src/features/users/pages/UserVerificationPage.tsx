@@ -4,8 +4,7 @@ import Constants from '../../../utils/constants.ts';
 import close from '../../../app/assets/icons/close.svg';
 import { ReactSVG } from 'react-svg';
 import useBreakpoint from '../../../hooks/useBreakpoint.ts';
-import { useLocation } from 'react-router-dom';
-import { useToggleUserVerificationStatus } from '../domain/usecase.ts';
+import { useUpdateUser } from '../domain/usecase.ts';
 import { Ref, useRef, useState } from 'react';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import PageModal from '../../../app/components/page/PageModal.tsx';
@@ -16,8 +15,7 @@ import StatusPill from '../components/StatusPill.tsx';
 import ImageViewerModal from '../../../app/components/ImageViewerModal.tsx';
 
 export default function UserVerificationPage({ user, type }: UserPageProps) {
-  const { pathname } = useLocation();
-  const mutation = useToggleUserVerificationStatus(type);
+  const mutation = useUpdateUser(type);
 
   const messageRef = useRef<HTMLDialogElement>(null);
   const imageViewerRef = useRef<HTMLDialogElement>(null);
@@ -36,9 +34,8 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
   };
 
   const onImage = (image?: string) => {
-    const src = image ? Constants.getAssetUrl(image, 'verification') : undefined;
-    if (src) {
-      setImage(src);
+    if (image) {
+      setImage(image);
       getCurrentFromRef(imageViewerRef)?.showModal();
     }
   };
@@ -52,7 +49,12 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
         type,
         accept
       });
-      await mutation.mutateAsync({ id: pathname.split('/').pop()!, accept, type, message });
+      await mutation.mutateAsync({
+        id: user.id,
+        data: {
+          [type === 'identity' ? 'identity_verified' : 'document_verified']: accept
+        }
+      });
       getCurrentFromRef(messageRef)?.close();
       toast(`${capitalize(type)} ${accept ? 'accepted' : 'rejected'} successfully`, {
         type: 'success'
@@ -71,30 +73,34 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
         <DocumentEntry
           title="Identity Document"
           subtitle="Upload a Government ID. Accepted is either Drivers License or International Passport"
-          status={user.verification?.identity?.status}
-          image={user.verification?.document?.identity}
+          status={
+            user.identity_verified ? 'accepted' : user.identity_document ? 'rejected' : 'pending'
+          }
+          image={user.identity_document}
           onAction={(active) => onAction('identity', active)}
-          onImage={() => onImage(user.verification?.document?.identity)}
+          onImage={() => onImage(user.identity_document)}
           loading={loading?.type == 'identity' ? loading : undefined}
         />
         <DocumentEntry
           title="Certificate"
           subtitle="Upload your Culinary school certificate here"
-          status={user.verification?.document?.status}
-          image={user.verification?.document?.certificate}
+          status={
+            user.document_verified ? 'accepted' : user.culinary_certificate ? 'rejected' : 'pending'
+          }
+          image={user.culinary_certificate}
           onAction={(active) => onAction('document', active)}
-          onImage={() => onImage(user.verification?.document?.certificate)}
+          onImage={() => onImage(user.culinary_certificate)}
           loading={loading?.type == 'document' ? loading : undefined}
         />
-        <DocumentEntry
-          title="CV"
-          subtitle="Upload your Curriculum vitae here"
-          status={'user.verification?.document?.status'}
-          image={user.verification?.document?.certificate}
-          onAction={(active) => onAction('document', active)}
-          onImage={() => onImage(user.verification?.document?.certificate)}
-          loading={loading?.type == 'document' ? loading : undefined}
-        />
+        {/*<DocumentEntry*/}
+        {/*  title="CV"*/}
+        {/*  subtitle="Upload your Curriculum vitae here"*/}
+        {/*  status={'user.verification?.document?.status'}*/}
+        {/*  image={user.verification?.document?.certificate}*/}
+        {/*  onAction={(active) => onAction('document', active)}*/}
+        {/*  onImage={() => onImage(user.verification?.document?.certificate)}*/}
+        {/*  loading={loading?.type == 'document' ? loading : undefined}*/}
+        {/*/>*/}
       </div>
       <UserVerificationReasonModal
         ref={messageRef}

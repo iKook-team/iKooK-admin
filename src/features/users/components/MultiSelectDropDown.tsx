@@ -12,13 +12,13 @@ interface MultiSelectDropdownProps {
 export default function MultiSelectDropdown({
   title,
   options,
-  value,
+  value = [],
   onChange
 }: MultiSelectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const toggleSelection = (item: string, event: React.MouseEvent) => {
+  const toggleSelection = (item: string, event: MouseEvent) => {
     event.stopPropagation(); // Prevent closing dropdown on click
     onChange(value.includes(item) ? value.filter((i) => i !== item) : [...value, item]);
   };

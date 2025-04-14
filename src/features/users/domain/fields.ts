@@ -13,7 +13,7 @@ export const hostProfileFields: Field[] = [
     type: 'text'
   },
   {
-    id: 'user_name',
+    id: 'username',
     placeholder: 'sandy',
     type: 'text'
   },
@@ -24,7 +24,7 @@ export const hostProfileFields: Field[] = [
     type: 'email'
   },
   {
-    id: 'mobile',
+    id: 'phone_number',
     label: 'Phone Number',
     placeholder: '+234 810 166 7299',
     type: 'phone'

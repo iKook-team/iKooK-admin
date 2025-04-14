@@ -1,58 +1,31 @@
 import { CurrentUser } from '../../auth/data/model.ts';
+import { UserType } from '../domain/types.ts';
 
 export interface User extends CurrentUser {
   username: string;
+  user_type: UserType;
   is_active: boolean;
   email: string;
   address: string;
+  bio: string;
+  postal_code: string;
   city: string;
   country: string;
   balance?: number;
   average_rating?: number;
   num_reviews?: number;
-  mobile?: string;
-  menus: string[];
-  photo: string;
+  phone_number?: string;
+  document_verified: boolean;
+  culinary_certificate: string;
+  identity_document: string;
   identity_verified: boolean;
+  identity_type: string;
+  identity_number: string;
   status: string;
   cuisines: string[];
   events: string[];
-  verification?: {
-    document?: {
-      document_type: string;
-      documents: string[];
-      certificate?: string;
-      identity?: string;
-      message?: string;
-      is_documents_verified: boolean;
-      verifiedAt: string;
-      status: string;
-    };
-    identity?: {
-      identity_type?: string;
-      identity_number?: string;
-      status: string;
-      message?: string;
-      data?: {
-        first_name: string;
-        last_name: string;
-        middle_name: string;
-        gender: string;
-        photo: string;
-        date_of_birth: string;
-        email?: string;
-        phone_number: string;
-        employment_status: string;
-        marital_status?: string;
-        customer: string;
-      };
-    };
-  };
-  settings?: {
-    disabled: boolean;
-    sms_notification?: boolean;
-    email_notification?: boolean;
-  };
+  email_notify: boolean;
+  sms_notify: boolean;
 }
 
 export interface Role {
