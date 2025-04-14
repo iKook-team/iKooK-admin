@@ -21,7 +21,7 @@ export default function CalendarEntry({ bookings, onClick }: CalendarEntryProps)
             images={
               bookings
                 .map((booking) =>
-                  Constants.getImageUrl(booking.chef.photo, 'users', booking.chef.first_name)
+                  Constants.getImageUrl(booking.chef.photo, booking.chef.first_name)
                 )
                 .filter(Boolean) as string[]
             }

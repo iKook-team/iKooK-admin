@@ -1,14 +1,15 @@
-import React, { SetStateAction, useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { getImageUrl } from '../../../utils/getImageUrl';
-import { Booking, Quote } from '../data/model';
+import { Booking, BookingStatus, Quote } from '../data/model';
 import Constants from '../../../utils/constants';
 import { DropdownField } from '../../../app/components/InputField';
 import Modal from './BookingsModal';
 import QuoteCardGrid from './QuotesGrid';
 import { ViewQuoteModal } from './QuotesModal';
-import { useAcceptQuote, useDeleteBooking } from '../domain/usecase';
+import { useAcceptQuote, useDeleteBooking, useUpdateBooking } from '../domain/usecase';
 import { BookingType } from '../domain/types.ts';
-import { toast } from 'react-toastify';
+import { User } from '../../users/data/model.ts';
+import { formatCurrency } from '../../../utils/helper.ts';
 
 interface IconTextItem {
   icon: string;
@@ -21,7 +22,8 @@ interface MenuItem {
   extratext?: string;
 }
 
-interface BookingComponentProps {
+interface QuotesColumnProps {
+  chef: User;
   booking: Booking;
   type?: BookingType;
   iconTextList: IconTextItem[];
@@ -31,15 +33,16 @@ interface BookingComponentProps {
   setFilter?: (value: SetStateAction<string>) => void;
 }
 
-const QuotesColumn: React.FC<BookingComponentProps> = ({
+export default function QuotesColumn({
   booking,
+  chef,
   type,
   iconTextList,
   menuList,
   filter,
   filters,
   setFilter
-}) => {
+}: QuotesColumnProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isQuoteModalVisible, setIsQuoteModalVisible] = useState(false);
 
@@ -48,56 +51,15 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
   const closeQuoteModal = () => setIsQuoteModalVisible(false);
   const openQuoteModal = () => setIsQuoteModalVisible(true);
 
-  const [cancelling, setCancelling] = useState(false);
-
-  const mutation = useDeleteBooking();
-
-  const [deleting, setDeleting] = useState(false);
-
+  const mutation = useUpdateBooking();
   const deleteMutation = useDeleteBooking();
 
-  const onDelete = async () => {
-    if (deleting || booking === undefined) {
-      return;
-    }
-
-    try {
-      setDeleting(true);
-
-      const response = await deleteMutation.mutateAsync({
-        bookingId: 'booking.id'
-      });
-
-      toast(response.data.data, { type: 'success' });
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  const onCancel = async () => {
-    if (cancelling || booking === undefined) {
-      return;
-    }
-
-    try {
-      setCancelling(true);
-
-      const response = await mutation.mutateAsync({
-        bookingId: 'booking.id'
-      });
-
-      toast(response.data.data, { type: 'success' });
-    } finally {
-      setCancelling(false);
-    }
-  };
-
   const enquiryProfileList = [
-    { icon: 'ci_location', text: `${booking?.chef?.country}`, review: null },
+    { icon: 'ci_location', text: `${chef?.country}`, review: null },
     {
       icon: 'star',
-      text: `${booking?.chef?.rating}`,
-      review: `(${booking?.chef?.reviews + ' ' + 'reviews'})`
+      text: `${chef?.average_rating?.toFixed(2)}`,
+      review: `(${chef?.num_reviews + ' ' + 'reviews'})`
     }
   ];
 
@@ -111,9 +73,14 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
     if (currentQuote) {
       performAcceptQuote(currentQuote.id);
     } else {
-      console.error("No quote selected!");
+      console.error('No quote selected!');
     }
   };
+
+  const fee = 0.025;
+  const guests = booking.num_of_persons || booking.num_of_guests;
+  const originalTotal = booking.total_cost / (1 + fee);
+  const guestPrice = originalTotal / (guests || 1);
 
   return (
     <div className="flex flex-col aspect-[370/600] rounded-xl shadow-xl border border-gray-300 bg-white px-10 justify-evenly items-center h-min gap-3 py-5 max-w-[500px] ">
@@ -128,24 +95,17 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
         </button>
       )}
 
-      {type &&
-        (booking.chef === null ? (
-          <div>No chef found</div>
-        ) : (
-          <div className="flex flex-row gap-4 items-center w-full">
-            <img
-              src={`${Constants.userUrl}/${booking?.user?.photo}`}
-              alt={booking.user?.first_name}
-              className="w-8 h-8 aspect-square rounded-full"
-            />
-            <div className="flex flex-col">
-              <span className="capitalize font-bold">
-                {`${booking.user?.first_name} ${booking.user?.last_name}`}
-              </span>
-              <span>{booking.user?.email}</span>
-            </div>
-          </div>
-        ))}
+      <div className="flex flex-row gap-4 items-center w-full">
+        <img
+          src={Constants.getImageUrl(booking.host_avatar, booking.host_name)}
+          alt={booking.host_name}
+          className="w-8 h-8 aspect-square rounded-full"
+        />
+        <div className="flex flex-col">
+          <span className="capitalize font-bold">{booking.host_name}</span>
+          {/*<span>{booking.user?.email}</span>*/}
+        </div>
+      </div>
 
       <div className="flex flex-col gap-1 w-full ">
         {iconTextList.map((each, index) => (
@@ -163,25 +123,19 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
       <div className="flex flex-col gap-1 w-full">
         <div className="flex justify-between">
           <h1>
-            {booking.no_of_guest || 0} Guests * {booking.currency} 20
+            {guests} Guests * {formatCurrency(guestPrice)}
           </h1>
-          <h1>
-            {booking.currency} {booking.no_of_guest * 20}
-          </h1>
+          <h1>{formatCurrency(originalTotal)}</h1>
         </div>
 
         <div className="flex justify-between pb-5 border-b">
           <h1>Platform Fees 2.5%</h1>
-          <h1>
-            {booking.currency} {booking.no_of_guest * 20 * 0.025}
-          </h1>
+          <h1>{formatCurrency(originalTotal * fee)}</h1>
         </div>
 
         <div className="flex justify-between">
           <h1 className="font-bold uppercase">Total</h1>
-          <h1>
-            {booking.currency} {(booking.no_of_guest * 20 * 1.025).toFixed(2)}
-          </h1>
+          <h1>{formatCurrency(booking.total_cost)}</h1>
         </div>
       </div>
 
@@ -196,12 +150,19 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
 
         {type && (
           <>
-            <button onClick={onCancel} className="btn btn-outline w-full h-min capitalize">
+            <button
+              disabled={mutation.isPending}
+              onClick={() =>
+                mutation.mutate({ id: booking.id, data: { status: BookingStatus.cancelled } })
+              }
+              className="btn btn-outline w-full h-min capitalize"
+            >
               Cancel
             </button>
 
             <button
-              onClick={onDelete}
+              onClick={() => deleteMutation.mutate({ id: booking.id })}
+              disabled={deleteMutation.isPending}
               className="btn bg-black-base text-white w-full h-min capitalize"
             >
               Delete
@@ -236,12 +197,12 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
         onClose={closeModal}
         children={
           <QuoteCardGrid
-            quotesList={booking.quotes}
+            booking={booking.id}
             viewQuote={openQuoteModal}
             setCurrentQuote={setCurrentQuote}
           />
         }
-        title={'custom booking quotes'}
+        title={`${booking.is_custom ? 'custom booking' : booking.chef_service} quotes`}
         isQuote={true}
       />
 
@@ -263,6 +224,4 @@ const QuotesColumn: React.FC<BookingComponentProps> = ({
       />
     </div>
   );
-};
-
-export default QuotesColumn;
+}

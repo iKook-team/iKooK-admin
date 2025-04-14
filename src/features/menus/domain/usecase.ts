@@ -57,13 +57,13 @@ export function useFetchTopMenusQuery(currency: string) {
   });
 }
 
-export function useFetchMenuQuery(id: string) {
+export function useFetchMenuQuery(id?: number | string) {
   return useQuery({
     queryKey: ['menu', id],
     queryFn: async ({ queryKey }) => {
       const [_, id] = queryKey;
       const response = await fetch({
-        url: `menus/get-menu-detail/${id}`,
+        url: `menus/${id}/`,
         method: 'GET'
       });
       return (response.data as GetMenuResponse).data;

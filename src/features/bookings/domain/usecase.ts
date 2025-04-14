@@ -2,8 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllBookingsResponse } from '../data/dto.ts';
 import { Ref, useMemo, useState } from 'react';
-import { GenericResponse } from '../../../app/data/dto.ts';
-import { Booking, BookingStatus } from '../data/model.ts';
+import { GenericResponse, PagedResponse } from '../../../app/data/dto.ts';
+import { Booking, BookingStatus, Quote } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { BookingType } from './types.ts';
 import { parseAsInteger, useQueryState } from 'nuqs';
@@ -57,24 +57,43 @@ export function useFetchBookingsQuery() {
   };
 }
 
-export function useFetchBookingQuery(id: string) {
-  const { isPending, data, error } = useQuery({
-    queryKey: [id],
+export function useFetchBookingQuery(type: BookingType, id?: number | string) {
+  const query = useQuery({
+    queryKey: ['bookings', type, id],
     queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [id] = queryKey;
+      const [_, __, id] = queryKey;
       const response = await fetch({
-        url: `bookings/get-booking-details/${id}`,
+        url: `bookings/${id}/`,
         method: 'GET'
       });
       return response?.data as GenericResponse<Booking>;
-    }
+    },
+    enabled: !!id
   });
 
   return {
-    isPending,
-    booking: data?.data,
-    error
+    ...query,
+    data: query?.data?.data
+  };
+}
+
+export function useFetchQuotesQuery(booking?: number | string) {
+  const query = useQuery({
+    queryKey: ['quotes', booking],
+    queryFn: async ({ queryKey }) => {
+      const [_, __, id] = queryKey;
+      const response = await fetch({
+        url: `quotes/${id}?page=1&page_size=100`,
+        method: 'GET'
+      });
+      return response?.data as GenericResponse<PagedResponse<Quote>>;
+    },
+    enabled: !!booking
+  });
+
+  return {
+    ...query,
+    data: query?.data?.data?.results
   };
 }
 

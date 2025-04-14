@@ -79,24 +79,23 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
   };
 }
 
-export function useFetchUserQuery(type: UserType, id: string) {
-  const { isPending, data, error } = useQuery({
+export function useFetchUserQuery(type: UserType, id?: number | string) {
+  const query = useQuery({
     queryKey: [type, id],
     queryFn: async ({ queryKey }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, id] = queryKey;
       const response = await fetch({
-        url: `admin/get-user-details/${id}`,
+        url: `/users/profiles/${id}/`,
         method: 'GET'
       });
       return response.data as GenericResponse<User>;
-    }
+    },
+    enabled: !!id
   });
 
   return {
-    isPending,
-    user: data?.data,
-    error
+    ...query,
+    data: query?.data?.data
   };
 }
 

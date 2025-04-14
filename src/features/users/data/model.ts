@@ -9,6 +9,7 @@ export interface User extends CurrentUser {
   country: string;
   balance?: number;
   average_rating?: number;
+  num_reviews?: number;
   mobile?: string;
   menus: string[];
   photo: string;

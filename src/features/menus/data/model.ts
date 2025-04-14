@@ -2,34 +2,23 @@ import { User } from '../../users/data/model.ts';
 
 export interface Menu {
   id: number;
-  chef: User;
   name: string;
   price_per_person: string;
+  num_of_guests: number;
+  max_menu_selection: number;
   currency: string;
-  images: string[];
   verifiedAt: string;
   active: boolean;
+  event_types: string[];
+  cuisine_types: string[];
+  menu_type: string;
+  courses: MenuCourse[];
+  courses_selection_limit: Record<MenuCourse, number>;
+  courses_extra_charge_per_person: Record<MenuCourse, number>;
   status: MenuStatus;
-}
-
-export interface MenuDetails {
+  images: MenuImage[];
+  items: MenuItem[];
   chef: User;
-  menu_name: string;
-  max_menu_selection: number;
-  minimum_number_of_guest: number;
-  menu_price: number;
-  cuisine: string[];
-  event: string[];
-  images: string[];
-  description: string | null;
-  search_tags: string[];
-  currency: string;
-  status: string;
-  starter_menu: MenuCategory;
-  main_menu: MenuCategory;
-  dessert_menu: MenuCategory;
-  side_menu: MenuCategory;
-  created_at: string;
 }
 
 export interface MenuCategory {
@@ -42,9 +31,30 @@ export interface MenuCategory {
   }[];
 }
 
+export interface MenuImage {
+  id: number;
+  image: string;
+  menu: number;
+}
+
+export interface MenuItem {
+  id: number;
+  course: MenuCourse;
+  name: string;
+  description: string;
+  menu: number;
+}
+
 export enum MenuStatus {
   active = 'Active',
   draft = 'Draft',
   deleted = 'Deleted',
   pending = 'Pending'
+}
+
+export enum MenuCourse {
+  starter = 'Starter',
+  main = 'Main',
+  dessert = 'Dessert',
+  side = 'Side'
 }

@@ -9,15 +9,21 @@ import { useFetchBookingQuery } from './domain/usecase';
 import Modal from './components/BookingsModal';
 import EditMenuModalContent from './components/EditMenuModalContent';
 import { BookingType } from './domain/types.ts';
+import { useFetchUserQuery } from '../users/domain/usecase.ts';
+import { UserType } from '../users/domain/types.ts';
+import { useFetchMenuQuery } from '../menus/domain/usecase.ts';
 
 export default function BookingEditScreen() {
   const filters = useMemo(() => ['in-progress', 'rejected', 'successful'], []);
 
-  const { id: bookingId } = useParams();
+  const { id } = useParams();
+
   const [params] = useSearchParams();
   const type = params.get('type') as BookingType;
 
-  const { isPending, booking, error } = useFetchBookingQuery(bookingId!);
+  const { isPending, data: booking, error } = useFetchBookingQuery(type, id);
+  const { data: chef } = useFetchUserQuery(UserType.chef, booking?.chef_id);
+  const { data: menu } = useFetchMenuQuery(booking?.menu);
 
   const date = booking?.created_at
     ? new Date(booking!.created_at).toLocaleDateString('en-US', {
@@ -27,14 +33,14 @@ export default function BookingEditScreen() {
       })
     : null;
 
+  const guests = booking?.num_of_persons ?? booking?.num_of_guests;
+
   const iconTextList = [
     { icon: 'calender-check', text: `${date}` },
-    { icon: 'location-pin', text: `${booking?.location.addressString}` },
+    { icon: 'location-pin', text: `${booking?.address}` },
     {
       icon: 'person-male-female',
-      text:
-        `${booking?.no_of_guest}` +
-        `${booking?.no_of_guest != undefined && booking.no_of_guest > 0 ? ' persons' : ' person'}`
+      text: `${guests}` + `${guests != undefined && guests > 0 ? ' persons' : ' person'}`
     }
   ];
 
@@ -50,47 +56,40 @@ export default function BookingEditScreen() {
   ];
 
   const enquiryProfileList = [
-    { icon: 'ci_location', text: `${booking?.chef?.country}`, review: null },
+    {
+      icon: 'ci_location',
+      text: `${booking?.city ?? booking?.country ?? chef?.city ?? chef?.country}`,
+      review: null
+    },
     {
       icon: 'star',
-      text: `${booking?.chef?.rating}`,
-      review: `(${booking?.chef?.reviews + ' ' + 'reviews'})`
+      text: `${chef?.average_rating?.toFixed(2)}`,
+      review: `(${chef?.num_reviews + ' ' + 'reviews'})`
     }
   ];
 
   const enquiryProfileList1 = [
     { icon: 'cuisine', text: `10 cuisine`, review: null },
-    { icon: 'group', text: `${booking?.no_of_guest} + people`, review: null }
+    { icon: 'group', text: `${guests} + people`, review: null }
   ];
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [filter, setFilter] = useState<string>(filters[0]);
 
-  const capitalizeFirst = (str: string | undefined) =>
-    str!.charAt(0).toUpperCase() + str!.slice(1).toLowerCase();
-
-  console.log(booking);
-
   return (
     <>
       <PageBackButton />
 
       {isPending || booking === undefined ? (
-        <div></div>
+        <></>
       ) : error?.message ? (
         <div className="text-center text-red-500">{error.message}</div>
       ) : (
         <div className="flex flex-row justify-between my-6 mr-20">
-          <PageTitle
-            title={
-              type === BookingType.menus
-                ? `${capitalizeFirst(booking?.booking_type)} Booking`
-                : `${capitalizeFirst(booking?.booking_type === 'custom-booking' ? booking.custom_booking_type_selected : booking?.booking_type)}`
-            }
-          />
-          <button onClick={() => setIsModalVisible(true)}>
-            <h2 className="underline">edit {type}</h2>
+          <PageTitle className="capitalize" title={`${booking?.chef_service} Booking`} />
+          <button onClick={() => setIsModalVisible(true)} className="underline">
+            Edit {type}
           </button>
         </div>
       )}
@@ -100,17 +99,18 @@ export default function BookingEditScreen() {
         <div className="text-center text-red-500">{error.message}</div>
       ) : (
         <div className="flex justify-between w-[90%]">
-          {booking.chef ? (
+          {chef ? (
             <div className="flex flex-col w-[75%]">
               {type != BookingType.menus ? (
                 <EnquiryProfileListTile
-                  booking={booking}
+                  chef={chef}
                   enquiryProfileList={enquiryProfileList}
                   enquiryProfileList1={enquiryProfileList1}
                 />
               ) : (
                 <MenuProfileListTile
-                  booking={booking}
+                  chef={chef}
+                  menu={menu}
                   enquiryProfileList={enquiryProfileList}
                   enquiryProfileList1={[]}
                 />
@@ -118,23 +118,21 @@ export default function BookingEditScreen() {
               {type != BookingType.menus ? (
                 <BudgetCard
                   message={booking.message}
-                  cuisines={booking.cuisines}
+                  cuisines={menu?.cuisine_types ?? []}
                   eventType={booking?.event_type}
                   allergies={
-                    booking.xallergies.length === 0
+                    booking.dietary_restrictions.length === 0
                       ? ['None']
-                      : booking.xallergies.length > 1
-                        ? booking?.xallergies
+                      : booking.dietary_restrictions_details.length > 1
+                        ? booking?.dietary_restrictions
                         : []
                   }
                   budget={booking.budget}
                 />
+              ) : menu ? (
+                <MenuList menu={menu} booking={booking} />
               ) : (
-                <MenuList
-                  starterList={booking.menu.starter}
-                  mainList={booking.menu.main}
-                  dessertList={booking.menu.dessert}
-                />
+                <></>
               )}
             </div>
           ) : (
@@ -143,6 +141,7 @@ export default function BookingEditScreen() {
 
           <QuotesColumn
             booking={booking}
+            chef={chef}
             type={type}
             iconTextList={iconTextList}
             menuList={menuList}
@@ -157,9 +156,13 @@ export default function BookingEditScreen() {
         onClose={() => setIsModalVisible(false)}
         children={
           <EditMenuModalContent
-            starterList={ booking?.menu.starter && booking!.menu.starter.map((e) => e.menuName) || []}
-            mainList={booking?.menu.main && booking!.menu.main.map((e) => e.menuName) || []}
-            dessertList={ booking?.menu.dessert && booking!.menu.dessert.map((e) => e.menuName) || []}
+            starterList={
+              (booking?.menu.starter && booking!.menu.starter.map((e) => e.menuName)) || []
+            }
+            mainList={(booking?.menu.main && booking!.menu.main.map((e) => e.menuName)) || []}
+            dessertList={
+              (booking?.menu.dessert && booking!.menu.dessert.map((e) => e.menuName)) || []
+            }
           />
         }
         title={'Edit menu'}

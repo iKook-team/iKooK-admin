@@ -1,27 +1,27 @@
 import { getImageUrl } from '../../../utils/getImageUrl';
 import { Quote } from '../data/model';
 import Constants from '../../../utils/constants';
-import { FC } from 'react';
+import { useFetchQuotesQuery } from '../domain/usecase.ts';
 
 interface QuoteCardGridProps {
-  quotesList: Quote[];
+  booking: number;
   viewQuote: () => void;
   setCurrentQuote: (quote: Quote) => void;
 }
 
-const QuoteCardGrid: FC<QuoteCardGridProps> = ({ quotesList, setCurrentQuote }) => {
+export default function QuoteCardGrid({ booking, setCurrentQuote }: QuoteCardGridProps) {
   function viewQuoteSetId(quote: Quote) {
     // viewQuote();
     setCurrentQuote(quote);
   }
 
-  console.log(quotesList);
+  const { data: quotes } = useFetchQuotesQuery(booking);
 
   return (
     <div
-      className={`flex flex-col md:flex-col xl:grid gap-4 ${quotesList.length > 1 ? 'xl:grid-cols-2' : 'place-items-center'}`}
+      className={`flex flex-col md:flex-col xl:grid gap-4 ${quotes?.length > 1 ? 'xl:grid-cols-2' : 'place-items-center'}`}
     >
-      {quotesList.map((quote, index) => (
+      {quotes?.map((quote, index) => (
         <div
           key={index}
           className="border border-gray-200 h-max lg:h-min aspect-[400/302] flex flex-col rounded-xl relative"
@@ -79,6 +79,4 @@ const QuoteCardGrid: FC<QuoteCardGridProps> = ({ quotesList, setCurrentQuote }) 
       ))}
     </div>
   );
-};
-
-export default QuoteCardGrid;
+}

@@ -19,13 +19,13 @@ export default function UserScreen() {
     () => pathname?.split('/')?.slice(1)?.[0]?.slice(0, 4) as UserType,
     [pathname]
   );
-  const { id: userId } = useParams();
+  const { id } = useParams();
 
   const [tab, setTab] = useQueryState('tab', {
     defaultValue: UserHeaderTab.profile
   });
 
-  const { isPending, user, error } = useFetchUserQuery(type, userId!);
+  const { isPending, data: user, error } = useFetchUserQuery(type, id);
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function UserScreen() {
           />
           <RenderTabContent
             tab={tab as UserHeaderTab}
-            user={{ ...user, id: user.id ?? userId }}
+            user={{ ...user, id: user.id ?? id }}
             type={type}
           />
         </>

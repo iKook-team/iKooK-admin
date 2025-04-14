@@ -11,7 +11,7 @@ export default function UsernameAndImage(props: {
   return (
     <div className="flex flex-row gap-2 items-center">
       <img
-        src={Constants.getImageUrl(props.image, 'users', props.name)}
+        src={Constants.getImageUrl(props.image, props.name)}
         alt={props.name}
         className="w-6 aspect-square rounded-full"
       />

@@ -47,11 +47,7 @@ export default function UserHeader({
         <div className="w-full flex flex-row items-center justify-center overflow-hidden">
           <div className="w-1/3 min-w-[80px] max-w-[120px] aspect-square flex-shrink-0">
             <img
-              src={Constants.getImageUrl(
-                user.photo,
-                'users',
-                `${user.first_name}  ${user.last_name}`
-              )}
+              src={Constants.getImageUrl(user.photo, `${user.first_name}  ${user.last_name}`)}
               alt={user.first_name}
               className="w-full h-full object-cover rounded-full border-[3px] border-primary"
             />

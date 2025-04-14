@@ -1,6 +1,7 @@
 import Constants from '../../../utils/constants';
 import { getImageUrl } from '../../../utils/getImageUrl';
-import { Booking } from '../data/model';
+import { User } from '../../users/data/model.ts';
+import { Menu } from '../../menus/data/model.ts';
 
 type RowListProps = {
   title: string;
@@ -18,7 +19,8 @@ type EnquiryProfileProps = {
 };
 
 type EnquiryProfileListTileProps = {
-  booking: Booking;
+  chef: User;
+  menu?: Menu;
   enquiryProfileList: EnquiryProfileProps[];
   enquiryProfileList1: EnquiryProfileProps[];
 };
@@ -61,7 +63,7 @@ export function EnquiryChefProfile({ icon, text, review }: EnquiryProfileProps) 
 }
 
 export function EnquiryProfileListTile({
-  booking,
+  chef,
   enquiryProfileList,
   enquiryProfileList1
 }: EnquiryProfileListTileProps) {
@@ -70,11 +72,11 @@ export function EnquiryProfileListTile({
       <div className="flex border border-gray-300 shadow-lg py-2 px-1 gap-2">
         <img
           className="h-20 w-20 object-cover"
-          src={`${Constants.userUrl}/${booking?.chef?.photo}`}
-          alt=""
+          src={Constants.getImageUrl(chef?.avatar, chef?.first_name)}
+          alt={chef?.first_name}
         />
         <div className="flex flex-col ">
-          <h1 className="capitalize font-bold mb-2">{`large event with chef ${booking?.chef?.first_name}`}</h1>
+          <h1 className="capitalize font-bold mb-2">Large event with Chef {chef?.first_name}</h1>
 
           <div className="flex gap-2">
             {enquiryProfileList.map((each, index) => (
@@ -103,22 +105,26 @@ export function EnquiryProfileListTile({
   );
 }
 
-export function MenuProfileListTile({ booking, enquiryProfileList }: EnquiryProfileListTileProps) {
+export function MenuProfileListTile({
+  chef,
+  menu,
+  enquiryProfileList
+}: EnquiryProfileListTileProps) {
   return (
     <div className="w-[80%]">
       <div className="flex border border-gray-300 shadow-lg py-2 px-1 gap-2">
         <img
           className="h-20 w-20 object-cover"
-          src={`${Constants.userUrl}/${booking?.chef?.photo}`}
-          alt=""
+          src={Constants.getImageUrl(
+            menu?.images?.[0]?.image ?? chef?.avatar,
+            menu?.name ?? chef?.first_name
+          )}
+          alt={menu?.name ?? chef?.first_name}
         />
         <div className="flex flex-col">
-          <h1 className="capitalize font-bold mb-2">{`Braised chicken with Lemons and Olives `}</h1>
+          <h1 className="capitalize font-bold mb-2">{menu?.name}</h1>
 
-          <h1 className="capitalize">
-            {' '}
-            chef {booking.chef?.first_name + ' ' + booking.chef?.last_name}
-          </h1>
+          <h1 className="capitalize"> chef {chef?.first_name + ' ' + chef?.last_name}</h1>
 
           <div className="flex gap-2">
             {enquiryProfileList.map((each, index) => (

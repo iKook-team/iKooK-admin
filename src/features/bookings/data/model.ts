@@ -1,31 +1,7 @@
-import { User } from '../../users/data/model.ts';
-
-export interface BookingsUser {
-  firstName: string;
-  lastName: string;
-  photo: string;
-}
-
-export interface EditBookingChef extends User {
-  reviews: number;
-}
-
-export interface Proposal {
-  amount: string;
-  currency: string;
-  photo: string;
-  username: string;
-}
-
 export interface Location {
   addressString: string;
   type: string;
   coordinate: string[];
-}
-
-export interface Menu {
-  menuName: string;
-  description: string;
 }
 
 export interface QuoteMenu {
@@ -58,20 +34,6 @@ export interface Quote {
   chef: QuoteChef;
 }
 
-export interface Bookings {
-  amount: number;
-  chef: BookingsUser;
-  currency: string;
-  country: string;
-  id: string;
-  menu: string[];
-  number_of_guest: number;
-  proposals: Proposal[];
-  status: string;
-  trxid: string;
-  user: BookingsUser;
-}
-
 export interface BookingUser {
   country: string;
   email: string;
@@ -85,31 +47,39 @@ export interface BookingUser {
 
 export interface Booking {
   id: number;
+  chef_service: string;
+  service: number;
+  is_custom: boolean;
   status: BookingStatus;
-  country: string;
+  location: string;
+  host_name: string;
+  host_id: number;
+  host_avatar: string;
   chef_name: string;
   chef_id: number;
   chef_avatar: string;
-  host_name: string;
-  host_avatar: string;
+  total_cost: number;
+  created_at: Date;
+  updated_at: Date;
+  address: string;
+  additional_address_info: string;
+  city: string;
+  country: string;
+  dietary_restrictions: string[];
+  dietary_restrictions_details: string;
+  event_date: string;
+  event_time: string;
+  event_venue: string;
   num_of_guests: number;
   num_of_persons: number;
-  total_cost: number;
-  chef_service: string;
-  location: Location;
-  no_of_guest: number;
-  created_at: string;
-  budget: number;
-  message: string;
-  event_type: string;
-  xallergies: string[];
-  cuisines: string[];
+  hob_type: string;
+  hob_size: string;
+  has_oven: boolean;
   menu: number;
-  user: BookingUser;
-  quotes: Quote[];
-  booking_type: string;
-  custom_booking_type_selected: string;
-  currency: string;
+  booking: number;
+  menu_choices: number[];
+  budget: number;
+  event_type: string;
 }
 
 export enum BookingStatus {
