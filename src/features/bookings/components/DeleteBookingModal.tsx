@@ -1,6 +1,5 @@
-import { Ref, useState } from 'react';
+import { Ref } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
-import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import { Booking } from '../data/model.ts';
 import { useDeleteBooking } from '../domain/usecase.ts';
@@ -11,30 +10,7 @@ interface DeleteBookingModalProps {
 }
 
 export default function DeleteBookingModal({ booking, ref }: DeleteBookingModalProps) {
-  const title = 'Delete Booking for ';
-
-  const [loading, setLoading] = useState(false);
-
-  const mutation = useDeleteBooking();
-
-  const onSubmit = async () => {
-    if (loading || booking === undefined) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response = await mutation.mutateAsync({
-        bookingId: booking.id
-      });
-
-      toast(response.data.data, { type: 'success' });
-      getCurrentFromRef(ref)?.close();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const mutation = useDeleteBooking(ref);
 
   return (
     <PageModal
@@ -42,7 +18,7 @@ export default function DeleteBookingModal({ booking, ref }: DeleteBookingModalP
       id="delete-booking-modal"
       title={
         <>
-          {title}
+          Delete Booking for{' '}
           <span className="text-jordy-blue capitalize">{booking?.host_name}</span>?
         </>
       }
@@ -51,11 +27,11 @@ export default function DeleteBookingModal({ booking, ref }: DeleteBookingModalP
         <h1>Are you sure you want to delete this booking?</h1>
         <div className="flex  gap-4 justify-center">
           <button
-            onClick={onSubmit}
-            disabled={loading}
+            onClick={() => mutation.mutate({ id: booking.id })}
+            disabled={mutation.isPending}
             className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {mutation.isPending ? 'Deleting...' : 'Delete'}
           </button>
           <button
             onClick={() => getCurrentFromRef(ref)?.close()}

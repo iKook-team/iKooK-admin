@@ -55,7 +55,7 @@ export default function BookingRow(props: BookingRowProps) {
                 : props.status === BookingStatus.pending
                   ? 'text-primary'
                   : props.status === BookingStatus.cancelled
-                    ? 'text-red'
+                    ? 'text-red-base'
                     : props.status === BookingStatus.enquiries
                       ? 'text-secondary'
                       : 'text-jordy-blue'

@@ -1,13 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllBookingsResponse } from '../data/dto.ts';
-import { useMemo, useState } from 'react';
+import { Ref, useMemo, useState } from 'react';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { Booking, BookingStatus } from '../data/model.ts';
 import { toast } from 'react-toastify';
 import { BookingType } from './types.ts';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
+import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 export function useFetchBookingsQuery() {
   const filters = useMemo(() => ['All', ...Object.values(BookingStatus)], []);
@@ -77,47 +78,38 @@ export function useFetchBookingQuery(id: string) {
   };
 }
 
-export function useEditBookingStatus() {
+export function useUpdateBooking(ref?: Ref<any>) {
   return useMutation({
-    mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
+    mutationFn: ({ id, data }: { id: number; data: Partial<Booking> }) => {
       return fetch({
-        url: `admin/update-booking-status/${bookingId}?booking_status=${status}`,
-        method: 'GET'
+        url: `/bookings/${id}/`,
+        method: 'PATCH',
+        data
       });
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      toast(response.data.message, { type: 'success' });
+      if (ref) {
+        getCurrentFromRef(ref)?.close();
+      }
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
     }
   });
 }
 
-export function useDeleteBooking() {
+export function useDeleteBooking(ref?: Ref<any>) {
   return useMutation({
-    mutationFn: async ({ bookingId }: { bookingId: string }) => {
+    mutationFn: async ({ id }: { id: number }) => {
       return await fetch({
-        url: `admin/delete-booking/${bookingId}`,
+        url: `bookings/${id}/`,
         method: 'DELETE'
       });
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
-    }
-  });
-}
-
-export function useReassignBooking() {
-  return useMutation({
-    mutationFn: async ({ chefId, bookingId }: { chefId: string; bookingId: string }) => {
-      return fetch({
-        url: 'admin/reassign-booking',
-        method: 'POST',
-        data: {
-          chefId: chefId,
-          bookingId: bookingId
-        }
-      });
-    },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      toast(response.data.message, { type: 'success' });
+      if (ref) {
+        getCurrentFromRef(ref)?.close();
+      }
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
     }
   });

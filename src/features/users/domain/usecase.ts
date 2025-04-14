@@ -7,7 +7,7 @@ import {
   GetRoleResponse,
   ProfileRequest
 } from '../data/dto.ts';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
@@ -40,6 +40,11 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
 
   const verified = filter === 'all' ? undefined : filter === 'verified';
   const debouncedQuery = useDebouncedValue(query, 500);
+
+  useEffect(() => {
+    // reset page when filter changes
+    setPage(1);
+  }, [filter, debouncedQuery]);
 
   const { isPending, data, error } = useQuery({
     queryKey: [request.type, service, verified, page, debouncedQuery],

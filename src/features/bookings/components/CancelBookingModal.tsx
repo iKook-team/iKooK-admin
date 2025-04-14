@@ -1,9 +1,8 @@
-import { Ref, useState } from 'react';
+import { Ref } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
-import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
-import { Booking } from '../data/model.ts';
-import { useEditBookingStatus } from '../domain/usecase.ts';
+import { Booking, BookingStatus } from '../data/model.ts';
+import { useUpdateBooking } from '../domain/usecase.ts';
 
 interface CancelBookingModalProps {
   booking: Booking;
@@ -11,31 +10,7 @@ interface CancelBookingModalProps {
 }
 
 export default function CancelBookingModal({ booking, ref }: CancelBookingModalProps) {
-  const title = 'Cancel Booking for ';
-  const status = 'cancelled';
-
-  const [loading, setLoading] = useState(false);
-
-  const mutation = useEditBookingStatus();
-  const onSubmit = async () => {
-    if (loading || booking === undefined) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response = await mutation.mutateAsync({
-        bookingId: booking.id,
-        status: status
-      });
-
-      toast(response.data.data, { type: 'success' });
-      getCurrentFromRef(ref)?.close();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const mutation = useUpdateBooking(ref);
 
   return (
     <PageModal
@@ -43,21 +18,23 @@ export default function CancelBookingModal({ booking, ref }: CancelBookingModalP
       id="cancel-booking-modal"
       title={
         <>
-          {title}
-          <span className="text-jordy-blue capitalize">{booking.host_name}</span>?
+          Cancel Booking for{' '}
+          <span className="text-jordy-blue capitalize">{booking?.host_name}</span>?
         </>
       }
     >
       <>
         <h1>Are you sure you want to cancel this menu?</h1>
 
-        <div className="flex  gap-4 justify-center">
+        <div className="flex gap-4 justify-center">
           <button
-            disabled={loading}
-            onClick={onSubmit}
+            disabled={mutation.isPending}
+            onClick={() =>
+              mutation.mutate({ id: booking.id, data: { status: BookingStatus.cancelled } })
+            }
             className="btn btn-soft-cream flex border border-primary  mt-3 w-[40%] "
           >
-            {loading ? 'Cancelling...' : 'Cancel'}
+            {mutation.isPending ? 'Cancelling...' : 'Cancel'}
           </button>
           <button
             onClick={() => getCurrentFromRef(ref)?.close()}
