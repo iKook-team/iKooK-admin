@@ -1,8 +1,8 @@
 import { Ref, useCallback, useRef, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
-import { useFetchMenuQuery, useUpdateMenuStatus } from '../domain/usecase.ts';
+import { useFetchMenuQuery, useUpdateMenu } from '../domain/usecase.ts';
 import PageLoading from '../../../app/components/page/PageLoading.tsx';
-import { MenuCategory } from '../data/model.ts';
+import { MenuCourse, MenuItem, MenuStatus } from '../data/model.ts';
 import { ReactSVG } from 'react-svg';
 import checkbox from '../../../app/assets/icons/checkbox.svg';
 import Constants from '../../../utils/constants.ts';
@@ -10,17 +10,16 @@ import { formatCurrency } from '../../../utils/helper.ts';
 import ImageViewerModal from '../../../app/components/ImageViewerModal.tsx';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 import ChangeMenuStatusModal from './ChangeMenuStatusModal.tsx';
-import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 interface MenuDetailsModalProps {
-  id: string;
+  id?: number;
   ref: Ref<HTMLDialogElement>;
 }
 
 export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
   const { isPending, data, error } = useFetchMenuQuery(id);
-  const mutation = useUpdateMenuStatus();
+  const mutation = useUpdateMenu(ref);
   const [selectedImage, setSelectedImage] = useState<string>();
   const imageDialogRef = useRef<HTMLDialogElement>(null);
   const changeStatusRef = useRef<HTMLDialogElement>(null);
@@ -29,18 +28,6 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
     setSelectedImage(src);
     imageDialogRef.current?.showModal();
   }, []);
-
-  const approveMenu = useCallback(() => {
-    mutation
-      .mutateAsync({
-        menuId: id,
-        status: 'approve'
-      })
-      .then(() => {
-        toast('Menu approved successfully', { type: 'success' });
-        getCurrentFromRef(ref)?.close();
-      });
-  }, [id, mutation, ref]);
 
   const rejectMenu = useCallback(() => {
     changeStatusRef.current?.showModal();
@@ -62,43 +49,43 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
           <div className="grid grid-cols-1 lg:grid-cols-[6fr_4fr] gap-7">
             <div>
               <div className="bg-soft-cream p-2.5 rounded-md flex flex-col gap-6">
-                <MenuCategoryItem title="Starter" {...data?.starter_menu} />
-                <MenuCategoryItem title="Main" {...data?.main_menu} />
-                <MenuCategoryItem title="Dessert" {...data?.dessert_menu} />
-                <MenuCategoryItem title="Side" {...data?.side_menu} />
+                {Object.values(MenuCourse).map((course) => (
+                  <MenuCategoryItem
+                    key={course}
+                    title={course}
+                    items={data?.items.filter((item) => item.course === course)}
+                  />
+                ))}
               </div>
               <div className="mt-6 flex flex-row gap-3 overflow-x-auto no-scrollbar">
-                {data?.images?.map((image, index) => (
+                {data?.images?.map(({ image }, index) => (
                   <MenuImage key={index} src={image} onClick={(src) => showImage(src)} />
                 ))}
               </div>
             </div>
             <div className="border border-black-100 shadow-md rounded-2xl px-7 pt-8 pb-11 flex flex-col justify-between">
               <div className="flex flex-col gap-3">
-                <MenuEntryItem title="Menu name" value={data?.menu_name} />
+                <MenuEntryItem title="Menu name" value={data?.name} />
                 <MenuEntryItem
                   title="Price"
-                  value={formatCurrency(data?.menu_price, data?.currency)}
+                  value={formatCurrency(data?.price_per_person, data?.currency)}
                 />
-                <MenuEntryItem
-                  title="Minimum number of quests"
-                  value={data?.minimum_number_of_guest}
-                />
+                <MenuEntryItem title="Minimum number of quests" value={data?.num_of_guests} />
                 <MenuEntryItem title="Maximum menu selection" value={data?.max_menu_selection} />
-                <MenuEntryItem title="Event types" value={data?.event} />
-                <MenuEntryItem title="Cuisine types" value={data?.cuisine} />
+                <MenuEntryItem title="Event types" value={data?.event_types} />
+                <MenuEntryItem title="Cuisine types" value={data?.cuisine_types} />
               </div>
               <div className="flex flex-col pt-6 gap-3.5 mt-auto">
                 <button
                   className="btn btn-primary"
-                  disabled={mutation.isPending || data?.status === 'approved'}
-                  onClick={approveMenu}
+                  disabled={mutation.isPending || data?.status === MenuStatus.active}
+                  onClick={() => mutation.mutate({ id: id!, data: { status: MenuStatus.active } })}
                 >
                   <LoadingSpinner isLoading={mutation.isPending}>Approve menu</LoadingSpinner>
                 </button>
                 <button
                   className="btn btn-ghost border-silver-american"
-                  disabled={mutation.isPending || data?.status === 'unapproved'}
+                  disabled={mutation.isPending || data?.status === MenuStatus.pending}
                   onClick={rejectMenu}
                 >
                   Reject menu
@@ -111,17 +98,9 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
       <ImageViewerModal ref={imageDialogRef} src={selectedImage} alt="menu" />
       <ChangeMenuStatusModal
         ref={changeStatusRef}
-        menu={
-          data
-            ? {
-                id,
-                chefUsername: data.chef.username,
-                name: data.menu_name
-              }
-            : undefined
-        }
+        menu={data}
         initialState={{
-          status: 'unapprove',
+          status: MenuStatus.pending,
           reason: ''
         }}
         onDone={() => getCurrentFromRef(ref)?.close()}
@@ -130,21 +109,21 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
   );
 }
 
-function MenuCategoryItem(props: MenuCategory & { title: string }) {
-  if (!props || props.menu.length === 0) {
+function MenuCategoryItem(props: { title: string; items: MenuItem[] }) {
+  if (!props || props.items.length === 0) {
     return null;
   }
 
   return (
     <div>
       <h3 className="text-lg font-medium text-black-base">
-        {props.title} x{props.menu_selection}
+        {props.title} x{props.items.length}
       </h3>
       <div className="mt-4">
-        {props.menu.map((item) => (
-          <div key={item._id} className="flex gap-3 items-center">
+        {props.items.map((item) => (
+          <div key={item.id} className="flex gap-3 items-center">
             <ReactSVG src={checkbox} className="w-5 h-5" />
-            <p className="text-base text-black-olive">{item.menuName}</p>
+            <p className="text-base text-black-olive">{item.name}</p>
           </div>
         ))}
       </div>

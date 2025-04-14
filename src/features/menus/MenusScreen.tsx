@@ -95,19 +95,8 @@ export default function MenusScreen() {
         pageItemCount={menus.length}
         totalItemCount={totalCount}
       />
-      <ChangeMenuStatusModal
-        ref={changeStatusRef}
-        menu={
-          selectedMenu
-            ? {
-                id: selectedMenu.id,
-                chefUsername: selectedMenu.chef?.username,
-                name: selectedMenu.name
-              }
-            : undefined
-        }
-      />
-      <MenuDetailsModal ref={menuDetailsRef} id={selectedMenu?.id ?? ''} />
+      <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />
+      <MenuDetailsModal ref={menuDetailsRef} id={selectedMenu?.id} />
     </>
   );
 }

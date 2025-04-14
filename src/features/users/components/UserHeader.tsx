@@ -58,7 +58,11 @@ export default function UserHeader({
             {type == UserType.chef && (
               <div className="flex">
                 <div>{user.country && <Info Icon={MdLocationOn} title={user.country} />}</div>
-                <div>{user.rating && <Info Icon={MdStar} title={user.rating.toString()} />}</div>
+                <div>
+                  {user.average_rating && (
+                    <Info Icon={MdStar} title={user.average_rating.toString()} />
+                  )}
+                </div>
               </div>
             )}
           </div>

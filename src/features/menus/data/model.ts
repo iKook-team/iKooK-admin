@@ -3,7 +3,7 @@ import { User } from '../../users/data/model.ts';
 export interface Menu {
   id: number;
   name: string;
-  price_per_person: string;
+  price_per_person: number;
   num_of_guests: number;
   max_menu_selection: number;
   currency: string;
@@ -19,16 +19,6 @@ export interface Menu {
   images: MenuImage[];
   items: MenuItem[];
   chef: User;
-}
-
-export interface MenuCategory {
-  additional_charge: number;
-  menu_selection: number;
-  menu: {
-    _id: string;
-    menuName: string;
-    description: string;
-  }[];
 }
 
 export interface MenuImage {

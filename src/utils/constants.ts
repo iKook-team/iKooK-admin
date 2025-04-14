@@ -25,7 +25,7 @@ const Constants = {
     return 'https://api.dicebear.com/9.x/initials/svg?seed=' + encodeURI(name);
   },
   getImageUrl: (image: string | undefined, fallback: string) => {
-    return image ?? Constants.getDicebearUrl(fallback);
+    return image || Constants.getDicebearUrl(fallback);
   }
 };
 

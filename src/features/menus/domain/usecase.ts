@@ -1,10 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
-import { useMemo, useState } from 'react';
+import { Ref, useMemo, useState } from 'react';
 import { GetAllMenusResponse, GetMenuResponse, GetTopMenus } from '../data/dto.ts';
 import { UpdateMenuStatusRequest } from './types.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
-import { MenuStatus } from '../data/model.ts';
+import { Menu, MenuStatus } from '../data/model.ts';
+import { toast } from 'react-toastify';
+import { getCurrentFromRef } from '../../../utils/ref.ts';
 
 export function useFetchMenusQuery() {
   const filters = useMemo(() => ['All', ...Object.values(MenuStatus)], []);
@@ -69,6 +71,26 @@ export function useFetchMenuQuery(id?: number | string) {
       return (response.data as GetMenuResponse).data;
     },
     enabled: !!id
+  });
+}
+
+export function useUpdateMenu(ref?: Ref<any>) {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<Menu> }) => {
+      return fetch({
+        url: `/menus/${id}/`,
+        method: 'PATCH',
+        data
+      });
+    },
+    onSuccess: (response, request) => {
+      toast(response.data.message, { type: 'success' });
+      if (ref) {
+        getCurrentFromRef(ref)?.close();
+      }
+      void queryClient.invalidateQueries({ queryKey: ['menus'] });
+      void queryClient.invalidateQueries({ queryKey: ['menu', request.id] });
+    }
   });
 }
 

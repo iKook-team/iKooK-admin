@@ -1,26 +1,21 @@
 import { FormEvent, Ref, useRef, useState } from 'react';
 import PageModal from '../../../app/components/page/PageModal.tsx';
 import InputField, { DropdownField } from '../../../app/components/InputField.tsx';
-import { useUpdateMenuStatus } from '../domain/usecase.ts';
+import { useUpdateMenu } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
+import { Menu, MenuStatus } from '../data/model.ts';
 
 type ChangeMenuStatusModalProps = {
-  menu?: {
-    name: string;
-    id: string;
-    chefUsername: string;
-  };
+  menu?: Menu;
   ref: Ref<HTMLDialogElement>;
   initialState?: ChangeMenuStatusModalState;
   onDone?: () => void;
 };
 
-type ChangeMenuStatus = 'approve' | 'unapprove';
-
 type ChangeMenuStatusModalState = {
-  status: ChangeMenuStatus;
+  status: MenuStatus;
   reason: string;
 };
 
@@ -28,14 +23,14 @@ export default function ChangeMenuStatusModal({
   menu,
   ref,
   initialState = {
-    status: 'approve',
+    status: MenuStatus.active,
     reason: ''
   },
   onDone
 }: ChangeMenuStatusModalProps) {
   const form = useRef<HTMLFormElement>(null);
 
-  const mutation = useUpdateMenuStatus();
+  const mutation = useUpdateMenu();
   const [state, setState] = useState<ChangeMenuStatusModalState>(initialState);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -45,9 +40,10 @@ export default function ChangeMenuStatusModal({
     }
 
     await mutation.mutateAsync({
-      menuId: menu!.id,
-      status: state.status,
-      message: state.reason
+      id: menu!.id,
+      data: {
+        status: state.status
+      }
     });
     toast(`${menu?.name} updated successfully`, { type: 'success' });
     getCurrentFromRef(ref)?.close();
@@ -61,7 +57,7 @@ export default function ChangeMenuStatusModal({
       id="change-menu-status-modal"
       title={
         <>
-          Update <span className="text-jordy-blue">{`Chef ${menu?.chefUsername}'s `}</span>
+          Update <span className="text-jordy-blue">{`Chef ${menu?.chef?.username}'s `}</span>
           <span className="text-purple-taupe">{menu?.name}</span> status
         </>
       }
@@ -73,13 +69,13 @@ export default function ChangeMenuStatusModal({
           onChange={(event) =>
             setState((prevState) => ({
               ...prevState,
-              status: event.target.value as ChangeMenuStatus
+              status: event.target.value as MenuStatus
             }))
           }
-          options={['approve', 'unapprove']}
+          options={[MenuStatus.active, MenuStatus.pending]}
           required={true}
         />
-        {state.status === 'unapprove' && (
+        {state.status === MenuStatus.pending && (
           <InputField
             value={state.reason}
             label="Reason"
