@@ -1,3 +1,5 @@
+import { User } from '../../users/data/model.ts';
+
 export interface SupportTicketReply {
   message: string;
   created_at: string;
@@ -5,24 +7,19 @@ export interface SupportTicketReply {
 }
 
 export interface SupportTicket {
-  id: string;
-  user: {
-    username: string;
-    first_name: string;
-    last_name: string;
-    country: string;
-    email: string;
-    photo: string;
-    mobile: string;
-    location: string | null;
-  };
+  id: number;
+  user: User;
+  admin: User | null;
+  category: string;
   title: string;
   status: string;
-  ticket_id: string;
-  category: string;
+  created_at: string;
+}
+
+export interface SupportTicketMessage {
+  id: number;
   message: string;
-  recent_message: string;
-  updated_at: string;
-  replies: SupportTicketReply[];
-  responded: boolean;
+  created_at: string;
+  sender: User;
+  ticket: number;
 }

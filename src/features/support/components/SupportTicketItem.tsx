@@ -17,10 +17,10 @@ export default function SupportTicketItem(props: SupportTicketItemProps) {
       <div className="flex flex-row justify-between items-center">
         <UsernameAndImage
           name={`${props.user.first_name} ${props.user.last_name}`}
-          image={props.user.photo}
+          image={props.user.avatar}
           name-class-name="text-sm font-bold text-black-base"
         />
-        <p className="text-xs text-gray-granite">{props.updated_at}</p>
+        <p className="text-xs text-gray-granite">{props.created_at}</p>
       </div>
       <h3 className="text-xs text-gray-granite">{props.title}</h3>
       <div className="flex flex-row gap-4 items-center">
@@ -29,7 +29,7 @@ export default function SupportTicketItem(props: SupportTicketItemProps) {
         >
           {props.status}
         </span>
-        <span className={`${actionClass} text-red-base border-red-base`}>High priority</span>
+        <span className={`${actionClass} text-red-base border-red-base`}>High Priority</span>
         <span className={`${actionClass} text-orange-base border-caramel`}>{props.category}</span>
       </div>
     </div>

@@ -1,13 +1,10 @@
 import UsernameAndImage from '../../users/components/UsernameAndImage.tsx';
 import { DateTime } from 'luxon';
 import LinkPreview from '../../../app/components/LinkPreview.tsx';
+import { User } from '../../users/data/model.ts';
 
 interface SupportChatItemProps {
-  user: {
-    first_name: string;
-    last_name: string;
-    photo: string;
-  } | null;
+  user: User | null;
   date: string;
   content: string;
 }
@@ -18,7 +15,7 @@ export default function SupportChatItem(props: SupportChatItemProps) {
       <div className="flex flex-row justify-between items-center">
         <UsernameAndImage
           name={props.user ? `${props.user?.first_name} ${props.user?.last_name}` : 'iKooK Support'}
-          image={props.user?.photo}
+          image={props.user?.avatar}
           name-class-name="text-sm text-gray-granite"
         />
         <p className="text-xs text-gray-granite">

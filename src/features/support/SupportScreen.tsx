@@ -2,7 +2,7 @@ import { SupportTickets } from './SupportTickets.tsx';
 import { SupportChat } from './SupportChat.tsx';
 import { SupportInfo } from './SupportInfo.tsx';
 import useBreakpoint from '../../hooks/useBreakpoint.ts';
-import { useQueryState } from 'nuqs';
+import { parseAsInteger, useQueryState } from 'nuqs';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PageBackButton from '../../app/components/page/PageBackButton.tsx';
 
@@ -11,13 +11,11 @@ export default function SupportScreen() {
   const isLg = useBreakpoint('lg').isAboveLg;
   const navigate = useNavigate();
   const location = useLocation();
-  const [ticketId, _] = useQueryState('ticket_id', {
-    defaultValue: ''
-  });
+  const [ticketId, _] = useQueryState('ticket_id', parseAsInteger);
 
-  const setTicketId = (ticketId: string) => {
+  const setTicketId = (ticketId: number) => {
     const params = new URLSearchParams(location.search);
-    params.set('ticket_id', ticketId);
+    params.set('ticket_id', String(ticketId));
     navigate({ search: params.toString() });
   };
 

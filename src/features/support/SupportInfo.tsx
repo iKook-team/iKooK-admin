@@ -3,9 +3,9 @@ import { DropdownField } from '../../app/components/InputField.tsx';
 import { useEffect, useMemo, useState } from 'react';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 
-export function SupportInfo({ ticketId }: { ticketId: string }) {
+export function SupportInfo({ ticketId }: { ticketId: number | null }) {
   const ticket = useGetSupportTicket(ticketId);
-  const closeTicket = useCloseTicket(ticket?.id ?? '');
+  const closeTicket = useCloseTicket(ticketId);
   const ticketActions = useMemo(
     () => [ticket?.status ?? '', ...(ticket?.status !== 'closed' ? ['close'] : [])],
     [ticket?.status]
@@ -43,9 +43,10 @@ export function SupportInfo({ ticketId }: { ticketId: string }) {
           <h3 className="font-bold text-black-base text-sm mt-5 mb-4">User Information</h3>
           <div className="flex flex-col gap-3">
             <InfoRow title="Name" content={`${ticket.user.first_name} ${ticket.user.last_name}`} />
-            <InfoRow title="Phone" content={ticket.user.mobile} />
-            <InfoRow title="Email" content={ticket.user.email} />
-            <InfoRow title="Location" content={`${ticket.user.location}, ${ticket.user.country}`} />
+            <InfoRow title="Username" content={`${ticket.user.username}`} />
+            {/*<InfoRow title="Phone" content={ticket.user.mobile} />*/}
+            {/*<InfoRow title="Email" content={ticket.user.email} />*/}
+            {/*<InfoRow title="Location" content={`${ticket.user.location}, ${ticket.user.country}`} />*/}
           </div>
         </div>
       ) : (

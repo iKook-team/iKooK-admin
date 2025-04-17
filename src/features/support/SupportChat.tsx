@@ -1,18 +1,25 @@
-import { useGetSupportTicket, useReplyTicket } from './domain/usecase.ts';
+import {
+  useGetSupportTicket,
+  useGetSupportTicketMessages,
+  useReplyTicket
+} from './domain/usecase.ts';
 import SupportChatItem from './components/SupportChatItem.tsx';
 import { Fragment, useState } from 'react';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
+import { UserType } from '../users/domain/types.ts';
 
 export function SupportChat({
   ticketId,
   includeBorder = true
 }: {
-  ticketId: string;
+  ticketId: number | null;
   includeBorder?: boolean;
 }) {
   const ticket = useGetSupportTicket(ticketId);
+  const { data: messages } = useGetSupportTicketMessages(ticketId);
   const reply = useReplyTicket(ticketId);
   const [message, setMessage] = useState('');
+
   return (
     <div className={`w-full ${includeBorder ? 'border-x border-x-black-neutral-4' : ''}`}>
       {ticket ? (
@@ -21,10 +28,10 @@ export function SupportChat({
             {ticket.title}
           </h2>
           <div className="px-3">
-            {ticket.replies.map((message, index) => (
+            {messages?.map((message, index) => (
               <Fragment key={index}>
                 <SupportChatItem
-                  user={message.is_admin ? null : ticket.user}
+                  user={message.sender?.user_type === UserType.admin ? null : ticket.user}
                   date={message.created_at}
                   content={message.message}
                 />

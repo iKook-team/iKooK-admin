@@ -3,12 +3,13 @@ import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api.ts';
 import { GetAllSupportTicketsResponse } from './dto.ts';
-import { SupportTicket } from './types.ts';
+import { SupportTicket, SupportTicketMessage } from './types.ts';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { toast } from 'react-toastify';
+import { UserType } from '../../users/domain/types.ts';
 
 function useQueryInfo() {
-  const filters = useMemo(() => ['all', 'open', 'closed', 'in-progress'], []);
+  const filters = useMemo(() => ['All', 'Open', 'Closed', 'In Progress'], []);
 
   const [page, setPage] = useQueryState<number>('page', parseAsInteger.withDefault(1));
   const [filter, setFilter] = useQueryState('filter', {
@@ -34,7 +35,7 @@ function useQueryInfo() {
 async function fetchTickets({ queryKey }: { queryKey: (string | number)[] }) {
   const [_, filter, page, query] = queryKey;
   const response = await fetch({
-    url: `support/get-all-tickets?page_number=${page}&page_size=20${filter !== 'all' ? `&status=${filter}` : ''}${query ? `&search_name=${query}` : ''}`,
+    url: `supports/tickets?page=${page}&page_size=20${filter !== 'All' ? `&status=${filter}` : ''}${query ? `&search=${query}` : ''}`,
     method: 'GET'
   });
   return response.data as GetAllSupportTicketsResponse;
@@ -58,7 +59,7 @@ export function useFetchSupportTicketsQuery() {
   };
 }
 
-export function useGetSupportTicket(ticketId: string) {
+export function useGetSupportTicket(ticketId: number | null) {
   const { queryKey } = useQueryInfo();
   const { data } = useQuery({
     queryKey: queryKey,
@@ -78,47 +79,50 @@ export function useGetSupportTicket(ticketId: string) {
           return acc.concat(query.state.data?.data?.results ?? []);
         }, [])
         // @ts-expect-error - ignoring for now
-        ?.find((ticket) => ticket.ticket_id === ticketId) as SupportTicket | undefined
+        ?.find((ticket) => ticket.id === ticketId) as SupportTicket | undefined
     );
   }, [data, ticketId]);
 }
 
-export function useReplyTicket(ticketId: string) {
-  const { queryKey } = useQueryInfo();
+export function useGetSupportTicketMessages(id: number | string | null) {
+  return useQuery({
+    queryKey: ['support', id],
+    queryFn: async ({ queryKey }) => {
+      const [_, id] = queryKey;
+      const response = await fetch({
+        url: `supports/tickets/messages?page=1&page_size=1000&ticket=${id}`,
+        method: 'GET'
+      });
+      return (response.data?.data?.results ?? []) as SupportTicketMessage[];
+    },
+    enabled: !!id
+  });
+}
 
+export function useReplyTicket(ticketId: number | null) {
   return useMutation({
     mutationFn: (message: string) => {
       // add message directly to the cache so we won't need to refetch the data
-      queryClient.setQueryData(queryKey, (prev: any) => {
+      queryClient.setQueryData(['support', ticketId], (prev: any) => {
         if (!prev) {
           return prev;
         }
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            items: prev.data.items.map((ticket: SupportTicket) => {
-              if (ticket.ticket_id === ticketId) {
-                return {
-                  ...ticket,
-                  replies: [
-                    ...ticket.replies,
-                    {
-                      message,
-                      is_admin: true,
-                      created_at: new Date().toISOString()
-                    }
-                  ]
-                };
-              }
-              return ticket;
-            })
-          }
+        const lastMessage = prev?.messages?.[prev?.messages?.length - 1];
+        const newMessage: SupportTicketMessage = {
+          id: (lastMessage?.id ?? 0) + 1,
+          message,
+          // @ts-expect-error - ignoring for now
+          sender: {
+            user_type: UserType.admin
+          },
+          created_at: new Date().toISOString(),
+          ticket: ticketId!
         };
+        return [...prev, newMessage];
       });
 
       return fetch({
-        url: `/support/reply-ticket`,
+        url: `/supports/tickets/messages/`,
         method: 'POST',
         data: {
           ticket: ticketId,
@@ -129,7 +133,7 @@ export function useReplyTicket(ticketId: string) {
   });
 }
 
-export function useCloseTicket(id: string) {
+export function useCloseTicket(id: number | null) {
   return useMutation({
     mutationFn: () => {
       return fetch({

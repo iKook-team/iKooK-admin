@@ -3,13 +3,12 @@ import { useFetchSupportTicketsQuery } from './domain/usecase.ts';
 import SupportTicketItem from './components/SupportTicketItem.tsx';
 import { PaginationControls } from '../../app/components/page/PageTable.tsx';
 
-export function SupportTickets({
-  selected,
-  setSelected
-}: {
-  selected: string;
-  setSelected: (id: string) => void;
-}) {
+interface SupportTicketsProps {
+  selected: number | null;
+  setSelected: (ticket: number) => void;
+}
+
+export function SupportTickets({ selected, setSelected }: SupportTicketsProps) {
   const {
     query,
     setQuery,
@@ -41,10 +40,10 @@ export function SupportTickets({
         <div className="flex flex-col gap-2 my-6">
           {tickets.map((ticket) => (
             <SupportTicketItem
-              key={ticket.ticket_id}
+              key={ticket.id}
               {...ticket}
-              onClick={() => setSelected(ticket.ticket_id)}
-              isActive={selected === ticket.ticket_id}
+              onClick={() => setSelected(ticket.id)}
+              isActive={selected === ticket.id}
             />
           ))}
         </div>
