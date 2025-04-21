@@ -1,5 +1,3 @@
-import CountrySwitcher from '../../app/components/CountrySwitcher.tsx';
-import { useQueryState } from 'nuqs';
 import RevenueChartRow from '../revenue/components/RevenueChartRow.tsx';
 import { useFetchRevenueOverviewQuery } from '../revenue/domain/usecase.ts';
 import { RevenueOverviewCard } from '../revenue/components/RevenueOverviewCard.tsx';
@@ -9,15 +7,11 @@ import BookingsHeader from '../bookings/components/BookingsHeader.tsx';
 import BookingRow from '../bookings/components/BookingRow.tsx';
 
 export default function DashboardScreen() {
-  const [currency, setCurrency] = useQueryState('currency', {
-    defaultValue: 'NGN'
-  });
-
   const {
     data: revenueOverview,
     isPending: revenueOverviewPending,
     error: revenueOverviewError
-  } = useFetchRevenueOverviewQuery(currency);
+  } = useFetchRevenueOverviewQuery();
 
   const {
     bookings,
@@ -35,36 +29,36 @@ export default function DashboardScreen() {
     <>
       <div className="flex gap-3 items-center">
         <h1 className="font-medium texl-xl">Overview</h1>
-        <CountrySwitcher currency={currency} setCurrency={setCurrency} />
+        {/*<CountrySwitcher currency={currency} setCurrency={setCurrency} />*/}
       </div>
       <div className="mt-3 grid 2xl:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
-        <RevenueOverviewCard
-          title="Users"
-          amount={revenueOverview?.data?.user_insight.count}
-          percentage={revenueOverview?.data?.user_insight.percentage_difference}
-          {...overviewExtras}
-        />
-        <RevenueOverviewCard
-          title="Chefs"
-          amount={revenueOverview?.data?.chef_insight.count}
-          percentage={revenueOverview?.data?.chef_insight.percentage_difference}
-          {...overviewExtras}
-        />
+        {/*<RevenueOverviewCard*/}
+        {/*  title="Users"*/}
+        {/*  amount={revenueOverview?.data?.user_insight.count}*/}
+        {/*  percentage={revenueOverview?.data?.user_insight.percentage_difference}*/}
+        {/*  {...overviewExtras}*/}
+        {/*/>*/}
+        {/*<RevenueOverviewCard*/}
+        {/*  title="Chefs"*/}
+        {/*  amount={revenueOverview?.data?.chef_insight.count}*/}
+        {/*  percentage={revenueOverview?.data?.chef_insight.percentage_difference}*/}
+        {/*  {...overviewExtras}*/}
+        {/*/>*/}
         <RevenueOverviewCard
           title="Orders"
-          amount={revenueOverview?.data?.order_insight.order_counts}
-          percentage={revenueOverview?.data?.order_insight.percentage_difference}
+          amount={revenueOverview?.data?.total_orders}
+          percentage={revenueOverview?.data?.orders_percentage_change}
+          formatAsNumber={true}
           {...overviewExtras}
         />
         <RevenueOverviewCard
           title="Revenue"
-          amount={revenueOverview?.data?.monthly_revenue.revenue}
-          percentage={revenueOverview?.data?.monthly_revenue.percentage_difference}
+          amount={revenueOverview?.data?.current_month_revenue}
+          percentage={revenueOverview?.data?.revenue_percentage_change}
           {...overviewExtras}
-          currency={currency}
         />
       </div>
-      <RevenueChartRow currency={currency} />
+      <RevenueChartRow />
       <div>
         <h3 className="pt-6 pb-3 font-semibold text-black-eerie text-xl">Recent Bookings</h3>
         <PageTable

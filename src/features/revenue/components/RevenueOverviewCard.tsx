@@ -7,12 +7,12 @@ import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 interface RevenueOverviewCardProps {
   title: string;
   amount?: number;
-  currency?: string;
   percentage?: number;
   percentageDescription?: string;
   percentageStyled?: boolean;
   isLoading?: boolean;
   hasError?: boolean;
+  formatAsNumber?: boolean;
 }
 
 export function RevenueOverviewCard(props: RevenueOverviewCardProps) {
@@ -28,7 +28,7 @@ export function RevenueOverviewCard(props: RevenueOverviewCardProps) {
       ) : (
         <>
           <h3 className="mt-1 font-semibold text-[2.4375rem] overflow-clip">
-            {props.currency ? formatCurrency(amount, props.currency, 0) : formatNumber(amount)}
+            {props.formatAsNumber ? formatNumber(amount) : formatCurrency(amount, undefined, 0)}
           </h3>
           <p className="text-base inline-flex gap-1">
             {typeof props.percentage === 'number' && percentageStyled ? (

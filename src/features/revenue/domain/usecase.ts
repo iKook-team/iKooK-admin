@@ -10,13 +10,12 @@ import { useMemo } from 'react';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { DateTime } from 'luxon';
 
-export function useFetchRevenueOverviewQuery(currency: string) {
+export function useFetchRevenueOverviewQuery() {
   return useQuery({
-    queryKey: ['revenue', currency, 'overview'],
-    queryFn: async ({ queryKey }) => {
-      const [_, currency] = queryKey;
+    queryKey: ['revenue', 'overview'],
+    queryFn: async () => {
       const response = await fetch({
-        url: `admin/revenue-overview?currency=${currency}`,
+        url: `payments/revenue-overview/`,
         method: 'GET'
       });
       return response.data as GetRevenueOverviewResponse;
@@ -24,11 +23,11 @@ export function useFetchRevenueOverviewQuery(currency: string) {
   });
 }
 
-export function useFetchRevenueInsightsQuery(currency: string, filter: string) {
+export function useFetchRevenueInsightsQuery(filter: string) {
   return useQuery({
-    queryKey: ['revenue', currency, 'insights', filter],
+    queryKey: ['revenue', 'insights', filter],
     queryFn: async ({ queryKey }) => {
-      const [_, __, ___, filter] = queryKey;
+      const [_, __, filter] = queryKey;
       const end_date = DateTime.now().toFormat('yyyy-MM-dd');
       const start_date = DateTime.now()
         .minus({

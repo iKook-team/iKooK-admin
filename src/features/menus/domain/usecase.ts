@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { Ref, useMemo, useState } from 'react';
 import { GetAllMenusResponse, GetMenuResponse, GetTopMenus } from '../data/dto.ts';
-import { UpdateMenuStatusRequest } from './types.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 import { Menu, MenuStatus } from '../data/model.ts';
 import { toast } from 'react-toastify';
@@ -45,13 +44,12 @@ export function useFetchMenusQuery() {
   };
 }
 
-export function useFetchTopMenusQuery(currency: string) {
+export function useFetchTopMenusQuery() {
   return useQuery({
-    queryKey: ['top-menus', currency],
-    queryFn: async ({ queryKey }) => {
-      const [_, currency] = queryKey;
+    queryKey: ['top-menus'],
+    queryFn: async () => {
       const response = await fetch({
-        url: `admin/top-menus?currency=${currency}`,
+        url: `menus/top-performing/`,
         method: 'GET'
       });
       return response.data as GetTopMenus;
@@ -90,21 +88,6 @@ export function useUpdateMenu(ref?: Ref<any>) {
       }
       void queryClient.invalidateQueries({ queryKey: ['menus'] });
       void queryClient.invalidateQueries({ queryKey: ['menu', request.id] });
-    }
-  });
-}
-
-export function useUpdateMenuStatus() {
-  return useMutation({
-    mutationFn: (request: UpdateMenuStatusRequest) => {
-      const id = request.menuId;
-      return fetch({
-        url: `/admin/approve-menus/${id}?menuId=${id}&status=${request.status}&${request.message ? `message=${request.message}` : ''}`,
-        method: 'GET'
-      });
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['menu'] });
     }
   });
 }

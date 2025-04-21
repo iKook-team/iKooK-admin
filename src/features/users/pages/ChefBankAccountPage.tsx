@@ -8,7 +8,6 @@ import { chefAccountSchema } from '../domain/validators';
 import InputField from '../../../app/components/InputField';
 
 export default function ChefBankAccountPage({ user }: UserPageProps) {
-  console.log(user);
   const formik = useFormik({
     initialValues: chefAccountInitials,
     validationSchema: chefAccountSchema,

@@ -17,11 +17,10 @@ import { DateTime } from 'luxon';
 interface RevenueChartCardProps {
   filter: string;
   setFilter: (filter: string) => void;
-  currency: string;
 }
 
-export default function RevenueChartCard({ filter, setFilter, currency }: RevenueChartCardProps) {
-  const { data: response, isPending, error } = useFetchRevenueInsightsQuery(currency, filter);
+export default function RevenueChartCard({ filter, setFilter }: RevenueChartCardProps) {
+  const { data: response, isPending, error } = useFetchRevenueInsightsQuery(filter);
 
   const data = response?.data;
 
@@ -97,7 +96,7 @@ export default function RevenueChartCard({ filter, setFilter, currency }: Revenu
             <YAxis axisLine={false} />
             <Tooltip
               formatter={(value, name) => [
-                formatCurrency(Number(value), currency),
+                formatCurrency(Number(value)),
                 capitalizeWords(fromSnakeCase(String(name)))
               ]}
             />
