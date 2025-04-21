@@ -159,13 +159,7 @@ export default function CalendarScreen() {
           ))}
         </div>
       ) : null}
-      <CalendarDetailsModal
-        ref={detailsRef}
-        data={selected?.entry}
-        hours={selected?.hours}
-        week={week}
-        year={year}
-      />
+      <CalendarDetailsModal ref={detailsRef} data={selected?.entry} />
     </>
   );
 }
