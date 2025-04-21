@@ -5,15 +5,25 @@ import ControlArrow from './components/ControlArrow.tsx';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import CalendarDayHeader from './components/CalendarDayHeader.tsx';
 import { Fragment, useMemo, useRef, useState } from 'react';
-import { chunkList, convertTo12Hour, hoursInDate } from '../../utils/helper.ts';
-import CalendarEntry from './components/CalendarEntry.tsx';
-import { CalendarDay } from './domain/types.ts';
+import { chunkList, convertTo12Hour } from '../../utils/helper.ts';
+import CalendarEntryItem from './components/CalendarEntryItem.tsx';
+import { CalendarEntry } from './domain/types.ts';
 import CalendarDetailsModal from './components/CalendarDetailsModal.tsx';
+import { DateTime } from 'luxon';
 
 export default function CalendarScreen() {
   const { calendar, isPending, error, week, setWeek, year, setYear } = useFetchCalendarQuery();
-  const [selected, setSelected] = useState<{ entry: CalendarDay; hours: number[] }>();
+  const [selected, setSelected] = useState<{ entry: CalendarEntry; hours: number[] }>();
   const detailsRef = useRef<HTMLDialogElement>(null);
+
+  const startDate = useMemo(
+    () =>
+      DateTime.fromObject({
+        weekYear: year,
+        weekNumber: week
+      }).startOf('week'),
+    [year, week]
+  );
 
   const hours = useMemo(
     () =>
@@ -84,17 +94,14 @@ export default function CalendarScreen() {
         <div
           className="grid overflow-x-auto mt-6 border-y border-black-base/10"
           style={{
-            gridTemplateColumns: `repeat(${calendar.length + 2}, minmax(8.5rem, 1fr))`
+            gridTemplateColumns: `repeat(9, minmax(8.5rem, 1fr))`
           }}
         >
           <ControlArrow direction="left" onClick={onDirection} className="my-5 place-self-center" />
-          {calendar.map((day) => (
+          {Array.from({ length: 7 }).map((_, i) => (
             <CalendarDayHeader
-              key={day.date}
-              day={day.date}
-              week={week}
-              year={year}
-              name={day.day}
+              key={i}
+              date={startDate.plus({ days: i })}
               className="my-5 place-self-center"
             />
           ))}
@@ -116,20 +123,35 @@ export default function CalendarScreen() {
               </div>
 
               {/** Days */}
-              {calendar.map((day, calendarIndex) => (
-                <div
-                  key={day.date}
-                  className={`${calendarIndex === 0 ? 'border-l' : ''} ${hourIndex < hours.length - 1 ? 'border-b' : ''} border-r border-black-base/10 p-2`}
-                >
-                  <CalendarEntry
-                    bookings={day.bookings.filter((booking) => hoursInDate(group, booking.date))}
-                    onClick={() => {
-                      setSelected({ entry: day, hours: group });
-                      detailsRef.current?.showModal();
-                    }}
-                  />
-                </div>
-              ))}
+              {Array.from({ length: 7 }).map((_, i) => {
+                const date = startDate.plus({ days: i });
+                const formatted = date.toFormat('yyyy-MM-dd');
+                const entry = calendar.find(
+                  (entry) =>
+                    (entry.start_date === formatted || entry.end_date === formatted) &&
+                    group.find(
+                      (hour) =>
+                        hour >= DateTime.fromISO(entry.start_time).hour &&
+                        hour <= DateTime.fromISO(entry.end_time).hour
+                    ) !== undefined
+                );
+                return (
+                  <div
+                    key={formatted}
+                    className={`${i === 0 ? 'border-l' : ''} ${hourIndex < hours.length - 1 ? 'border-b' : ''} border-r border-black-base/10 p-2`}
+                  >
+                    <CalendarEntryItem
+                      entry={entry}
+                      onClick={() => {
+                        if (entry) {
+                          setSelected({ entry, hours: group });
+                          detailsRef.current?.showModal();
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              })}
               {hourIndex < hours.length - 1 ? (
                 <div className="border-b border-black-base/10" />
               ) : null}

@@ -1,4 +1,4 @@
-import { CalendarDay } from '../domain/types.ts';
+import { CalendarEntry } from '../domain/types.ts';
 import { Ref, useMemo } from 'react';
 import { ReactSVG } from 'react-svg';
 import close from '../../../app/assets/icons/close.svg';
@@ -9,7 +9,7 @@ import { BookingType } from '../../bookings/domain/types.ts';
 
 interface CalendarDetailsModalProps {
   ref: Ref<HTMLDialogElement>;
-  data?: CalendarDay;
+  data?: CalendarEntry;
   hours?: number[];
   week: number;
   year: number;

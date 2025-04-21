@@ -1,4 +1,4 @@
-import { GenericResponse } from '../../../app/data/dto.ts';
-import { CalendarDay } from './types.ts';
+import { PagedResponse } from '../../../app/data/dto.ts';
+import { CalendarEntry } from './types.ts';
 
-export type GetCalendarResponse = GenericResponse<CalendarDay[]>;
+export type GetCalendarResponse = PagedResponse<CalendarEntry>;
