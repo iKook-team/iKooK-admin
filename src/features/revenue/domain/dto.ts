@@ -29,11 +29,7 @@ export type GetRevenueOverviewResponse = GenericResponse<{
 }>;
 
 export type GetRevenueInsightsResponse = GenericResponse<{
-  [key: string]: Array<{
-    day_name?: string;
-    week?: number;
-    total_revenue: number;
-  }>;
+  [key: string]: string;
 }>;
 
 export type GetAllPaymentsResponse = GenericResponse<PagedResponse<Payment>>;

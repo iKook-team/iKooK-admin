@@ -8,6 +8,7 @@ import {
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 import { useMemo } from 'react';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { DateTime } from 'luxon';
 
 export function useFetchRevenueOverviewQuery(currency: string) {
   return useQuery({
@@ -27,12 +28,24 @@ export function useFetchRevenueInsightsQuery(currency: string, filter: string) {
   return useQuery({
     queryKey: ['revenue', currency, 'insights', filter],
     queryFn: async ({ queryKey }) => {
-      const [_, currency, __, filter] = queryKey;
+      const [_, __, ___, filter] = queryKey;
+      const end_date = DateTime.now().toFormat('yyyy-MM-dd');
+      const start_date = DateTime.now()
+        .minus({
+          weeks: filter === 'weekly' ? 1 : undefined,
+          months: filter === 'monthly' ? 1 : undefined
+        })
+        .toFormat('yyyy-MM-dd');
       const response = await fetch({
-        url: `admin/revenue-insight?currency=${currency}${filter ? `&filter=${filter}` : ''}`,
-        method: 'GET'
+        url: `payments/revenue-chart/`,
+        method: 'POST',
+        data: {
+          mode: filter,
+          start_date,
+          end_date
+        }
       });
-      return response.data as GetRevenueInsightsResponse;
+      return response.data.data as GetRevenueInsightsResponse;
     }
   });
 }

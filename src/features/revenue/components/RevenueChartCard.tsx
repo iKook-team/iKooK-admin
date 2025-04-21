@@ -12,6 +12,7 @@ import { useMemo } from 'react';
 import { formatCurrency } from '../../../utils/helper.ts';
 import { capitalizeWords, fromSnakeCase } from '../../../utils/strings.ts';
 import { useFetchRevenueInsightsQuery } from '../domain/usecase.ts';
+import { DateTime } from 'luxon';
 
 interface RevenueChartCardProps {
   filter: string;
@@ -29,18 +30,14 @@ export default function RevenueChartCard({ filter, setFilter, currency }: Revenu
       return [];
     }
 
-    const entries: Record<string, { [key: string]: number }> = {};
-    Object.keys(data).forEach((key) => {
-      data[key].forEach((entry) => {
-        const name = entry.day_name ?? entry.week ?? '';
-        if (!entries[name]) {
-          entries[name] = {};
-        }
-        entries[name] = { ...entries[name], [key]: entry.total_revenue };
-      });
+    return Object.keys(data).map((key) => {
+      return {
+        name: filter === 'weekly' ? DateTime.fromFormat(key, 'cccc').toFormat('ccc') : key,
+        current_week: filter === 'weekly' ? data[key] : undefined,
+        current_month: filter === 'monthly' ? data[key] : undefined
+      };
     });
-    return Object.entries(entries).map(([name, values]) => ({ name, ...values }));
-  }, [data]);
+  }, [data, filter]);
 
   const buttonClass = 'btn btn-ghost bg-transparent font-semibold text-sm text-black-eerie';
   return (

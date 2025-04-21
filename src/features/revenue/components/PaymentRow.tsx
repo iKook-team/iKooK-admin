@@ -15,7 +15,7 @@ export default function PaymentRow(props: PaymentRowProps) {
     <tr>
       <td>
         {user ? (
-          <UsernameAndImage name={`${user.first_name} ${user.last_name}`} image={user.photo} />
+          <UsernameAndImage name={`${user.first_name} ${user.last_name}`} image={user.avatar} />
         ) : (
           '-'
         )}
