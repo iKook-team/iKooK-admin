@@ -46,12 +46,6 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
       readonly: true
     },
     {
-      id: 'state',
-      placeholder: 'London',
-      type: 'text',
-      readonly: true
-    },
-    {
       id: 'city',
       label: 'city/state',
       placeholder: 'London',

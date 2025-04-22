@@ -1,12 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
-import {
-  GetAllUsersRequest,
-  GetAllUsersResponse,
-  GetRoleRequest,
-  GetRoleResponse,
-  ProfileRequest
-} from '../data/dto.ts';
+import { GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
@@ -114,48 +108,11 @@ export function useUpdateUser(type: UserType) {
   });
 }
 
-export function useToggleUserVerificationStatus(type: UserType) {
+export function useCreateUser(type: UserType) {
   return useMutation({
-    mutationFn: ({
-      id,
-      accept,
-      type,
-      message
-    }: {
-      id: string;
-      accept: boolean;
-      type: string;
-      message?: string;
-    }) => {
-      return fetch({
-        url: `/admin/update-verification-status`,
-        method: 'POST',
-        data: {
-          userId: id,
-          status: accept ? 'accept' : 'reject',
-          type,
-          message
-        }
-      });
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [type] });
-    }
-  });
-}
-
-export function useCreateNewUser(type: UserType) {
-  const mutation = useMutation({
-    mutationFn: async (request: {
-      first_name: string;
-      last_name: string;
-      username: string;
-      email: string;
-      mobile: string;
-      role: string;
-    }) => {
+    mutationFn: async (request: User) => {
       const response = await fetch({
-        url: `UserManagement/create-user`,
+        url: `users/auth/signup/`,
         method: 'POST',
         data: request
       });
@@ -165,19 +122,6 @@ export function useCreateNewUser(type: UserType) {
       void queryClient.invalidateQueries({ queryKey: [type] });
     }
   });
-
-  return {
-    createUser: async (request: {
-      first_name: string;
-      last_name: string;
-      username: string;
-      email: string;
-      mobile: string;
-      role: string;
-    }) => {
-      await mutation.mutateAsync(request);
-    }
-  };
 }
 
 export function useCheckUserNameValidity(username: string) {
@@ -225,38 +169,6 @@ export function useCheckUserNameValidity(username: string) {
   };
 }
 
-export function useGetRole(request: GetRoleRequest) {
-  const { isPending, data, error } = useQuery({
-    queryKey: [request.isAdmin],
-    queryFn: async ({ queryKey }) => {
-      // const [isAdmin] = queryKey;
-      const [] = queryKey; //This endpoint is a bit faulty, I will fix this after the endpoint is okay
-      const response = await fetch({
-        // url: `/roleClaims/get-roles?admin={isAdmin}`,
-        url: `/roleClaims/get-roles`,
-        method: 'GET'
-      });
-      return response.data as GetRoleResponse;
-    }
-  });
-
-  const roles = useMemo(() => {
-    const items = data?.data?.results || [];
-
-    if (!data) {
-      return items;
-    }
-
-    return items;
-  }, [data]);
-
-  return {
-    isPending,
-    error,
-    roles
-  };
-}
-
 export function useDeleteAccount(type: UserType) {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
@@ -288,65 +200,6 @@ export function useResetPassword(type: UserType) {
 
   return {
     resetPassword: async (request: { email: string }) => {
-      await mutation.mutateAsync(request);
-    }
-  };
-}
-
-export function useEditProfile(type: UserType) {
-  const mutation = useMutation({
-    mutationFn: async (request: ProfileRequest) => {
-      const response = await fetch({
-        url: `/chef/edit-profile`,
-        method: 'POST',
-        data: request
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [type] });
-    }
-  });
-
-  return {
-    editProfile: async (request: ProfileRequest) => {
-      await mutation.mutateAsync(request);
-    }
-  };
-}
-
-export function useToggleNotificationSettings(request: { id: string; type: UserType }) {
-  return useMutation({
-    mutationFn: async ({ type }: { type: 'sms' | 'email' }) => {
-      const response = await fetch({
-        url: `/UserManagement/toggle-notifications-settings?user_id=${request.id}&type=${type}`,
-        method: 'GET'
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [request.type, request.id] });
-    }
-  });
-}
-
-export function useEditServiceDetails(type: UserType, service_type: string) {
-  const mutation = useMutation({
-    mutationFn: async (request: ProfileRequest) => {
-      const response = await fetch({
-        url: `/chef/update-service-detail/${service_type}`,
-        method: 'POST',
-        data: request
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [type] });
-    }
-  });
-
-  return {
-    editProfile: async (request: ProfileRequest) => {
       await mutation.mutateAsync(request);
     }
   };

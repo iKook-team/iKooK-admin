@@ -7,13 +7,8 @@ export type GetTopMenus = GenericResponse<
   Array<{
     id: number;
     name: string;
-    chef: {
-      id: number;
-      first_name: string;
-      last_name: string;
-    };
-    currency: string;
-    price_per_person: number;
+    chef_name: string;
+    num_bookings: number;
   }>
 >;
 

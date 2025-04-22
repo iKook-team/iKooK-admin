@@ -65,7 +65,8 @@ export default function NavigationShell() {
           <img src={logo} alt="iKooK" className="w-20" />
           <div className="flex flex-col flex-1 mt-12 w-full">
             {sidebarItems.map((item) => {
-              const selected = pathname.replace('/', '') === item.route.replace('/', '');
+              const selected =
+                pathname.replace('/', '').toLowerCase() === item.route.replace('/', '');
               return (
                 <Link
                   to={item.route}
@@ -95,7 +96,7 @@ function LoggedInUser() {
     <details className="dropdown">
       <summary className="flex flex-row items-center gap-10 border border-primary px-5 py-2 rounded-xl">
         <div className="flex flex-col items-start">
-          <p className="capitalize font-semibold">{user?.role}</p>
+          <p className="capitalize font-semibold">{user?.user_type}</p>
           <p className="capitalize text-xs">{user?.first_name}</p>
         </div>
         <img src={getImageUrl(`icons/arrow-down.svg`)} alt="Dropdown" />
