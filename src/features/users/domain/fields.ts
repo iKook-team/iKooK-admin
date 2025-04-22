@@ -179,12 +179,3 @@ export const chefServicesInitials = {
   starting_price: '',
   minimum_number_of_guests: ''
 };
-
-export const chefSettingsInitials = {
-  starting_price: '',
-  minNoGuest: ''
-};
-
-export const userPasswordInitiails = {
-  new_password: ''
-};

@@ -14,6 +14,7 @@ export interface GetRoleRequest {
 }
 
 export type GetAllUsersResponse = GenericResponse<PagedResponse<User>>;
+export type GetAllAdminsResponse = PagedResponse<User>;
 export type GetRoleResponse = GenericResponse<PagedResponse<Role>>;
 
 export interface ProfileRequest {

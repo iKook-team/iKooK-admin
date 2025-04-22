@@ -163,22 +163,24 @@ export default function UsersScreen({ type, isServices }: UsersScreenProps) {
                 </td>
               }
             >
-              <td>
-                <PageAction
-                  items={[
-                    { title: 'Edit', icon: 'edit' },
-                    // {
-                    //   title: type == UserType.host ? 'Approve docs' : 'Verification',
-                    //   icon: 'approve-document'
-                    // },
-                    { title: user.is_active ? 'Suspend' : 'Activate', icon: 'suspend' },
-                    { title: 'Delete', icon: 'delete' },
-                    { title: 'Reset Password', icon: 'reset' }
-                    // ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
-                  ]}
-                  onItemClick={(action) => onAction(action, user)}
-                />
-              </td>
+              {type !== UserType.admin && (
+                <td>
+                  <PageAction
+                    items={[
+                      { title: 'Edit', icon: 'edit' },
+                      // {
+                      //   title: type == UserType.host ? 'Approve docs' : 'Verification',
+                      //   icon: 'approve-document'
+                      // },
+                      { title: user.is_active ? 'Suspend' : 'Activate', icon: 'suspend' },
+                      { title: 'Delete', icon: 'delete' },
+                      { title: 'Reset Password', icon: 'reset' }
+                      // ...(type == UserType.chef ? [{ title: 'Verification', icon: 'check' }] : [])
+                    ]}
+                    onItemClick={(action) => onAction(action, user)}
+                  />
+                </td>
+              )}
             </UserRow>
           );
         })}

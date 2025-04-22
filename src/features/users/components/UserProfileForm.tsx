@@ -1,19 +1,19 @@
 import InputField, { InputContainer } from '../../../app/components/InputField.tsx';
 import { UserType } from '../domain/types.ts';
 import MultiSelectDropdown from './MultiSelectDropDown.tsx';
-import DragAndDropImage from './ImageDraggable.tsx';
 import { chefProfileFields, hostProfileFields } from '../domain/fields.ts';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
-import { chefProfileSchema, userProfileSchema } from '../domain/validators.ts';
+import { adminProfileSchema, chefProfileSchema, userProfileSchema } from '../domain/validators.ts';
 import { User } from '../data/model.ts';
 import { extractInitialValues } from '../../../utils/zodValidator.ts';
+import DragAndDropImage, { DragAndDropImageRef } from './DragAndDropImage.tsx';
 
 interface UserProfileFormProps {
   user?: User;
   type: UserType;
-  onSave: (user: User) => void;
+  onSave: (data: FormData) => void;
 }
 
 export interface UserProfileFormRef {
@@ -22,8 +22,15 @@ export interface UserProfileFormRef {
 
 const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
   ({ user, type, onSave }, ref) => {
-    const fields = type === UserType.host ? hostProfileFields : chefProfileFields;
-    const schema = type === UserType.host ? userProfileSchema : chefProfileSchema;
+    const imageRef = useRef<DragAndDropImageRef>(null);
+
+    const fields = type === UserType.chef ? chefProfileFields : hostProfileFields;
+    const schema =
+      type === UserType.admin
+        ? adminProfileSchema
+        : type === UserType.chef
+          ? chefProfileSchema
+          : userProfileSchema;
     const [selectedCuisines, setSelectedCuisines] = useState<string[]>(user?.cuisines || []);
     const [selectedEvents, setSelectedEvents] = useState<string[]>(user?.events || []);
 
@@ -37,8 +44,24 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
       onSubmit: (values) => {
         // remove all file upload fields from data
         const { avatar, identity_document, culinary_certificate, ...data } = values;
-        // @ts-expect-error ignore this useless typescript error
-        onSave(data);
+        const formData = new FormData();
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((item) => {
+              formData.append(key, item);
+            });
+          } else if (value) {
+            formData.append(key, value as string);
+          }
+        });
+
+        const image = imageRef.current?.getImage();
+        if (image) {
+          formData.append('avatar', image);
+        }
+
+        onSave(formData);
       }
     });
 
@@ -78,7 +101,7 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
               onChange={formik.handleChange}
               className={`mb-4 ${field.hidden ? 'hidden' : ''} ${field.id === 'first_name' || field.id === 'last_name' ? '' : 'col-span-2'}`}
               // @ts-expect-error ignore this useless typescript error
-              value={formik.values[field.id]}
+              value={formik.values[field.id] || ''}
               onBlur={formik.handleBlur} // ✅ Handles input blur events
               error={
                 touched && error
@@ -144,7 +167,7 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
                   className={`h-full w-full input input-bordered p-3 ${formik.errors.bio ? 'input-error' : ''}`}
                   placeholder="John Smith was born in a small town in the Midwest. He grew up with a love of learning and a passion for science and technology. After graduating from high school, he attended a prestigious university where he earned a degree in electrical engineering. He then landed a job at a top technology company, where he quickly rose through the ranks to become a lead engineer.John has always been an innovator, and he is known for his ability to think outside the box and come up with new, creative solutions to complex problems. He has been credited with several patents for his inventions and is respected throughout the industry for his technical expertise and leadership skills."
                   onChange={formik.handleChange}
-                  value={formik.values.bio}
+                  value={formik.values.bio || ''}
                   onBlur={formik.handleBlur}
                 />
               </div>
@@ -152,7 +175,7 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
           </div>
         )}
         <div className="col-span-2 w-full">
-          <DragAndDropImage />
+          <DragAndDropImage ref={imageRef} />
         </div>
       </form>
     );

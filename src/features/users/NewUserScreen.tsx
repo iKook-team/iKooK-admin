@@ -12,7 +12,7 @@ export default function NewUserScreen() {
   const { pathname } = useLocation();
   const [type] = useMemo(() => {
     const [type] = pathname.split('/').slice(1);
-    return [type.slice(0, 4) as UserType];
+    return [type.slice(0, type.length - 1) as UserType];
   }, [pathname]);
 
   const formRef = useRef<UserProfileFormRef>(null);
@@ -30,7 +30,7 @@ export default function NewUserScreen() {
       <UserProfileForm
         ref={formRef}
         type={type}
-        onSave={(user) => {
+        onSave={async (user) => {
           if (mutation.isPending) {
             return;
           }

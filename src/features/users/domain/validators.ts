@@ -38,7 +38,7 @@ export const chefSettingSchema = Yup.object().shape({
     .matches(/^\d+$/, 'minimum number of guest must be a number')
 });
 
-const ProfileSchema = Yup.object({
+export const adminProfileSchema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Email is required'),
   first_name: Yup.string().required('First Name is required'),
   last_name: Yup.string().required('Last Name is required'),
@@ -47,11 +47,11 @@ const ProfileSchema = Yup.object({
     .required('Phone number is required')
 });
 
-export const userProfileSchema = ProfileSchema.shape({
+export const userProfileSchema = adminProfileSchema.shape({
   bio: Yup.string().required('Brief Description is required')
 });
 
-export const chefProfileSchema = ProfileSchema.shape({
+export const chefProfileSchema = adminProfileSchema.shape({
   city: Yup.string().required('City is required'),
   address: Yup.string().required('Address is required'),
   postcode: Yup.string().required('Post Code is required'),

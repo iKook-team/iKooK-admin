@@ -20,7 +20,7 @@ export default function UserRow(props: UserRowProps) {
       <td>
         <UsernameAndImage
           name={`${props.first_name} ${props.last_name}`}
-          image={props.photo}
+          image={props.avatar}
           status={props.isServices || props.type === UserType.admin ? undefined : props.is_active}
           statusText={props.status}
         />
@@ -28,14 +28,14 @@ export default function UserRow(props: UserRowProps) {
       <td>{props.email}</td>
       {props.type !== UserType.admin && <td>{props.address || props.city || props.country}</td>}
       {props.type !== UserType.chef ? (
-        <td>{props.mobile}</td>
+        <td>{props.phone_number}</td>
       ) : (
         <>
           {!props.isServices && <td>{props.balance}</td>}
           <td>{props.average_rating?.toFixed(2)}</td>
         </>
       )}
-      {props.type === UserType.admin && <td className="capitalize">{props.role}</td>}
+      {props.type === UserType.admin && <td className="capitalize">{props.user_type}</td>}
       <td>
         {props.type === UserType.admin ? (
           <ItemStatus

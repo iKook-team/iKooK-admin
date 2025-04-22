@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
-import { GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
+import { GetAllAdminsResponse, GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
@@ -50,7 +50,7 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
         url: `${baseUrl}page=${page}&page_size=20${verified !== undefined ? `&identity_verified=${verified}` : ''}${query ? `&search=${query}` : ''}${service ? `&chef_service=${service}` : ''}`,
         method: 'GET'
       });
-      return response.data as GetAllUsersResponse;
+      return response.data as GetAllUsersResponse & GetAllAdminsResponse;
     }
   });
 
@@ -59,7 +59,7 @@ export function useFetchUsersQuery(request: GetAllUsersRequest) {
     error,
     page,
     setPage,
-    users: data?.data?.results ?? [],
+    users: data?.data?.results || data?.results || [],
     query,
     setQuery,
     filter,
@@ -95,7 +95,7 @@ export function useFetchUserQuery(type: UserType, id?: number | string) {
 
 export function useUpdateUser(type: UserType) {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<User> }) => {
+    mutationFn: ({ id, data }: { id: number; data: Partial<User> | FormData }) => {
       return fetch({
         url: `/users/profiles/${id}/`,
         method: 'PATCH',
@@ -110,13 +110,35 @@ export function useUpdateUser(type: UserType) {
 
 export function useCreateUser(type: UserType) {
   return useMutation({
-    mutationFn: async (request: User) => {
+    mutationFn: async (request: FormData) => {
       const response = await fetch({
-        url: `users/auth/signup/`,
+        url: type === UserType.admin ? 'users/admins/' : `users/auth/signup/`,
         method: 'POST',
         data: request
       });
       return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [type] });
+    }
+  });
+}
+
+export function useUpdateUserAsset(type: UserType) {
+  return useMutation({
+    mutationFn: async (data: { file: string; name: string }) => {
+      const formData = new FormData();
+      // @ts-expect-error random error
+      formData.append(data.name, {
+        uri: data.file,
+        type: 'image/png',
+        name: `${data.name}.png`
+      });
+      return fetch({
+        url: type === UserType.admin ? 'users/admins/' : 'users/profiles/',
+        method: 'PATCH',
+        data: formData
+      });
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: [type] });
