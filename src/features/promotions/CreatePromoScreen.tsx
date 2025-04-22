@@ -42,14 +42,14 @@ export default function CreatePromoScreen() {
           ),
           ...(values.has_duration
             ? {
-                from_duration: `${values.from_date}T${values.from_time}`,
-                to_duration: `${values.to_date}T${values.to_time}`
+                start: `${values.from_date}T${values.from_time}`,
+                end: `${values.to_date}T${values.to_time}`
               }
             : {}),
           ...(values.has_menu ? { menu: values.menu } : {})
         };
         mutation.mutateAsync(request).then((response) => {
-          toast(response.data.data, { type: 'success' });
+          toast(response.data.message, { type: 'success' });
           resetForm();
         });
       }}
@@ -136,7 +136,7 @@ function Entry(field: Field & { className?: string; modal?: RefObject<HTMLDialog
       {field.modal && (
         <SearchMenuModal
           ref={field.modal}
-          onMenuSelected={(menuId: string) => {
+          onMenuSelected={(menuId: number) => {
             void formik.setFieldValue('menu', menuId);
           }}
         />

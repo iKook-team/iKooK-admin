@@ -9,16 +9,16 @@ const CreatePromoCodeDurationSchema = z.object({
 });
 
 const CreatePromoCodeMenuSchema = z.object({
-  menu: z.string().min(3, 'Menu is required')
+  menu: z.number().min(1, 'Menu is required')
 });
 
 const CreatePromoCodeBaseSchema = z.object({
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(3, 'Description is required'),
-  percentage: z.number(),
-  promo_code: z.string().min(3, 'Promo code is required'),
-  currency: z.string(),
-  number_of_users: z.number().min(1, 'Number of users is required'),
+  discount_percentage: z.number(),
+  code: z.string().min(3, 'Promo code is required'),
+  // currency: z.string(),
+  num_users: z.number().min(1, 'Number of users is required'),
   has_duration: z.boolean().default(false), // Switch to include duration
   has_menu: z.boolean().default(false) // Switch to include menu
 });
@@ -29,7 +29,7 @@ export const CreateGiftCardSchema = z.object({
 });
 
 export const SendGiftCardSchema = z.object({
-  id: z.string().min(3, 'Gift is required'),
+  gift_card: z.number().min(1, 'Gift is required'),
   email: z.string().email('Invalid email').min(3, 'Email is required'),
   override: z.boolean().default(false)
 });

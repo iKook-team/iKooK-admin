@@ -49,7 +49,7 @@ export function useFetchPromotionsQuery() {
 
     return items.filter((card) => {
       return (
-        (card.card_number ?? card.promo_code)?.includes(cleanedQuery) ||
+        (card.card_number ?? card.code)?.includes(cleanedQuery) ||
         card?.purchased_by?.username?.toLowerCase().includes(cleanedQuery) ||
         card?.purchased_by?.first_name.toLowerCase().includes(cleanedQuery) ||
         card?.purchased_by?.last_name.toLowerCase().includes(cleanedQuery)
@@ -79,7 +79,7 @@ export function useCreateGiftCard() {
   return useMutation({
     mutationFn: (data: CreateGiftCardRequest) => {
       return fetch({
-        url: `/promotions/create-gift-card`,
+        url: `/gifts/giftcards/`,
         method: 'POST',
         data
       });
@@ -94,7 +94,7 @@ export function useCreatePromoCode() {
   return useMutation({
     mutationFn: (data: CreatePromoCodeRequest) => {
       return fetch({
-        url: `/promotions/create-coupon`,
+        url: `/gifts/promocodes/`,
         method: 'POST',
         data
       });
@@ -109,7 +109,7 @@ export function useSendGiftCard() {
   return useMutation({
     mutationFn: (data: SendGiftCardRequest) => {
       return fetch({
-        url: `/promotions/Send-gift-card`,
+        url: `/gifts/purchasedgiftcards/`,
         method: 'POST',
         data
       });

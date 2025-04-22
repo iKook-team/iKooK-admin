@@ -10,7 +10,7 @@ import PromotionsHeader from './PromotionsHeader.tsx';
 
 interface SearchPromotionsModalProps {
   ref: Ref<HTMLDialogElement>;
-  onPromotionSelected: (menuId: string) => void;
+  onPromotionSelected: (id: number) => void;
   isPurchase: boolean;
 }
 

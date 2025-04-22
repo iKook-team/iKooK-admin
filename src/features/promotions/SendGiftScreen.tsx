@@ -40,8 +40,8 @@ export default function SendGiftScreen() {
                   name="gift"
                   placeholder="Select giftcard"
                   className="mt-4"
-                  value={values['id']}
-                  error={touched['id'] ? errors['id'] : undefined}
+                  value={values['gift_card']}
+                  error={touched['gift_card'] ? errors['gift_card'] : undefined}
                   onChange={handleChange}
                   onClick={() => selectGiftCardRef.current?.showModal()}
                   readOnly={true}
@@ -80,8 +80,8 @@ export default function SendGiftScreen() {
               <SearchPromotionsModal
                 ref={selectGiftCardRef}
                 isPurchase={true}
-                onPromotionSelected={(promoId: string) => {
-                  void setFieldValue('id', promoId);
+                onPromotionSelected={(id: number) => {
+                  void setFieldValue('gift_card', id);
                 }}
               />
             </>

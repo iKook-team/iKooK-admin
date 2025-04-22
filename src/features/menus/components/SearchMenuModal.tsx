@@ -7,10 +7,11 @@ import { useFetchMenusQuery } from '../domain/usecase.ts';
 import MenuRow from './MenuRow.tsx';
 import MenusHeader from './MenusHeader.tsx';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
+import { MenuStatus } from '../data/model.ts';
 
 interface SearchMenuModalProps {
   ref: Ref<HTMLDialogElement>;
-  onMenuSelected: (menuId: string) => void;
+  onMenuSelected: (menuId: number) => void;
 }
 
 export default function SearchMenuModal({ ref, onMenuSelected }: SearchMenuModalProps) {
@@ -28,9 +29,9 @@ export default function SearchMenuModal({ ref, onMenuSelected }: SearchMenuModal
   } = useFetchMenusQuery();
 
   useEffect(() => {
-    // only show approved menus
-    setFilter('approved');
-  }, []);
+    // only show active menus
+    setFilter(MenuStatus.active);
+  }, [setFilter]);
 
   return (
     <PageModal ref={ref} id="search-menu-modal" title="Select Menu" className="lg:min-w-[50rem]">

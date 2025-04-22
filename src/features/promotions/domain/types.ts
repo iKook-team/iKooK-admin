@@ -13,9 +13,9 @@ interface GiftCardUser {
 }
 
 export interface GiftCard {
-  id: string;
+  id: number;
   card_number?: string;
-  promo_code?: string;
+  code?: string;
   amount: number;
   currency: string;
   created_at: string;
@@ -23,7 +23,8 @@ export interface GiftCard {
   duration_to?: string;
   purchased_by: GiftCardUser | null;
   created_by: GiftCardUser | null;
-  percentage?: number;
+  discount_percentage?: number;
   is_active: boolean;
   redeemed: boolean;
+  status: string;
 }

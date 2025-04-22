@@ -1,5 +1,4 @@
 import Field from '../../../app/domain/field.ts';
-import { CURRENCIES } from '../../../utils/helper.ts';
 
 export const createPromoFields: Field[] = [
   {
@@ -13,26 +12,26 @@ export const createPromoFields: Field[] = [
     type: 'text'
   },
   {
-    id: 'percentage',
+    id: 'discount_percentage',
     placeholder: 'Discount percentage (%)',
     type: 'number',
     min: 1,
     max: 100
   },
   {
-    id: 'promo_code',
+    id: 'code',
     placeholder: 'Custom Code',
     type: 'text',
     maxLength: 15
   },
+  // {
+  //   id: 'currency',
+  //   placeholder: 'Currency',
+  //   type: 'select',
+  //   options: CURRENCIES
+  // },
   {
-    id: 'currency',
-    placeholder: 'Currency',
-    type: 'select',
-    options: CURRENCIES
-  },
-  {
-    id: 'number_of_users',
+    id: 'num_users',
     placeholder: 'Number of users',
     type: 'number'
   },

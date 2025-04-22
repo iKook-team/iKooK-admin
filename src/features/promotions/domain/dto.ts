@@ -9,7 +9,7 @@ export type CreateGiftCardRequest = {
 };
 
 export type SendGiftCardRequest = {
-  id: string;
+  gift_card: number;
   email: string;
   override: boolean;
 };
@@ -17,11 +17,11 @@ export type SendGiftCardRequest = {
 export type CreatePromoCodeRequest = {
   title: string;
   description: string;
-  percentage?: number;
-  promo_code: string;
-  currency?: string;
-  number_of_users: number;
-  from_duration?: string;
-  to_duration?: string;
-  menu?: string;
+  discount_percentage?: number;
+  code: string;
+  // currency?: string;
+  num_users: number;
+  start?: string;
+  end?: string;
+  menu?: number;
 };
