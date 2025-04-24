@@ -4,6 +4,7 @@ import close from '../../../../src/app/assets/icons/close.svg';
 
 export interface DragAndDropImageRef {
   getImage: () => File | null;
+  clearImage: () => void;
 }
 
 type DragAndDropImageProps = object;
@@ -61,7 +62,11 @@ const DragAndDropImage = forwardRef<DragAndDropImageRef, DragAndDropImageProps>(
   useImperativeHandle(
     ref,
     () => ({
-      getImage: () => imageFile.current
+      getImage: () => imageFile.current,
+      clearImage: () => {
+        setImage(null);
+        imageFile.current = null;
+      }
     }),
     []
   );

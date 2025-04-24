@@ -1,11 +1,21 @@
 import InputField, { DropdownField, InputContainer } from '../../../app/components/InputField.tsx';
-import { UserType } from '../domain/types.ts';
+import { ChefService, UserType } from '../domain/types.ts';
 import MultiSelectDropdown from './MultiSelectDropDown.tsx';
-import { adminProfileFields, chefProfileFields, hostProfileFields } from '../domain/fields.ts';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import {
+  adminProfileFields,
+  chefProfileFields,
+  hostProfileFields,
+  newChefProfileFields
+} from '../domain/fields.ts';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
-import { adminProfileSchema, chefProfileSchema, userProfileSchema } from '../domain/validators.ts';
+import {
+  adminProfileSchema,
+  chefProfileSchema,
+  newChefProfileSchema,
+  userProfileSchema
+} from '../domain/validators.ts';
 import { User } from '../data/model.ts';
 import { extractInitialValues } from '../../../utils/zodValidator.ts';
 import DragAndDropImage, { DragAndDropImageRef } from './DragAndDropImage.tsx';
@@ -30,16 +40,18 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
       type === UserType.admin
         ? adminProfileFields
         : type === UserType.chef
-          ? chefProfileFields
+          ? user
+            ? chefProfileFields
+            : newChefProfileFields
           : hostProfileFields;
     const schema =
       type === UserType.admin
         ? adminProfileSchema
         : type === UserType.chef
-          ? chefProfileSchema
+          ? user
+            ? chefProfileSchema
+            : newChefProfileSchema
           : userProfileSchema;
-    const [selectedCuisines, setSelectedCuisines] = useState<string[]>(user?.cuisines || []);
-    const [selectedEvents, setSelectedEvents] = useState<string[]>(user?.events || []);
 
     const formik = useFormik({
       initialValues: {
@@ -86,7 +98,10 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
             });
           }
         },
-        reset: () => formik.resetForm()
+        reset: () => {
+          formik.resetForm();
+          imageRef.current?.clearImage();
+        }
       }),
       [formik]
     );
@@ -110,10 +125,10 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
               <InputContainer key={field.id} error={errorMessage} className="col-span-2">
                 <MultiSelectDropdown
                   title={field.label!}
-                  options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
+                  options={field.id === 'chef_services' ? Object.values(ChefService) : []}
                   // @ts-expect-error ignore this useless typescript error
-                  value={formik.values[field.id] || ''}
-                  onChange={formik.handleChange}
+                  value={formik.values[field.id] || []}
+                  onChange={(current) => formik.setFieldValue(field.id, current)}
                 />
               </InputContainer>
             );
@@ -138,52 +153,14 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
                     : field.id === 'city' && formik.values.country
                       ? // @ts-expect-error ignore this useless typescript error
                         countries[formik.values.country]
-                      : field.options
+                      : field.id === 'service_type'
+                        ? ['Chef', ChefService.boxGrocery]
+                        : field.options
                 }
               />
             );
           }
         })}
-        {type === UserType.chef && (
-          <div className="col-span-2 flex flex-col gap-5">
-            <div>
-              <InputContainer
-                error={
-                  formik.touched.cuisines && formik.errors.cuisines
-                    ? Array.isArray(formik.errors.cuisines)
-                      ? formik.errors.cuisines.join(', ')
-                      : formik.errors.cuisines
-                    : undefined
-                }
-              >
-                <MultiSelectDropdown
-                  title="Cuisines I can cook"
-                  options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
-                  value={selectedCuisines}
-                  onChange={setSelectedCuisines}
-                />
-              </InputContainer>
-            </div>
-            <div>
-              <InputContainer
-                error={
-                  formik.touched.cuisines && formik.errors.cuisines
-                    ? Array.isArray(formik.errors.cuisines)
-                      ? formik.errors.cuisines.join(', ')
-                      : formik.errors.cuisines
-                    : undefined
-                }
-              >
-                <MultiSelectDropdown
-                  onChange={setSelectedEvents}
-                  title="Events avaliable for"
-                  options={['Wedding', 'Birthday', 'Party']}
-                  value={selectedEvents}
-                />
-              </InputContainer>
-            </div>
-          </div>
-        )}
         <div className="col-span-2 w-full">
           <DragAndDropImage ref={imageRef} />
         </div>

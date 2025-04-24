@@ -48,13 +48,8 @@ export const hostProfileFields: Field[] = adminProfileFields.concat(
   }
 );
 
-export const chefProfileFields: Field[] = hostProfileFields.concat(
+export const newChefProfileFields: Field[] = hostProfileFields.concat(
   [
-    {
-      id: 'date_of_birth',
-      placeholder: '17/01/1990',
-      type: 'date'
-    },
     {
       id: 'address',
       label: 'Your address',
@@ -85,6 +80,22 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
       type: 'multiselect'
     }
   ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }))
+);
+
+export const chefProfileFields: Field[] = newChefProfileFields.concat(
+  [
+    {
+      id: 'date_of_birth',
+      placeholder: '17/01/1990',
+      type: 'date'
+    },
+    {
+      id: 'cuisines',
+      label: 'Cuisines',
+      placeholder: 'Select chef cuisines',
+      type: 'multiselect'
+    }
+  ].map((field) => ({ ...field, label: fromSnakeOrCamelCase(field.id) }))
 );
 
 export const chefAccountFields: Field[] = [

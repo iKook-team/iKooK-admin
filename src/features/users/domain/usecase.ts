@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllAdminsResponse, GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
 import { useEffect, useMemo, useState } from 'react';
-import { UserType } from './types.ts';
+import { ChefService, UserType } from './types.ts';
 import { GenericResponse } from '../../../app/data/dto.ts';
 import { User } from '../data/model.ts';
 import axios from 'axios';
@@ -10,20 +10,7 @@ import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
-  const services = useMemo(
-    () => [
-      'Chef at Home',
-      'Cooking Class',
-      'Meal Delivery',
-      'Large Event',
-      'Meal Prep',
-      'Fine Dining',
-      'Corporate Dining',
-      'Box Grocery',
-      'Eating Coach'
-    ],
-    []
-  );
+  const services = useMemo(() => Object.values(ChefService), []);
 
   const [filter, setFilter] = useState<string>(filters[0]);
   const [service, setService] = useState<string | undefined>(
