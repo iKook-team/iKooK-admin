@@ -33,7 +33,7 @@ export default function InputField(
 export function DropdownField(
   props: InputHTMLAttributes<HTMLSelectElement> &
     Omit<InputContainerProps, 'children'> & {
-      options: string[];
+      options?: string[];
       'get-label'?: (value: string) => string;
     }
 ) {
@@ -48,7 +48,7 @@ export function DropdownField(
             {props.placeholder}
           </option>
         )}
-        {props.options.map((option) => (
+        {props.options?.map((option) => (
           <option key={option} className="capitalize" value={option}>
             {props['get-label'] ? props['get-label'](option) : option}
           </option>

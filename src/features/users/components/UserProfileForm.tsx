@@ -1,7 +1,7 @@
-import InputField, { InputContainer } from '../../../app/components/InputField.tsx';
+import InputField, { DropdownField, InputContainer } from '../../../app/components/InputField.tsx';
 import { UserType } from '../domain/types.ts';
 import MultiSelectDropdown from './MultiSelectDropDown.tsx';
-import { chefProfileFields, hostProfileFields } from '../domain/fields.ts';
+import { adminProfileFields, chefProfileFields, hostProfileFields } from '../domain/fields.ts';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
@@ -9,6 +9,7 @@ import { adminProfileSchema, chefProfileSchema, userProfileSchema } from '../dom
 import { User } from '../data/model.ts';
 import { extractInitialValues } from '../../../utils/zodValidator.ts';
 import DragAndDropImage, { DragAndDropImageRef } from './DragAndDropImage.tsx';
+import countries from '../../../app/assets/raw/countries.json';
 
 interface UserProfileFormProps {
   user?: User;
@@ -18,13 +19,19 @@ interface UserProfileFormProps {
 
 export interface UserProfileFormRef {
   handleSubmit: () => Promise<void>;
+  reset: () => void;
 }
 
 const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
   ({ user, type, onSave }, ref) => {
     const imageRef = useRef<DragAndDropImageRef>(null);
 
-    const fields = type === UserType.chef ? chefProfileFields : hostProfileFields;
+    const fields =
+      type === UserType.admin
+        ? adminProfileFields
+        : type === UserType.chef
+          ? chefProfileFields
+          : hostProfileFields;
     const schema =
       type === UserType.admin
         ? adminProfileSchema
@@ -78,7 +85,8 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
               toast(formik.errors[key], { type: 'error' });
             });
           }
-        }
+        },
+        reset: () => formik.resetForm()
       }),
       [formik]
     );
@@ -86,32 +94,55 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
     return (
       <form
         onSubmit={formik.handleSubmit}
-        className="grid grid-cols-2 gap-4 w-full lg:w-[90%] self-start"
+        className="grid grid-cols-2 gap-8 w-full lg:w-[90%] self-start"
       >
         {fields.map((field) => {
           const touched = formik.touched[field.id as keyof typeof formik.touched];
           const error = formik.errors[field.id as keyof typeof formik.errors];
-          return (
-            <InputField
-              key={field.id}
-              label={field.label}
-              name={field.id}
-              type={field.type}
-              placeholder={field.placeholder}
-              onChange={formik.handleChange}
-              className={`mb-4 ${field.hidden ? 'hidden' : ''} ${field.id === 'first_name' || field.id === 'last_name' ? '' : 'col-span-2'}`}
-              // @ts-expect-error ignore this useless typescript error
-              value={formik.values[field.id] || ''}
-              onBlur={formik.handleBlur} // ✅ Handles input blur events
-              error={
-                touched && error
-                  ? Array.isArray(error)
-                    ? (error as string[]).join(', ')
-                    : (error as string)
-                  : undefined
-              }
-            />
-          );
+          const errorMessage =
+            touched && error
+              ? Array.isArray(error)
+                ? (error as string[]).join(', ')
+                : (error as string)
+              : undefined;
+          if (field.type === 'multiselect') {
+            return (
+              <InputContainer key={field.id} error={errorMessage} className="col-span-2">
+                <MultiSelectDropdown
+                  title={field.label!}
+                  options={['African', 'Modern English', 'Italian', 'Chinese', 'Mexican', 'Indian']}
+                  // @ts-expect-error ignore this useless typescript error
+                  value={formik.values[field.id] || ''}
+                  onChange={formik.handleChange}
+                />
+              </InputContainer>
+            );
+          } else {
+            const Field = field.type === 'select' ? DropdownField : InputField;
+            return (
+              <Field
+                key={field.id}
+                label={field.label}
+                name={field.id}
+                type={field.type}
+                placeholder={field.placeholder}
+                onChange={formik.handleChange}
+                className={`${field.hidden ? 'hidden' : ''} ${field.id === 'first_name' || field.id === 'last_name' ? '' : 'col-span-2'}`}
+                // @ts-expect-error ignore this useless typescript error
+                value={formik.values[field.id] || ''}
+                onBlur={formik.handleBlur}
+                error={errorMessage}
+                options={
+                  field.id === 'country'
+                    ? Object.keys(countries)
+                    : field.id === 'city' && formik.values.country
+                      ? // @ts-expect-error ignore this useless typescript error
+                        countries[formik.values.country]
+                      : field.options
+                }
+              />
+            );
+          }
         })}
         {type === UserType.chef && (
           <div className="col-span-2 flex flex-col gap-5">
@@ -151,27 +182,6 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
                 />
               </InputContainer>
             </div>
-          </div>
-        )}
-        {type === UserType.host && (
-          <div className="col-span-2">
-            <InputContainer
-              label={'Brief description'}
-              error={formik.touched.bio && formik.errors.bio ? formik.errors.bio : undefined}
-            >
-              <div className="border-b" />
-              <div className="h-[200px] items-stretch">
-                <textarea
-                  key="bio"
-                  name="bio"
-                  className={`h-full w-full input input-bordered p-3 ${formik.errors.bio ? 'input-error' : ''}`}
-                  placeholder="John Smith was born in a small town in the Midwest. He grew up with a love of learning and a passion for science and technology. After graduating from high school, he attended a prestigious university where he earned a degree in electrical engineering. He then landed a job at a top technology company, where he quickly rose through the ranks to become a lead engineer.John has always been an innovator, and he is known for his ability to think outside the box and come up with new, creative solutions to complex problems. He has been credited with several patents for his inventions and is respected throughout the industry for his technical expertise and leadership skills."
-                  onChange={formik.handleChange}
-                  value={formik.values.bio || ''}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
-            </InputContainer>
           </div>
         )}
         <div className="col-span-2 w-full">

@@ -34,9 +34,10 @@ export default function NewUserScreen() {
           if (mutation.isPending) {
             return;
           }
-          mutation
-            .mutateAsync(user)
-            .then(() => toast(`${type} created successfully`, { type: 'success' }));
+          mutation.mutateAsync(user).then(() => {
+            toast(`${type} created successfully`, { type: 'success' });
+            formRef.current?.reset();
+          });
         }}
       />
 

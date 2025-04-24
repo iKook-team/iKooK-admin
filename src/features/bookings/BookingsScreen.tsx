@@ -79,7 +79,6 @@ export default function BookingsScreen() {
         dropdown={filter}
         dropdownOptions={filters}
         onDropdown={setFilter}
-        button="New Booking"
       />
       <PageTable
         isFetching={isPending}

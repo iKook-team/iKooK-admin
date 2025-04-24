@@ -1,7 +1,7 @@
 import Field from '../../../app/domain/field.ts';
 import { fromSnakeOrCamelCase } from '../../../utils/strings.ts';
 
-export const hostProfileFields: Field[] = [
+export const adminProfileFields: Field[] = [
   {
     id: 'first_name',
     placeholder: 'Sandra',
@@ -31,6 +31,23 @@ export const hostProfileFields: Field[] = [
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 
+export const hostProfileFields: Field[] = adminProfileFields.concat(
+  {
+    id: 'country',
+    label: 'Country of residence',
+    placeholder: 'Select a country',
+    type: 'select',
+    readonly: true
+  },
+  {
+    id: 'city',
+    label: 'city/state',
+    placeholder: 'Select a city/state',
+    type: 'select',
+    readonly: true
+  }
+);
+
 export const chefProfileFields: Field[] = hostProfileFields.concat(
   [
     {
@@ -39,35 +56,33 @@ export const chefProfileFields: Field[] = hostProfileFields.concat(
       type: 'date'
     },
     {
-      id: 'country',
-      label: 'Country of residence',
-      placeholder: 'United Kingdom',
-      type: 'text',
-      readonly: true
-    },
-    {
-      id: 'city',
-      label: 'city/state',
-      placeholder: 'London',
-      type: 'text',
-      readonly: true
-    },
-    {
       id: 'address',
       label: 'Your address',
       placeholder: 'Enter address',
       type: 'text'
     },
     {
-      id: 'postcode',
+      id: 'postal_code',
       label: 'Postal Code',
       placeholder: 'Enter post code',
       type: 'text'
     },
+    // {
+    //   id: 'bio',
+    //   placeholder: 'Let us know few things about your experience',
+    //   type: 'text'
+    // },
     {
-      id: 'brief_profile',
-      placeholder: 'Let us know few things about your experience',
-      type: 'text'
+      id: 'service_type',
+      label: 'Service Type',
+      placeholder: 'Select service type',
+      type: 'select'
+    },
+    {
+      id: 'chef_services',
+      label: 'Chef Services',
+      placeholder: 'Select chef services',
+      type: 'multiselect'
     }
   ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }))
 );

@@ -112,7 +112,12 @@ export function useCreateUser(type: UserType) {
   return useMutation({
     mutationFn: async (request: FormData) => {
       const response = await fetch({
-        url: type === UserType.admin ? 'users/admins/' : `users/auth/signup/`,
+        url:
+          type === UserType.admin
+            ? 'users/admins/'
+            : type === UserType.chef
+              ? 'users/admins/create-chef/'
+              : 'users/admins/create-host/',
         method: 'POST',
         data: request
       });
