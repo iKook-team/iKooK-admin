@@ -1,6 +1,4 @@
-import InputField, { DropdownField, InputContainer } from '../../../app/components/InputField.tsx';
 import { ChefService, UserType } from '../domain/types.ts';
-import MultiSelectDropdown from './MultiSelectDropDown.tsx';
 import {
   adminProfileFields,
   chefProfileFields,
@@ -20,6 +18,8 @@ import { User } from '../data/model.ts';
 import { extractInitialValues } from '../../../utils/zodValidator.ts';
 import DragAndDropImage, { DragAndDropImageRef } from './DragAndDropImage.tsx';
 import countries from '../../../app/assets/raw/countries.json';
+import FormField from '../../../app/components/FormField.tsx';
+import { getFormikErrorForId } from '../../../utils/formik.ts';
 
 interface UserProfileFormProps {
   user?: User;
@@ -111,56 +111,29 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
         onSubmit={formik.handleSubmit}
         className="grid grid-cols-2 gap-8 w-full lg:w-[90%] self-start"
       >
-        {fields.map((field) => {
-          const touched = formik.touched[field.id as keyof typeof formik.touched];
-          const error = formik.errors[field.id as keyof typeof formik.errors];
-          const errorMessage =
-            touched && error
-              ? Array.isArray(error)
-                ? (error as string[]).join(', ')
-                : (error as string)
-              : undefined;
-          if (field.type === 'multiselect') {
-            return (
-              <InputContainer key={field.id} error={errorMessage} className="col-span-2">
-                <MultiSelectDropdown
-                  title={field.label!}
-                  options={field.id === 'chef_services' ? Object.values(ChefService) : []}
-                  // @ts-expect-error ignore this useless typescript error
-                  value={formik.values[field.id] || []}
-                  onChange={(current) => formik.setFieldValue(field.id, current)}
-                />
-              </InputContainer>
-            );
-          } else {
-            const Field = field.type === 'select' ? DropdownField : InputField;
-            return (
-              <Field
-                key={field.id}
-                label={field.label}
-                name={field.id}
-                type={field.type}
-                placeholder={field.placeholder}
-                onChange={formik.handleChange}
-                className={`${field.hidden ? 'hidden' : ''} ${field.id === 'first_name' || field.id === 'last_name' ? '' : 'col-span-2'}`}
-                // @ts-expect-error ignore this useless typescript error
-                value={formik.values[field.id] || ''}
-                onBlur={formik.handleBlur}
-                error={errorMessage}
-                options={
-                  field.id === 'country'
-                    ? Object.keys(countries)
-                    : field.id === 'city' && formik.values.country
-                      ? // @ts-expect-error ignore this useless typescript error
-                        countries[formik.values.country]
-                      : field.id === 'service_type'
-                        ? ['Chef', ChefService.boxGrocery]
-                        : field.options
-                }
-              />
-            );
-          }
-        })}
+        {fields.map((field) => (
+          <FormField
+            key={field.id}
+            field={field}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange(field.id)}
+            className={`${field.id === 'first_name' || field.id === 'last_name' ? '' : 'col-span-2'}`}
+            value={formik.values[field.id]}
+            error={getFormikErrorForId(formik, field.id)}
+            options={
+              field.id === 'chef_services'
+                ? Object.values(ChefService)
+                : field.id === 'country'
+                  ? Object.keys(countries)
+                  : field.id === 'city' && formik.values.country
+                    ? // @ts-expect-error ignore this useless typescript error
+                      countries[formik.values.country]
+                    : field.id === 'service_type'
+                      ? ['Chef', ChefService.boxGrocery]
+                      : field.options
+            }
+          />
+        ))}
         <div className="col-span-2 w-full">
           <DragAndDropImage ref={imageRef} />
         </div>

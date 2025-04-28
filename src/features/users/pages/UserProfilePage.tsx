@@ -1,7 +1,5 @@
 import { UserPageProps } from '../domain/types.ts';
 import UserSettingsTitle from '../components/UserSettingsTitle.tsx';
-import InputField from '../../../app/components/InputField.tsx';
-import Field from '../../../app/domain/field.ts';
 import { useUpdateUser } from '../domain/usecase.ts';
 import { toast } from 'react-toastify';
 import UserProfileForm, { UserProfileFormRef } from '../components/UserProfileForm.tsx';
@@ -32,29 +30,5 @@ export default function UserProfilePage({ user, type }: UserPageProps) {
         }}
       />
     </div>
-  );
-}
-
-export function ProfileField({
-  field,
-  value,
-  onChange,
-  className
-}: {
-  field: Field;
-  value?: string | number | readonly string[] | undefined;
-  onChange?: (value: string) => void;
-  className?: string;
-}) {
-  return (
-    <InputField
-      id={field.id}
-      label={field.label}
-      value={value}
-      placeholder={field.placeholder}
-      onChange={(e) => onChange?.(e.target.value)}
-      readOnly={field.readonly}
-      className={className}
-    />
   );
 }

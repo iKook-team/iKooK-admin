@@ -23,7 +23,7 @@ import CalendarScreen from '../features/calendar/CalendarScreen.tsx';
 import ReportsScreen from '../features/reports/ReportsScreen.tsx';
 import NewUserScreen from '../features/users/NewUserScreen.tsx';
 import SettingsScreen from '../features/settings/SettingsScreen.tsx';
-import NewMenu from '../features/menus/NewMenu.tsx';
+import CreateMenuScreen from '../features/menus/CreateMenuScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -58,7 +58,7 @@ export default function Routes() {
                 }
               ]),
               { path: 'menus', element: <MenusScreen /> },
-              { path: 'menus/new', element: <NewMenu /> },
+              { path: 'menus/new', element: <CreateMenuScreen /> },
               { path: 'bookings', element: <BookingsScreen /> },
               {
                 path: `bookings/:id`,

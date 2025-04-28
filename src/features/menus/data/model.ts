@@ -22,9 +22,11 @@ export interface Menu {
 }
 
 export interface MenuImage {
-  id: number;
+  id?: number;
   image: string;
-  menu: number;
+  menu?: number;
+  deleted?: boolean;
+  file?: File;
 }
 
 export interface MenuItem {

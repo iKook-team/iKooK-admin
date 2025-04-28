@@ -5,12 +5,12 @@ import PageLoading from '../../../app/components/page/PageLoading.tsx';
 import { MenuCourse, MenuItem, MenuStatus } from '../data/model.ts';
 import { ReactSVG } from 'react-svg';
 import checkbox from '../../../app/assets/icons/checkbox.svg';
-import Constants from '../../../utils/constants.ts';
 import { formatCurrency } from '../../../utils/helper.ts';
 import ImageViewerModal from '../../../app/components/ImageViewerModal.tsx';
 import { LoadingSpinner } from '../../../app/components/LoadingSpinner.tsx';
 import ChangeMenuStatusModal from './ChangeMenuStatusModal.tsx';
 import { getCurrentFromRef } from '../../../utils/ref.ts';
+import MenuImage from './MenuImage.tsx';
 
 interface MenuDetailsModalProps {
   id?: number;
@@ -127,19 +127,6 @@ function MenuCategoryItem(props: { title: string; items: MenuItem[] }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function MenuImage({ src, onClick }: { src: string; onClick: (src: string) => void }) {
-  const image = Constants.getAssetUrl(src, 'menus');
-  return (
-    <div
-      className="flex-shrink-0 max-w-[9.375rem] aspect-square relative"
-      onClick={image ? () => onClick(image) : undefined}
-    >
-      <img src={image} alt="menu" className="w-full h-full rounded-2xl object-cover block" />
-      <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-black-base/25 to-black-base/50 rounded-2xl" />
     </div>
   );
 }

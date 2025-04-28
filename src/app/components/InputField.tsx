@@ -9,12 +9,18 @@ interface InputContainerProps {
   children: ReactNode;
 }
 
-export default function InputField(
-  props: InputHTMLAttributes<HTMLInputElement> &
-    Omit<InputContainerProps, 'children'> & {
-      trailing?: ReactNode;
-    }
-) {
+export type InputFieldProps = InputHTMLAttributes<HTMLInputElement> &
+  Omit<InputContainerProps, 'children'> & {
+    trailing?: ReactNode;
+  };
+
+export type DropdownFieldProps = InputHTMLAttributes<HTMLSelectElement> &
+  Omit<InputContainerProps, 'children'> & {
+    options?: string[];
+    'get-label'?: (value: string) => string;
+  };
+
+export default function InputField(props: InputFieldProps) {
   return (
     <InputContainer {...props}>
       <div

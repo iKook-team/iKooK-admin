@@ -1,26 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import ArrowDown from '../../../app/assets/icons/arrow-down.svg';
 
 interface MultiSelectDropdownProps {
   title: string;
-  options: string[];
+  options?: string[];
   value: string[];
-  onChange: (value: string[]) => void;
+  onChange: ChangeEventHandler<string[]>;
+  placeholder?: string;
 }
 
 export default function MultiSelectDropdown({
   title,
   options,
   value = [],
-  onChange
+  onChange,
+  placeholder
 }: MultiSelectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleSelection = (item: string, event: MouseEvent) => {
     event.stopPropagation(); // Prevent closing dropdown on click
-    onChange(value.includes(item) ? value.filter((i) => i !== item) : [...value, item]);
+    onChange({
+      ...event,
+      target: {
+        ...event.target,
+        value: value.includes(item) ? value.filter((i) => i !== item) : [...value, item]
+      }
+    });
   };
 
   // Close dropdown when clicking outside
@@ -52,7 +60,7 @@ export default function MultiSelectDropdown({
               </span>
             ))
           ) : (
-            <span className="text-gray-400">Select cuisine</span>
+            <span className="text-gray-400">{placeholder || 'Select Cuisine'}</span>
           )}
         </div>
         <ReactSVG src={ArrowDown} className="ml-auto text-gray-600 w-4" wrapper="span" />
@@ -60,7 +68,7 @@ export default function MultiSelectDropdown({
 
       {isOpen && (
         <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-md">
-          {options.map((option) => (
+          {options?.map((option) => (
             <div
               key={option}
               className={`p-2 cursor-pointer ${

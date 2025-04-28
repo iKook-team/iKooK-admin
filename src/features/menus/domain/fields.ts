@@ -1,47 +1,97 @@
-import Field from "../../../app/domain/field";
-import { fromSnakeOrCamelCase } from "../../../utils/strings";
+import Field from '../../../app/domain/field';
+import { fromSnakeOrCamelCase } from '../../../utils/strings';
+import { CuisineTypeEnum, EventTypeEnum } from './types.ts';
+import { ChefService } from '../../users/domain/types.ts';
+import { CourseTypeEnum } from './schema.ts';
 
-export const newMenuFields: Field[] = [
+export const createMenuFields: Field[] = [
   {
-    id: 'menu_name',
-    label : "Menu name",
-    placeholder: 'What is the menu name',
+    id: 'name',
+    label: 'Menu name',
+    placeholder: 'What is the menu name?',
     type: 'text'
   },
   {
-    id: 'price',
-    label : 'price',
+    id: 'price_per_person',
+    label: 'Price',
     placeholder: 'Price per person',
-    type: 'text'
+    type: 'number'
   },
   {
-    id: 'min_guest_number',
-    label : 'Minimum number of guests',
-    placeholder: 'What is the minimum of guests',
-    type: 'text'
+    id: 'num_of_guests',
+    label: 'Minimum number of guests',
+    placeholder: 'Minimum guests',
+    type: 'number'
   },
   {
     id: 'max_menu_selection',
     label: 'Maximum menu selection',
     placeholder: '3',
-    type: 'email'
+    type: 'number'
   },
   {
-    id: 'event_type',
-    label: 'event type',
+    id: 'event_types',
+    label: 'Event types',
     placeholder: '',
-    type: 'phone'
+    type: 'multiselect',
+    options: EventTypeEnum.options
   },
   {
-    id: 'cusine_type',
-    label: 'cusine type',
+    id: 'cuisine_types',
+    label: 'Cuisine types',
     placeholder: '',
-    type: 'phone'
+    type: 'multiselect',
+    options: CuisineTypeEnum.options
   },
   {
     id: 'menu_type',
-    label: 'cusine type',
-    placeholder: 'Chef at home',
-    type: 'phone'
+    label: 'Menu type',
+    placeholder: ChefService.chefAtHome,
+    options: [
+      ChefService.chefAtHome,
+      ChefService.fineDining,
+      ChefService.largeEvent,
+      ChefService.corporateDining,
+      ChefService.mealPrep,
+      ChefService.mealDelivery
+    ],
+    type: 'select'
+  },
+  {
+    id: 'courses',
+    label: 'Courses',
+    placeholder: 'Select',
+    type: 'multiselect',
+    options: CourseTypeEnum.options
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
+
+export const createMenuEntryFields: Field[] = [
+  {
+    id: 'selection_limit',
+    label: 'Course selection limit',
+    placeholder: 'What is the course selection limit?',
+    type: 'number'
+  },
+  {
+    id: 'extra_charge_per_person',
+    label: 'Extra charge per person',
+    placeholder: 'What is the extra charge per person?',
+    type: 'number'
+  }
+];
+
+export const createMenuItemsFields: Field[] = [
+  {
+    id: 'name',
+    label: 'Menu Item name',
+    placeholder: 'What is the menu item name?',
+    type: 'text'
+  },
+  {
+    id: 'description',
+    label: 'Menu Item description',
+    placeholder: 'What is the menu item description?',
+    type: 'text'
+  }
+];
