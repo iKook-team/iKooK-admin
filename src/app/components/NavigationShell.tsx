@@ -156,11 +156,11 @@ const sidebarItems = [
     icon: 'support',
     route: '/support'
   },
-  // {
-  //   title: 'Addons Services',
-  //   icon: 'addon',
-  //   route: '/addons'
-  // },
+  {
+    title: 'Addon Services',
+    icon: 'addon',
+    route: '/addons'
+  },
   {
     title: 'Withdrawal',
     icon: 'withdrawal',

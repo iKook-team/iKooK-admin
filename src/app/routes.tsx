@@ -24,6 +24,9 @@ import ReportsScreen from '../features/reports/ReportsScreen.tsx';
 import NewUserScreen from '../features/users/NewUserScreen.tsx';
 import SettingsScreen from '../features/settings/SettingsScreen.tsx';
 import CreateMenuScreen from '../features/menus/CreateMenuScreen.tsx';
+import AddonsScreen from '../features/addons/AddonsScreen.tsx';
+import { AddonType } from '../features/addons/domain/type.ts';
+import NewAddonScreen from '../features/addons/NewAddonScreen.tsx';
 
 export default function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
@@ -84,6 +87,16 @@ export default function Routes() {
                 path: 'support',
                 element: <SupportScreen />
               },
+              {
+                path: 'addons',
+                element: <AddonsScreen />
+              },
+              ...Object.values(AddonType).flatMap((type) => [
+                {
+                  path: `addons/${type}s/new`,
+                  element: <NewAddonScreen type={type} />
+                }
+              ]),
               {
                 path: 'withdrawal',
                 element: <WithdrawalScreen />
