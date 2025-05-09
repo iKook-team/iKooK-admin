@@ -30,7 +30,7 @@ export interface MenuImage {
 }
 
 export interface MenuItem {
-  id: number;
+  id?: number;
   course: MenuCourse;
   name: string;
   description: string;

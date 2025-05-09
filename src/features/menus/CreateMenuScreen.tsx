@@ -15,7 +15,7 @@ import { createMenuEntryFields, createMenuFields, createMenuItemsFields } from '
 import { getImageUrl } from '../../utils/getImageUrl.ts';
 import { getFormikErrorForId } from '../../utils/formik.ts';
 import { DragAndDropImageContainer } from '../users/components/DragAndDropImage.tsx';
-import { MenuImage as MenuImageType } from './data/model.ts';
+import { MenuCourse, MenuImage as MenuImageType, MenuItem } from './data/model.ts';
 import MenuImage from './components/MenuImage.tsx';
 import { useMutation } from '@tanstack/react-query';
 import fetch from '../../app/services/api.ts';
@@ -41,6 +41,29 @@ export default function CreateMenuScreen() {
       return fetch({
         url: `/users/admins/create-menu/`,
         method: 'POST',
+        data
+      });
+    }
+  });
+
+  const createMenuItemMutation = useMutation({
+    mutationFn: (data: MenuItem) => {
+      return fetch({
+        url: `/menus/items/`,
+        method: 'POST',
+        data
+      });
+    }
+  });
+
+  const createMenuImageMutation = useMutation({
+    mutationFn: (data: FormData) => {
+      return fetch({
+        url: `/menus/images/`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         data
       });
     }
@@ -96,8 +119,33 @@ export default function CreateMenuScreen() {
               {} as Record<string, number>
             )
           };
-          console.log(body);
           const response = await createMenuMutation.mutateAsync(body);
+          const menuId: number = response.data.data.id;
+          const items = Object.keys(entries).reduce((acc, course) => {
+            const entry = entries[course as keyof typeof entries];
+            if (entry && entry.items) {
+              acc.push(
+                ...entry.items.map((item) => ({
+                  ...item,
+                  course: course as MenuCourse,
+                  menu: menuId
+                }))
+              );
+            }
+            return acc;
+          }, [] as MenuItem[]);
+          await Promise.allSettled([
+            ...items.map((item) => createMenuItemMutation.mutateAsync(item)),
+            ...images.map((image) => {
+              const formData = new FormData();
+              formData.append('image', image.file!);
+              formData.append('menu', menuId.toString());
+              return createMenuImageMutation.mutateAsync(formData);
+            })
+          ]);
+          toast(`Successfully created menu`, {
+            type: 'success'
+          });
         } catch (_) {
           // do nothing
         }

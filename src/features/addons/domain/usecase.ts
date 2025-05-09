@@ -68,6 +68,9 @@ export function useCreateAddon(type: AddonType) {
       const response = await fetch({
         url: type === AddonType.service ? 'addons/' : 'addons/clients/',
         method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         data: request
       });
       return response.data;

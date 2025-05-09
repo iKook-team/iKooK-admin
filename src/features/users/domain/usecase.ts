@@ -86,6 +86,9 @@ export function useUpdateUser(type: UserType) {
       return fetch({
         url: `/users/profiles/${id}/`,
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         data
       });
     },
@@ -106,6 +109,9 @@ export function useCreateUser(type: UserType) {
               ? 'users/admins/create-chef/'
               : 'users/admins/create-host/',
         method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         data: request
       });
       return response.data;
