@@ -10,7 +10,7 @@ import {
 import { z } from 'zod';
 import FormField from '../../app/components/FormField.tsx';
 import PageBackButton from '../../app/components/page/PageBackButton.tsx';
-import { Fragment, useCallback, useMemo, useState, useTransition } from 'react';
+import { Fragment, useCallback, useMemo, useRef, useState, useTransition } from 'react';
 import { createMenuEntryFields, createMenuFields, createMenuItemsFields } from './domain/fields';
 import { getImageUrl } from '../../utils/getImageUrl.ts';
 import { getFormikErrorForId } from '../../utils/formik.ts';
@@ -19,6 +19,9 @@ import { MenuImage as MenuImageType } from './data/model.ts';
 import MenuImage from './components/MenuImage.tsx';
 import { useMutation } from '@tanstack/react-query';
 import fetch from '../../app/services/api.ts';
+import SearchUsersModal from '../users/components/SearchUsersModal.tsx';
+import { getCurrentFromRef } from '../../utils/ref.ts';
+import { UserType } from '../users/domain/types.ts';
 
 const combinedSchema = createMenuSchema.merge(createMenuEntriesSchema);
 type FormValues = z.infer<typeof combinedSchema>;
@@ -26,12 +29,14 @@ type FormValues = z.infer<typeof combinedSchema>;
 export default function CreateMenuScreen() {
   const [page, setPage] = useState(0);
   const [images, setImages] = useState<MenuImageType[]>([]);
+
+  const selectUserModal = useRef<HTMLDialogElement>(null);
   const [isPending, startTransition] = useTransition();
 
   const createMenuMutation = useMutation({
     mutationFn: (data: FormValues) => {
       return fetch({
-        url: `/menus/`,
+        url: `/users/admins/create-menu/`,
         method: 'POST',
         data
       });
@@ -241,6 +246,9 @@ export default function CreateMenuScreen() {
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange(field.id)}
                   error={formik.touched[field.id] && getFormikErrorForId(formik, field.id)}
+                  onClick={
+                    field.id === 'chef_id' ? () => selectUserModal.current?.showModal() : undefined
+                  }
                 />
               ))}
             </>
@@ -348,6 +356,16 @@ export default function CreateMenuScreen() {
             </button>
           </div>
         </form>
+
+        <SearchUsersModal
+          ref={selectUserModal}
+          onUserSelected={(user) => {
+            formik
+              .setFieldValue('chef_id', user.id)
+              .then(() => getCurrentFromRef(selectUserModal)?.close());
+          }}
+          type={UserType.chef}
+        />
       </div>
     </>
   );

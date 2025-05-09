@@ -63,6 +63,12 @@ export const createMenuFields: Field[] = [
     placeholder: 'Select',
     type: 'multiselect',
     options: CourseTypeEnum.options
+  },
+  {
+    id: 'chef_id',
+    label: 'Chef',
+    placeholder: 'Chef Ayo',
+    type: 'text'
   }
 ].map((field) => ({ ...field, label: field.label || fromSnakeOrCamelCase(field.id) }));
 

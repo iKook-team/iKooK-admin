@@ -39,6 +39,7 @@ export const createMenuSchema = z.object({
     .min(1, { message: 'At least one cuisine type is required' }),
   menu_type: z.string().min(1, { message: 'Menu type is required' }),
   courses: z.array(CourseTypeEnum).min(1, { message: 'At least one course is required' }),
+  chef_id: z.number().int().min(1, { message: 'Chef ID is required' }),
   status: z.enum(['Active', 'Inactive'])
 });
 
