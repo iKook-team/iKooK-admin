@@ -32,14 +32,14 @@ export const createMenuFields: Field[] = [
   {
     id: 'event_types',
     label: 'Event types',
-    placeholder: '',
+    placeholder: 'Select Events',
     type: 'multiselect',
     options: EventTypeEnum.options
   },
   {
     id: 'cuisine_types',
     label: 'Cuisine types',
-    placeholder: '',
+    placeholder: 'Select Cuisines',
     type: 'multiselect',
     options: CuisineTypeEnum.options
   },

@@ -22,8 +22,11 @@ import fetch from '../../app/services/api.ts';
 import SearchUsersModal from '../users/components/SearchUsersModal.tsx';
 import { getCurrentFromRef } from '../../utils/ref.ts';
 import { UserType } from '../users/domain/types.ts';
+import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
+import { isDev } from '../../app/environment.ts';
 
 const combinedSchema = createMenuSchema.merge(createMenuEntriesSchema);
+const numberOfImages = isDev() ? 1 : 5;
 type FormValues = z.infer<typeof combinedSchema>;
 
 export default function CreateMenuScreen() {
@@ -64,15 +67,40 @@ export default function CreateMenuScreen() {
       return withZodSchema(currentSchema)(values);
     },
     onSubmit: async (values) => {
-      console.log('Submitting form with values:', values);
       if (isPending) {
         return;
       }
       const { entries, ...data } = values;
       startTransition(async () => {
         try {
-          const response = await createMenuMutation.mutateAsync(data);
-        } catch (_) {}
+          const body = {
+            ...data,
+            courses_extra_charge_per_person: Object.keys(entries).reduce(
+              (acc, course) => {
+                const entry = entries[course as keyof typeof entries];
+                if (entry && entry.extra_charge_per_person) {
+                  acc[course] = entry.extra_charge_per_person;
+                }
+                return acc;
+              },
+              {} as Record<string, number>
+            ),
+            courses_selection_limit: Object.keys(entries).reduce(
+              (acc, course) => {
+                const entry = entries[course as keyof typeof entries];
+                if (entry && entry.selection_limit) {
+                  acc[course] = entry.selection_limit;
+                }
+                return acc;
+              },
+              {} as Record<string, number>
+            )
+          };
+          console.log(body);
+          const response = await createMenuMutation.mutateAsync(body);
+        } catch (_) {
+          // do nothing
+        }
       });
     }
   });
@@ -154,8 +182,8 @@ export default function CreateMenuScreen() {
         }
       }
       return;
-    } else if (images.length < 5) {
-      toast.error('Please upload at least 5 images');
+    } else if (images.length < numberOfImages) {
+      toast.error(`Please upload at least ${numberOfImages} images`);
       return;
     }
 
@@ -351,8 +379,15 @@ export default function CreateMenuScreen() {
             >
               Back
             </button>
-            <button type="button" onClick={onContinue} className="btn btn-primary min-w-32">
-              {isLastPage ? 'Submit' : 'Continue'}
+            <button
+              type="button"
+              onClick={onContinue}
+              className="btn btn-primary min-w-32"
+              disabled={isPending}
+            >
+              <LoadingSpinner isLoading={isPending}>
+                {isLastPage ? 'Submit' : 'Continue'}
+              </LoadingSpinner>
             </button>
           </div>
         </form>
