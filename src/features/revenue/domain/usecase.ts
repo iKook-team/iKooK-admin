@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import fetch from '../../../app/services/api.ts';
-import {
-  GetAllPaymentsResponse,
-  GetRevenueInsightsResponse,
-  GetRevenueOverviewResponse
-} from './dto.ts';
+import { GetAllPaymentsResponse, GetRevenueInsightsResponse, GetRevenueOverviewResponse } from './dto.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 import { useMemo } from 'react';
 import { parseAsInteger, useQueryState } from 'nuqs';
@@ -50,7 +46,7 @@ export function useFetchRevenueInsightsQuery(filter: string) {
 }
 
 export function useFetchPaymentsQuery() {
-  const filters = useMemo(() => ['all', 'failed', 'pending', 'success'], []);
+  const filters = useMemo(() => ['All', 'Failed', 'Pending', 'Completed'], []);
   const [filter, setFilter] = useQueryState('status', {
     defaultValue: filters[0]
   });
@@ -66,7 +62,7 @@ export function useFetchPaymentsQuery() {
     queryFn: async ({ queryKey }) => {
       const [_, status, page, search] = queryKey;
       const response = await fetch({
-        url: `admin/get-payments?page_number=${page}&page_size=20${status === 'all' ? '' : `&status=${status}`}${search ? `&search=${search}` : ''}`,
+        url: `payments?page=${page}&page_size=20${status === 'All' ? '' : `&status=${status}`}${search ? `&search=${search}` : ''}`,
         method: 'GET'
       });
       return response.data as GetAllPaymentsResponse;

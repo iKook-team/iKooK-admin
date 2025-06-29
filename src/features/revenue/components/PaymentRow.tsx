@@ -10,12 +10,12 @@ interface PaymentRowProps extends Payment {
 }
 
 export default function PaymentRow(props: PaymentRowProps) {
-  const { user } = props;
+  const { host } = props;
   return (
     <tr>
       <td>
-        {user ? (
-          <UsernameAndImage name={`${user.first_name} ${user.last_name}`} image={user.avatar} />
+        {host ? (
+          <UsernameAndImage name={`${host.first_name} ${host.last_name}`} image={host.avatar} />
         ) : (
           '-'
         )}
@@ -24,7 +24,7 @@ export default function PaymentRow(props: PaymentRowProps) {
         <CalendarIcon />
         {getDateWithOrdinal(props.created_at, true)}
       </td>
-      <td>{formatCurrency(Number(props.amount), props.currency)}</td>
+      <td>{formatCurrency(Number(props.amount))}</td>
       <td>{capitalize(props.gateway, true)}</td>
       {props.children}
     </tr>
