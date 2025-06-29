@@ -14,6 +14,10 @@ interface UserRowProps extends User {
 }
 
 export default function UserRow(props: UserRowProps) {
+  const verified =
+    props.type === UserType.chef
+      ? props.identity_verified && props.document_verified
+      : props.identity_verified;
   return (
     <tr className={props.isSelected ? 'active' : undefined} onClick={props.onClick}>
       {props.leading}
@@ -45,9 +49,9 @@ export default function UserRow(props: UserRowProps) {
           />
         ) : (
           <ItemStatus
-            title={props.identity_verified ? 'Verified' : 'Not verified'}
-            circleColor={props.identity_verified ? 'bg-green' : 'bg-red-base'}
-            textColor={props.identity_verified ? 'text-green' : 'text-red-base'}
+            title={verified ? 'Verified' : 'Not verified'}
+            circleColor={verified ? 'bg-green' : 'bg-red-base'}
+            textColor={verified ? 'text-green' : 'text-red-base'}
           />
         )}
       </td>
