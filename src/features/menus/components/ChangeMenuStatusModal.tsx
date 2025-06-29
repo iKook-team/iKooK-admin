@@ -57,7 +57,7 @@ export default function ChangeMenuStatusModal({
       id="change-menu-status-modal"
       title={
         <>
-          Update <span className="text-jordy-blue">{`Chef ${menu?.chef?.username}'s `}</span>
+          Update <span className="text-jordy-blue">{`Chef ${menu?.chef?.first_name}'s `}</span>
           <span className="text-purple-taupe">{menu?.name}</span> status
         </>
       }
