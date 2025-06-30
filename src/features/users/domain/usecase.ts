@@ -2,15 +2,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import fetch, { queryClient } from '../../../app/services/api';
 import { GetAllAdminsResponse, GetAllUsersRequest, GetAllUsersResponse } from '../data/dto.ts';
 import { useEffect, useMemo, useState } from 'react';
-import { ChefService, UserType } from './types.ts';
-import { GenericResponse } from '../../../app/data/dto.ts';
-import { User } from '../data/model.ts';
-import axios from 'axios';
+import { ServiceType, UserType } from './types.ts';
+import { GenericResponse, PagedResponse } from '../../../app/data/dto.ts';
+import { ChefService, User } from '../data/model.ts';
 import useDebouncedValue from '../../../hooks/useDebouncedValue.ts';
 
 export function useFetchUsersQuery(request: GetAllUsersRequest) {
   const filters = useMemo(() => ['all', 'verified', 'unverified'], []);
-  const services = useMemo(() => Object.values(ChefService), []);
+  const services = useMemo(() => Object.values(ServiceType), []);
 
   const [filter, setFilter] = useState<string>(filters[0]);
   const [service, setService] = useState<string | undefined>(
@@ -80,6 +79,26 @@ export function useFetchUserQuery(type: UserType, id?: number | string) {
   };
 }
 
+export function useFetchChefServicesQuery(id?: number | string) {
+  const query = useQuery({
+    queryKey: [UserType.chef, id, 'services'],
+    queryFn: async ({ queryKey }) => {
+      const [_, id] = queryKey;
+      const response = await fetch({
+        url: `/services?chef_id=${id}`,
+        method: 'GET'
+      });
+      return response.data as PagedResponse<ChefService>;
+    },
+    enabled: !!id
+  });
+
+  return {
+    ...query,
+    data: query?.data?.results || []
+  };
+}
+
 export function useUpdateUser(type: UserType) {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<User> | FormData }) => {
@@ -120,73 +139,6 @@ export function useCreateUser(type: UserType) {
       void queryClient.invalidateQueries({ queryKey: [type] });
     }
   });
-}
-
-export function useUpdateUserAsset(type: UserType) {
-  return useMutation({
-    mutationFn: async (data: { file: string; name: string }) => {
-      const formData = new FormData();
-      // @ts-expect-error random error
-      formData.append(data.name, {
-        uri: data.file,
-        type: 'image/png',
-        name: `${data.name}.png`
-      });
-      return fetch({
-        url: type === UserType.admin ? 'users/admins/' : 'users/profiles/',
-        method: 'PATCH',
-        data: formData
-      });
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [type] });
-    }
-  });
-}
-
-export function useCheckUserNameValidity(username: string) {
-  const { isPending, data, error } = useQuery({
-    queryKey: ['usernameValidity', username],
-    queryFn: async ({ queryKey }) => {
-      const [_, username] = queryKey;
-
-      // const regex = ; // Matches any digit (0-9)
-
-      if (!username || username.length <= 3) {
-        throw new Error('Username should not be empty or less than 3 characters');
-      }
-
-      if (!/^[a-zA-Z\s]+$/.test(username)) {
-        throw new Error('Username should not contain a number or symbol');
-      }
-
-      try {
-        const response = await fetch({
-          url: `registration/username/validity-check/${username}`,
-          method: 'GET',
-          showError: false
-        });
-
-        return response.data;
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (err.response?.status === 409) {
-            throw new Error('Username already in use');
-          }
-        }
-        // Rethrow any other errors
-        throw new Error('Unknown error');
-      }
-    },
-    enabled: !!username, // Avoid querying if username is falsy
-    retry: false
-  });
-
-  return {
-    isPending,
-    successMsg: data?.message,
-    errorMsg: error?.message
-  };
 }
 
 export function useDeleteAccount(type: UserType) {

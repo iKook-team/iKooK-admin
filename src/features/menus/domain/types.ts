@@ -1,10 +1,5 @@
 import { z } from 'zod';
-
-export interface UpdateMenuStatusRequest {
-  menuId: string;
-  status: 'approve' | 'unapprove';
-  message?: string;
-}
+import { ServiceType } from '../../users/domain/types.ts';
 
 export const EventTypeEnum = z.enum(['Naming', 'Wedding', 'Gathering']);
 
@@ -18,3 +13,12 @@ export const CuisineTypeEnum = z.enum([
   'Spicy Mediterranean',
   'Pizza'
 ]);
+
+export const menuServices = [
+  ServiceType.chefAtHome,
+  ServiceType.fineDining,
+  ServiceType.largeEvent,
+  ServiceType.corporateDining,
+  ServiceType.mealPrep,
+  ServiceType.mealDelivery
+];

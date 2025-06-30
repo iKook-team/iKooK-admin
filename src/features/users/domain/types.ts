@@ -22,7 +22,7 @@ export interface UserPageProps {
   className?: string;
 }
 
-export enum ChefService {
+export enum ServiceType {
   chefAtHome = 'Chef at Home',
   cookingClass = 'Cooking Class',
   mealDelivery = 'Meal Delivery',
@@ -32,4 +32,25 @@ export enum ChefService {
   corporateDining = 'Corporate Dining',
   boxGrocery = 'Box Grocery',
   eatingCoach = 'Eating Coach'
+}
+
+export enum MealPrepAppearance {
+  monthly = 'Monthly',
+  weekly = 'Weekly'
+}
+
+export enum DeliveryOption {
+  physical = 'Physical',
+  delivery = 'Delivery'
+}
+
+export enum CookingClassAppearance {
+  physical = 'Physical',
+  virtual = 'Virtual'
+}
+
+export enum EatingCoachService {
+  mealPlanning = 'Meal Planning',
+  nutrition = 'Nutrition',
+  weightLoss = 'Weight Loss'
 }

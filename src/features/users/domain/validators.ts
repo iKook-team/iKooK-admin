@@ -1,4 +1,12 @@
 import * as Yup from 'yup';
+import { z } from 'zod';
+import {
+  CookingClassAppearance,
+  DeliveryOption,
+  EatingCoachService,
+  MealPrepAppearance,
+  ServiceType
+} from './types';
 
 export const chefAccountSchema = Yup.object().shape({
   billing_address: Yup.string().required('Billing address is required'),
@@ -14,28 +22,6 @@ export const chefAccountSchema = Yup.object().shape({
     .required('Iban code is required')
     .matches(/^\d+$/, 'Iban code must be numeric'),
   sort_code: Yup.string().required('Sort code is required')
-});
-
-export const chefServicesSchema = Yup.object().shape({
-  starting_price: Yup.string()
-    .required('Starting price is required')
-    .matches(/^\d+$/, 'Starting price must be a number'),
-
-  minimum_number_of_guests: Yup.string()
-    .required('Minimum number of guest is required')
-    .matches(/^\d+$/, 'Minimum number of guest must be a number'),
-
-  cuisine_type: Yup.string().required('Minimum number of guest is required')
-});
-
-export const chefSettingSchema = Yup.object().shape({
-  startingPrice: Yup.string()
-    .required('Starting price is required')
-    .matches(/^\d+$/, 'Starting price must be a number'),
-
-  minNoGuest: Yup.string()
-    .required('Minimum number of guest is required')
-    .matches(/^\d+$/, 'minimum number of guest must be a number')
 });
 
 export const adminProfileSchema = Yup.object({
@@ -63,3 +49,36 @@ export const chefProfileSchema = newChefProfileSchema.shape({
   cuisines: Yup.array().of(Yup.string()),
   date_of_birth: Yup.string().required('Date of birth is required')
 });
+
+export const chefServiceFormSchema = z.object({
+  availability: z.boolean().default(false),
+  starting_price_per_person: z.number().min(1, 'Starting price is required'),
+  min_num_of_guests: z.number().min(1, 'Minimum number of guests is required'),
+  cuisines: z.array(z.string()).min(1, 'Please select at least one cuisine type'),
+  events: z.array(z.string()).default([]),
+  cover_image: z.string().optional(),
+  meal_prep_appearance: z.array(z.nativeEnum(MealPrepAppearance)).default([]),
+  delivery_option: z.array(z.nativeEnum(DeliveryOption)).default([]),
+  deliveryTime: z.string().default(''),
+  cookingClassAppearance: z.array(z.nativeEnum(CookingClassAppearance)).default([]),
+  price_per_hour: z.number().default(0),
+  services: z.array(z.nativeEnum(EatingCoachService)).default([])
+});
+
+// Conditional validation based on service type
+export const createChefServiceValidationSchema = (serviceType: ServiceType) => {
+  return chefServiceFormSchema.refine(
+    (data) => {
+      // Validate price per hour for eating coach service
+      if (serviceType === ServiceType.eatingCoach && !isFinite(Number(data.price_per_hour))) {
+        return false;
+      }
+
+      return true;
+    },
+    {
+      message: 'Please fill in all required fields for this service type',
+      path: ['serviceSpecific']
+    }
+  );
+};

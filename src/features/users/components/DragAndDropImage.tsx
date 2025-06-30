@@ -7,47 +7,61 @@ export interface DragAndDropImageRef {
   clearImage: () => void;
 }
 
-type DragAndDropImageProps = object;
+interface DragAndDropImageProps {
+  onImageSelected: (image?: string) => void;
+  includeMargin?: boolean;
+}
 
-const DragAndDropImage = forwardRef<DragAndDropImageRef, DragAndDropImageProps>((_, ref) => {
-  const [image, setImage] = useState<string | null>(null);
-  const imageFile = useRef<File>(null);
+const DragAndDropImage = forwardRef<DragAndDropImageRef, DragAndDropImageProps>(
+  ({ onImageSelected, includeMargin = false }, ref) => {
+    const [image, setImage] = useState<string | null>(null);
+    const imageFile = useRef<File>(null);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      getImage: () => imageFile.current,
-      clearImage: () => {
+    const clearImage = useCallback(
+      () => () => {
         setImage(null);
+        onImageSelected(undefined);
         imageFile.current = null;
-      }
-    }),
-    []
-  );
+      },
+      [onImageSelected]
+    );
 
-  return (
-    <div className="flex justify-center mt-10 w-full gap-5 items-center h-60">
-      <DragAndDropImageContainer
-        className="w-[90%]"
-        onImageGotten={(file, preview) => {
-          imageFile.current = file;
-          setImage(preview);
-        }}
-      />
+    useImperativeHandle(
+      ref,
+      () => ({
+        getImage: () => imageFile.current,
+        clearImage
+      }),
+      [clearImage]
+    );
 
-      <div className="h-full aspect-[248/251] ">
-        {image ? (
-          <div className="relative h-full w-full">
-            <img src={image} alt="Dropped" className=" h-full w-full object-cover" />
-            <button className="absolute top-4 right-4" onClick={() => setImage(null)}>
-              <ReactSVG src={close} className="w-6 h-6" />
-            </button>
-          </div>
-        ) : null}
+    return (
+      <div
+        className={`flex justify-center ${includeMargin ? 'mt-10' : ''} w-full gap-5 items-center h-60`}
+      >
+        <DragAndDropImageContainer
+          className="w-[90%]"
+          onImageGotten={(file, preview) => {
+            imageFile.current = file;
+            setImage(preview);
+            onImageSelected(preview);
+          }}
+        />
+
+        <div className="h-full aspect-[248/251] ">
+          {image ? (
+            <div className="relative h-full w-full">
+              <img src={image} alt="Dropped" className=" h-full w-full object-cover" />
+              <button className="absolute top-4 right-4" onClick={clearImage}>
+                <ReactSVG src={close} className="w-6 h-6" />
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 export function DragAndDropImageContainer({
   onImageGotten,
@@ -68,19 +82,18 @@ export function DragAndDropImageContainer({
       if (
         (file && file.type.endsWith('jpeg')) ||
         file?.type.endsWith('png') ||
-        file?.type.endsWith('jpg')
+        file?.type.endsWith('jpg') ||
+        file?.type.endsWith('webp')
       ) {
         const reader = new FileReader();
-        console.log('File:');
         reader.onload = (e) => {
           if (e.target?.result) {
-            console.log('File loaded:');
             onImageGotten?.(file, e.target.result as string);
           }
         };
         reader.readAsDataURL(file);
       } else {
-        setError(errorMessage || 'Please select a valid image file (jpeg, png, or jpg).');
+        setError(errorMessage || 'Please select a valid image file (jpeg, png, jpg or webp).');
       }
     },
     [onImageGotten]
@@ -89,7 +102,6 @@ export function DragAndDropImageContainer({
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setError(''); // Clear any previous errors
-    console.log('File input drop:');
     onProcess(event.dataTransfer.files[0], 'Please drop a valid image file.');
   };
 
@@ -97,14 +109,11 @@ export function DragAndDropImageContainer({
     e.preventDefault();
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput?.click();
-
-    console.log('File input click:');
   };
 
   const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(''); // Clear any previous errors
     onProcess((event.target as HTMLInputElement)?.files?.[0]);
-    console.log('File input changed:');
   };
   return (
     <div

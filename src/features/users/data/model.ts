@@ -1,5 +1,5 @@
 import { CurrentUser } from '../../auth/data/model.ts';
-import { UserType } from '../domain/types.ts';
+import { ServiceType, UserType } from '../domain/types.ts';
 
 export interface User extends CurrentUser {
   username: string;
@@ -31,4 +31,25 @@ export interface User extends CurrentUser {
 export interface Role {
   id: string;
   name: string;
+}
+
+export interface ChefService {
+  id: number;
+  chef: User;
+  availability: boolean;
+  chef_service: ServiceType;
+  cover_image: string | null;
+  created_at: string;
+  updated_at: string;
+  starting_price_per_person: number;
+  min_num_of_guests: number;
+  cuisines: string[];
+  service: number;
+
+  // Optional fields for specific service types
+  meal_prep_appearance?: string;
+  delivery_option?: string;
+  events?: string[] | null;
+  price_per_hour?: string;
+  services?: string[];
 }

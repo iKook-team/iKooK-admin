@@ -8,7 +8,7 @@ import { User } from './data/model.ts';
 import UserProfilePage from './pages/UserProfilePage.tsx';
 import UserVerificationPage from './pages/UserVerificationPage.tsx';
 import ChefBankAccountPage from './pages/ChefBankAccountPage.tsx';
-import UserServicesPage from './pages/UserServicesPage.tsx';
+import ChefServicesPage from './pages/ChefServicesPage.tsx';
 import UserSettingsPage from './pages/UserSettingsPage.tsx';
 import { LoadingSpinner } from '../../app/components/LoadingSpinner.tsx';
 import { useQueryState } from 'nuqs';
@@ -67,7 +67,7 @@ function RenderTabContent({ tab, user, type }: { tab: UserHeaderTab; user: User;
         <ChefBankAccountPage user={user} type={type} />
       );
     case UserHeaderTab.services:
-      return <UserServicesPage user={user} type={type} />;
+      return <ChefServicesPage user={user} type={type} />;
     case UserHeaderTab.notification:
       return <UserSettingsPage user={user} type={type} select="notifications" />;
     case UserHeaderTab.password:

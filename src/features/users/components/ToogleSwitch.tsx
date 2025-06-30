@@ -43,12 +43,8 @@ export function ToggleCard({
   return (
     <div className={`${underline && 'border-b'} ${topLine && 'border-t'} ${className ?? ''}`}>
       <div className={`flex justify-between items-center w-[70%]`}>
-        <div className="">
-          <h1 className=" font-medium">{title}</h1>
-        </div>
-        <div className="">
-          <ToggleSwitch onToggle={onToggle} isOn={isOn} />
-        </div>
+        <h1 className="font-medium">{title}</h1>
+        <ToggleSwitch onToggle={onToggle} isOn={isOn} />
       </div>
     </div>
   );

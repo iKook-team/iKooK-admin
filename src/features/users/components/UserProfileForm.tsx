@@ -1,4 +1,4 @@
-import { ChefService, UserType } from '../domain/types.ts';
+import { ServiceType, UserType } from '../domain/types.ts';
 import {
   adminProfileFields,
   chefProfileFields,
@@ -122,14 +122,14 @@ const UserProfileForm = forwardRef<UserProfileFormRef, UserProfileFormProps>(
             error={getFormikErrorForId(formik, field.id)}
             options={
               field.id === 'chef_services'
-                ? Object.values(ChefService)
+                ? Object.values(ServiceType)
                 : field.id === 'country'
                   ? Object.keys(countries)
                   : field.id === 'city' && formik.values.country
                     ? // @ts-expect-error ignore this useless typescript error
                       countries[formik.values.country]
                     : field.id === 'service_type'
-                      ? ['Chef', ChefService.boxGrocery]
+                      ? ['Chef', ServiceType.boxGrocery]
                       : field.options
             }
           />

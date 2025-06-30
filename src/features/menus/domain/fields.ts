@@ -1,8 +1,8 @@
 import Field from '../../../app/domain/field';
 import { fromSnakeOrCamelCase } from '../../../utils/strings';
 import { CuisineTypeEnum, EventTypeEnum } from './types.ts';
-import { ChefService } from '../../users/domain/types.ts';
 import { CourseTypeEnum } from './schema.ts';
+import { ServiceType } from '../../users/domain/types.ts';
 
 export const createMenuFields: Field[] = [
   {
@@ -46,14 +46,14 @@ export const createMenuFields: Field[] = [
   {
     id: 'menu_type',
     label: 'Menu type',
-    placeholder: ChefService.chefAtHome,
+    placeholder: ServiceType.chefAtHome,
     options: [
-      ChefService.chefAtHome,
-      ChefService.fineDining,
-      ChefService.largeEvent,
-      ChefService.corporateDining,
-      ChefService.mealPrep,
-      ChefService.mealDelivery
+      ServiceType.chefAtHome,
+      ServiceType.fineDining,
+      ServiceType.largeEvent,
+      ServiceType.corporateDining,
+      ServiceType.mealPrep,
+      ServiceType.mealDelivery
     ],
     type: 'select'
   },
