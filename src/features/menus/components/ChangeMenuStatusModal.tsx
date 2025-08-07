@@ -39,11 +39,17 @@ export default function ChangeMenuStatusModal({
       return;
     }
 
+    const payload: any = {
+      status: state.status
+    };
+    
+    if (state.status === MenuStatus.review) {
+      payload.reject_reason = state.reason;
+    }
+    
     await mutation.mutateAsync({
       id: menu!.id,
-      data: {
-        status: state.status
-      }
+      data: payload
     });
     toast(`${menu?.name} updated successfully`, { type: 'success' });
     getCurrentFromRef(ref)?.close();
@@ -72,10 +78,10 @@ export default function ChangeMenuStatusModal({
               status: event.target.value as MenuStatus
             }))
           }
-          options={[MenuStatus.active, MenuStatus.pending]}
+          options={[MenuStatus.active, MenuStatus.pending, MenuStatus.review]}
           required={true}
         />
-        {state.status === MenuStatus.pending && (
+        {state.status === MenuStatus.review && (
           <InputField
             value={state.reason}
             label="Reason"

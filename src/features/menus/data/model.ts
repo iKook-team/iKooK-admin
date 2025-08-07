@@ -41,7 +41,8 @@ export enum MenuStatus {
   active = 'Active',
   draft = 'Draft',
   deleted = 'Deleted',
-  pending = 'Pending'
+  pending = 'Pending',
+  review = 'Review'
 }
 
 export enum MenuCourse {

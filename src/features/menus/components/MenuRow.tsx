@@ -34,14 +34,18 @@ export default function MenuRow(props: MenuRowProps) {
               ? 'bg-green'
               : props.status === MenuStatus.deleted || props.status === MenuStatus.pending
                 ? 'bg-red-base'
-                : 'bg-jordy-blue'
+                : props.status === MenuStatus.review
+                  ? 'bg-amber-500'
+                  : 'bg-jordy-blue'
           }
           textColor={
             props.status === MenuStatus.active
               ? 'text-green'
               : props.status === MenuStatus.deleted || props.status === MenuStatus.pending
                 ? 'text-red-base'
-                : 'text-jordy-blue'
+                : props.status === MenuStatus.review
+                  ? 'text-amber-600'
+                  : 'text-jordy-blue'
           }
         />
       </td>
