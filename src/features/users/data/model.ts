@@ -16,8 +16,8 @@ export interface User extends CurrentUser {
   num_reviews?: number;
   phone_number?: string;
   document_verified: boolean;
-  culinary_certificate: string;
-  identity_document: string;
+  culinary_certificate: string | null;
+  identity_document: string | null;
   identity_verified: boolean;
   identity_type: string;
   identity_number: string;

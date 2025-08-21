@@ -102,12 +102,11 @@ export function useFetchChefServicesQuery(id?: number | string) {
 export function useUpdateUser(type: UserType) {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<User> | FormData }) => {
+      const isForm = data instanceof FormData;
       return fetch({
         url: `/users/profiles/${id}/`,
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
+        ...(isForm ? { headers: { 'Content-Type': 'multipart/form-data' } } : {}),
         data
       });
     },

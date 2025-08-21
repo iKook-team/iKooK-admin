@@ -33,7 +33,7 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
     }
   };
 
-  const onImage = (image?: string) => {
+  const onImage = (image?: string | null) => {
     if (image) {
       setImage(image);
       getCurrentFromRef(imageViewerRef)?.showModal();
@@ -51,9 +51,12 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
       });
       await mutation.mutateAsync({
         id: user.id,
-        data: {
-          [type === 'identity' ? 'identity_verified' : 'document_verified']: accept
-        }
+        data:
+          type === 'document' && !accept
+            ? { document_verified: false, culinary_certificate: null }
+            : {
+                [type === 'identity' ? 'identity_verified' : 'document_verified']: accept
+              }
       });
       getCurrentFromRef(messageRef)?.close();
       toast(`${capitalize(type)} ${accept ? 'accepted' : 'rejected'} successfully`, {
@@ -115,7 +118,7 @@ function DocumentEntry(props: {
   title: string;
   subtitle: string;
   status?: string;
-  image?: string;
+  image?: string | null;
   onAction: (active: boolean) => void;
   onImage: () => void;
   loading?: UserVerificationLoading;
@@ -156,7 +159,7 @@ function DocumentEntry(props: {
         {!isSmallScreen && <DragAndDrop className="w-[55%]" />}
         <div className="basis-[25%] aspect-square relative">
           <img
-            src={props.image && Constants.getAssetUrl(props.image, 'verification')}
+            src={props.image ? Constants.getAssetUrl(props.image, 'verification') : undefined}
             alt={props.title}
             className="rounded-lg"
             style={{ objectFit: 'cover', width: '100%', height: '100%' }}
