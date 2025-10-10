@@ -85,7 +85,7 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
                 </button>
                 <button
                   className="btn btn-ghost border-silver-american"
-                  disabled={mutation.isPending || data?.status === MenuStatus.pending}
+                  disabled={mutation.isPending || data?.status !== MenuStatus.pending}
                   onClick={rejectMenu}
                 >
                   Reject menu
