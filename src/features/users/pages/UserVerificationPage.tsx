@@ -34,7 +34,19 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
   };
 
   const onImage = (image?: string | null) => {
-    if (image) {
+    if (!image) return;
+    
+    // Check if the image is a .heic file
+    if (image.toLowerCase().endsWith('.heic')) {
+      // Create a temporary link to trigger download
+      const link = document.createElement('a');
+      link.href = Constants.getAssetUrl(image, 'verification');
+      link.download = 'certificate.heic';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // For non-HEIC files, show in the image viewer as before
       setImage(image);
       getCurrentFromRef(imageViewerRef)?.showModal();
     }

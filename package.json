@@ -21,6 +21,7 @@
     "classnames": "^2.5.1",
     "flag-icons": "^7.3.2",
     "formik": "^2.4.6",
+    "heic2any": "^0.0.4",
     "linkify-it": "^5.0.0",
     "luxon": "^3.5.0",
     "moment": "^2.30.1",
