@@ -80,6 +80,7 @@ export interface Booking {
   menu_choices: number[];
   budget: number;
   event_type: string;
+  message?: string; // Optional message field for service bookings
 }
 
 export enum BookingStatus {

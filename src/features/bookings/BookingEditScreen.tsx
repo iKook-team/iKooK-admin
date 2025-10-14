@@ -12,6 +12,7 @@ import { BookingType } from './domain/types.ts';
 import { useFetchUserQuery } from '../users/domain/usecase.ts';
 import { UserType } from '../users/domain/types.ts';
 import { useFetchMenuQuery } from '../menus/domain/usecase.ts';
+import { MenuCourse } from '../menus/data/model.ts';
 
 export default function BookingEditScreen() {
   const filters = useMemo(() => ['in-progress', 'rejected', 'successful'], []);
@@ -33,14 +34,14 @@ export default function BookingEditScreen() {
       })
     : null;
 
-  const guests = booking?.num_of_persons ?? booking?.num_of_guests;
+  const guests = booking?.num_of_persons ?? booking?.num_of_guests ?? 0;
 
   const iconTextList = [
-    { icon: 'calender-check', text: `${date}` },
-    { icon: 'location-pin', text: `${booking?.address}` },
+    { icon: 'calender-check', text: `${date || 'TBD'}` },
+    { icon: 'location-pin', text: `${booking?.address || 'Address not specified'}` },
     {
       icon: 'person-male-female',
-      text: `${guests}` + `${guests != undefined && guests > 0 ? ' persons' : ' person'}`
+      text: `${guests}` + `${guests > 0 ? ' persons' : ' person'}`
     }
   ];
 
@@ -58,13 +59,13 @@ export default function BookingEditScreen() {
   const enquiryProfileList = [
     {
       icon: 'ci_location',
-      text: `${booking?.city ?? booking?.country ?? chef?.city ?? chef?.country}`,
+      text: `${booking?.city ?? booking?.country ?? chef?.city ?? chef?.country ?? 'Location not specified'}`,
       review: null
     },
     {
       icon: 'star',
-      text: `${chef?.average_rating?.toFixed(2)}`,
-      review: `(${chef?.num_reviews + ' ' + 'reviews'})`
+      text: `${chef?.average_rating?.toFixed(2) ?? '0.0'}`,
+      review: `(${chef?.num_reviews ?? 0} reviews)`
     }
   ];
 
@@ -89,7 +90,7 @@ export default function BookingEditScreen() {
         <div className="flex flex-row justify-between my-6 mr-20">
           <PageTitle className="capitalize" title={`${booking?.chef_service} Booking`} />
           <button onClick={() => setIsModalVisible(true)} className="underline">
-            Edit {type}
+            {type === BookingType.menus ? `Edit ${type}` : 'View Details'}
           </button>
         </div>
       )}
@@ -117,7 +118,7 @@ export default function BookingEditScreen() {
               )}
               {type != BookingType.menus ? (
                 <BudgetCard
-                  message={booking.message}
+                  message={booking?.message || 'No additional message provided'}
                   cuisines={menu?.cuisine_types ?? []}
                   eventType={booking?.event_type}
                   allergies={
@@ -155,17 +156,24 @@ export default function BookingEditScreen() {
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         children={
-          <EditMenuModalContent
-            starterList={
-              (booking?.menu.starter && booking!.menu.starter.map((e) => e.menuName)) || []
-            }
-            mainList={(booking?.menu.main && booking!.menu.main.map((e) => e.menuName)) || []}
-            dessertList={
-              (booking?.menu.dessert && booking!.menu.dessert.map((e) => e.menuName)) || []
-            }
-          />
+          type === BookingType.menus ? (
+            <EditMenuModalContent
+              starterList={
+                (menu?.items.filter(item => item.course === MenuCourse.starter).map((e) => e.name)) || []
+              }
+              mainList={(menu?.items.filter(item => item.course === MenuCourse.main).map((e) => e.name)) || []}
+              dessertList={
+                (menu?.items.filter(item => item.course === MenuCourse.dessert).map((e) => e.name)) || []
+              }
+            />
+          ) : (
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-4">Edit Service Booking</h3>
+              <p>Service booking editing functionality coming soon...</p>
+            </div>
+          )
         }
-        title={'Edit menu'}
+        title={type === BookingType.menus ? 'Edit menu' : 'Edit service'}
         isQuote={true}
       />
     </>

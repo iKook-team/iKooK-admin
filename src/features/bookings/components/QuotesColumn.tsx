@@ -23,7 +23,7 @@ interface MenuItem {
 }
 
 interface QuotesColumnProps {
-  chef: User;
+  chef: User | undefined;
   booking: Booking;
   type?: BookingType;
   iconTextList: IconTextItem[];
@@ -55,11 +55,11 @@ export default function QuotesColumn({
   const deleteMutation = useDeleteBooking();
 
   const enquiryProfileList = [
-    { icon: 'ci_location', text: `${chef?.country}`, review: null },
+    { icon: 'ci_location', text: `${chef?.country || 'N/A'}`, review: null },
     {
       icon: 'star',
-      text: `${chef?.average_rating?.toFixed(2)}`,
-      review: `(${chef?.num_reviews + ' ' + 'reviews'})`
+      text: `${chef?.average_rating?.toFixed(2) || '0.0'}`,
+      review: `(${chef?.num_reviews || 0} reviews)`
     }
   ];
 
