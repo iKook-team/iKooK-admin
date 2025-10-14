@@ -63,7 +63,7 @@ export function useFetchBookingQuery(type: BookingType, id?: number | string) {
     queryFn: async ({ queryKey }) => {
       const [_, __, id] = queryKey;
       const response = await fetch({
-        url: `bookings/${id}/`,
+        url: `bookings/${id}/?booking_type=${type}`,
         method: 'GET'
       });
       return response?.data as GenericResponse<Booking>;
