@@ -35,21 +35,31 @@ export default function UserVerificationPage({ user, type }: UserPageProps) {
 
   const onImage = (image?: string | null) => {
     if (!image) return;
-    
-    // Check if the image is a .heic file
-    if (image.toLowerCase().endsWith('.heic')) {
-      // Create a temporary link to trigger download
+
+    const extension = image.split('.').pop()?.toLowerCase();
+    const assetUrl = Constants.getAssetUrl(image, 'verification');
+
+    const triggerDownload = (filename: string) => {
       const link = document.createElement('a');
-      link.href = Constants.getAssetUrl(image, 'verification');
-      link.download = 'certificate.heic';
+      link.href = assetUrl;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } else {
-      // For non-HEIC files, show in the image viewer as before
-      setImage(image);
-      getCurrentFromRef(imageViewerRef)?.showModal();
+    };
+
+    if (extension === 'heic') {
+      triggerDownload('document.heic');
+      return;
     }
+
+    if (extension === 'pdf') {
+      triggerDownload('document.pdf');
+      return;
+    }
+
+    setImage(image);
+    getCurrentFromRef(imageViewerRef)?.showModal();
   };
 
   const onSubmit = async (accept: boolean, type: string, message?: string) => {
