@@ -16,4 +16,4 @@ npm run build
 npm run build --report
 ```
 
-# ikook-admin-front-end
+# ikook-admin-dashboard
