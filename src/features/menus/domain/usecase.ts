@@ -57,26 +57,26 @@ export function useFetchTopMenusQuery() {
   });
 }
 
-export function useFetchMenuQuery(id?: number | string) {
+export function useFetchMenuQuery(slug?: string) {
   return useQuery({
-    queryKey: ['menu', id],
+    queryKey: ['menu', slug],
     queryFn: async ({ queryKey }) => {
-      const [_, id] = queryKey;
+      const [_, slug] = queryKey;
       const response = await fetch({
-        url: `menus/${id}/`,
+        url: `menus/${slug}/`,
         method: 'GET'
       });
       return (response.data as GetMenuResponse).data;
     },
-    enabled: !!id
+    enabled: !!slug
   });
 }
 
 export function useUpdateMenu(ref?: Ref<any>) {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Menu> }) => {
+    mutationFn: ({ slug, data }: { slug: string; data: Partial<Menu> }) => {
       return fetch({
-        url: `/menus/${id}/`,
+        url: `/menus/${slug}/`,
         method: 'PATCH',
         data
       });
@@ -87,7 +87,7 @@ export function useUpdateMenu(ref?: Ref<any>) {
         getCurrentFromRef(ref)?.close();
       }
       void queryClient.invalidateQueries({ queryKey: ['menus'] });
-      void queryClient.invalidateQueries({ queryKey: ['menu', request.id] });
+      void queryClient.invalidateQueries({ queryKey: ['menu', request.slug] });
     }
   });
 }

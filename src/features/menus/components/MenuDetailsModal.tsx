@@ -13,12 +13,12 @@ import { getCurrentFromRef } from '../../../utils/ref.ts';
 import MenuImage from './MenuImage.tsx';
 
 interface MenuDetailsModalProps {
-  id?: number;
+  slug?: string;
   ref: Ref<HTMLDialogElement>;
 }
 
-export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
-  const { isPending, data, error } = useFetchMenuQuery(id);
+export default function MenuDetailsModal({ slug, ref }: MenuDetailsModalProps) {
+  const { isPending, data, error } = useFetchMenuQuery(slug);
   const mutation = useUpdateMenu(ref);
   const [selectedImage, setSelectedImage] = useState<string>();
   const imageDialogRef = useRef<HTMLDialogElement>(null);
@@ -79,7 +79,7 @@ export default function MenuDetailsModal({ id, ref }: MenuDetailsModalProps) {
                 <button
                   className="btn btn-primary"
                   disabled={mutation.isPending || data?.status === MenuStatus.active}
-                  onClick={() => mutation.mutate({ id: id!, data: { status: MenuStatus.active } })}
+                  onClick={() => mutation.mutate({ slug: slug!, data: { status: MenuStatus.active } })}
                 >
                   <LoadingSpinner isLoading={mutation.isPending}>Approve menu</LoadingSpinner>
                 </button>

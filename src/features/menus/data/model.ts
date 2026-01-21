@@ -2,6 +2,7 @@ import { User } from '../../users/data/model.ts';
 
 export interface Menu {
   id: number;
+  slug: string;
   name: string;
   price_per_person: number;
   num_of_guests: number;

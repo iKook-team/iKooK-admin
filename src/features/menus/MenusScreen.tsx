@@ -96,7 +96,7 @@ export default function MenusScreen() {
         totalItemCount={totalCount}
       />
       <ChangeMenuStatusModal ref={changeStatusRef} menu={selectedMenu} />
-      <MenuDetailsModal ref={menuDetailsRef} id={selectedMenu?.id} />
+      <MenuDetailsModal ref={menuDetailsRef} slug={selectedMenu?.slug} />
     </>
   );
 }

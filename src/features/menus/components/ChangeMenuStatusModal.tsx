@@ -48,7 +48,7 @@ export default function ChangeMenuStatusModal({
     }
     
     await mutation.mutateAsync({
-      id: menu!.id,
+      slug: menu!.slug,
       data: payload
     });
     toast(`${menu?.name} updated successfully`, { type: 'success' });

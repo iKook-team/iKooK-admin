@@ -75,7 +75,7 @@ export interface Booking {
   hob_type: string;
   hob_size: string;
   has_oven: boolean;
-  menu: number;
+  menu: string;
   booking: number;
   menu_choices: number[];
   budget: number;
