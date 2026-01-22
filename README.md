@@ -1,4 +1,4 @@
-# iKooK Admin(Needs Update)
+# iKooK Admin(Needs Updates)
 
 ## Build Setup
 
