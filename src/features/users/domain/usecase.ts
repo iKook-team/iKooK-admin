@@ -88,14 +88,15 @@ export function useFetchChefServicesQuery(id?: number | string) {
         url: `/services?chef_id=${id}`,
         method: 'GET'
       });
-      return response.data as PagedResponse<ChefService>;
+      const data = response.data as PagedResponse<ChefService>;
+      return data;
     },
     enabled: !!id
   });
 
   return {
     ...query,
-    data: query?.data?.results || []
+    data: (query.data as any)?.data?.results || (query.data as any)?.results || []
   };
 }
 

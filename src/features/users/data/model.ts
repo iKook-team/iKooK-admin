@@ -35,7 +35,7 @@ export interface Role {
 
 export interface ChefService {
   id: number;
-  chef: User;
+  chef: User | number;
   availability: boolean;
   chef_service: ServiceType;
   cover_image: string | null;
@@ -50,6 +50,8 @@ export interface ChefService {
   meal_prep_appearance?: string;
   delivery_option?: string;
   events?: string[] | null;
-  price_per_hour?: string;
+  price_per_hour?: string | number;
   services?: string[];
+  cooking_class_appearance?: string;
+  delivery_time_in_hrs?: string | number;
 }

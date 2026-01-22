@@ -56,11 +56,11 @@ export const chefServiceFormSchema = z.object({
   min_num_of_guests: z.number().min(1, 'Minimum number of guests is required'),
   cuisines: z.array(z.string()).min(1, 'Please select at least one cuisine type'),
   events: z.array(z.string()).default([]),
-  cover_image: z.string().optional(),
+  cover_image: z.string().nullable().optional(),
   meal_prep_appearance: z.array(z.nativeEnum(MealPrepAppearance)).default([]),
   delivery_option: z.array(z.nativeEnum(DeliveryOption)).default([]),
-  deliveryTime: z.string().default(''),
-  cookingClassAppearance: z.array(z.nativeEnum(CookingClassAppearance)).default([]),
+  delivery_time_in_hrs: z.number().default(0),
+  cooking_class_appearance: z.array(z.nativeEnum(CookingClassAppearance)).default([]),
   price_per_hour: z.number().default(0),
   services: z.array(z.nativeEnum(EatingCoachService)).default([])
 });

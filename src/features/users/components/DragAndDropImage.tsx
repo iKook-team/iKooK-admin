@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState
+} from 'react';
 import { ReactSVG } from 'react-svg';
 import close from '../../../../src/app/assets/icons/close.svg';
 
@@ -10,12 +17,20 @@ export interface DragAndDropImageRef {
 interface DragAndDropImageProps {
   onImageSelected: (image?: string) => void;
   includeMargin?: boolean;
+  initialImage?: string | null;
 }
 
 const DragAndDropImage = forwardRef<DragAndDropImageRef, DragAndDropImageProps>(
-  ({ onImageSelected, includeMargin = false }, ref) => {
-    const [image, setImage] = useState<string | null>(null);
+  ({ onImageSelected, includeMargin = false, initialImage = null }, ref) => {
+    const [image, setImage] = useState<string | null>(initialImage);
     const imageFile = useRef<File>(null);
+
+    // Update internal state if initialImage changes
+    useEffect(() => {
+      if (initialImage) {
+        setImage(initialImage);
+      }
+    }, [initialImage]);
 
     const clearImage = useCallback(
       () => () => {
