@@ -6,7 +6,7 @@ interface MenuHeaderProps {
 
 export default function MenusHeader({ children }: MenuHeaderProps) {
   const header = useMemo(
-    () => ['ID', 'Menu', 'Chef', 'Availability', 'Starting Price', 'Status'],
+    () => ['ID', 'Menu', 'Chef', 'Menu Type', 'Availability', 'Starting Price', 'Status'],
     []
   );
 

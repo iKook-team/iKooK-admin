@@ -24,6 +24,7 @@ export default function MenuRow(props: MenuRowProps) {
           image={props.chef?.avatar}
         />
       </td>
+      <td>{props.menu_type}</td>
       <td></td>
       <td>{formatCurrency(Number(props.price_per_person), props.currency)}</td>
       <td>

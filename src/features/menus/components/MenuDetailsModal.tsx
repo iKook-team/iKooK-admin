@@ -73,6 +73,7 @@ export default function MenuDetailsModal({ slug, ref }: MenuDetailsModalProps) {
                 <MenuEntryItem title="Minimum number of quests" value={data?.num_of_guests} />
                 <MenuEntryItem title="Maximum menu selection" value={data?.max_menu_selection} />
                 <MenuEntryItem title="Event types" value={data?.event_types} />
+                <MenuEntryItem title="Menu Type" value={data?.menu_type} />
                 <MenuEntryItem title="Cuisine types" value={data?.cuisine_types} />
               </div>
               <div className="flex flex-col pt-6 gap-3.5 mt-auto">
