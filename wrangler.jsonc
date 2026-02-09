@@ -1,0 +1,9 @@
+{
+    "name": "ikook-admin",
+    "pages_build_output_dir": "dist",
+    "compatibility_date": "2026-02-06",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "vars": {}
+}

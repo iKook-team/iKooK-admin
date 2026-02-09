@@ -12,7 +12,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ./**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pages:build": "vite build --mode production",
+    "deploy": "npm run pages:build && npx wrangler pages deploy dist --project-name ikook-admin"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.65.1",
